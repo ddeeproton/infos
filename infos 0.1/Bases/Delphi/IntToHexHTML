@@ -1,0 +1,7 @@
+// Convertit une couleur Delphi en code couleur HTML
+function IntToHexHTML(color:integer):string;
+begin
+  IntToHexHTML :='#'+IntTohex(color and $ff,2)+
+                     IntTohex(((color shr 8) and $ff),2)+
+                     IntTohex(((color shr 16) and $ff),2);
+end;

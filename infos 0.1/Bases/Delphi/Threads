@@ -1,0 +1,14 @@
+  TSauvegarde = class(TThread)
+  protected
+    procedure Execute; override;
+  end;
+..
+implementation
+..
+procedure TSauvegarde.Execute;
+begin
+//
+end;
+
+...
+    Unit1.TSauvegarde.Create(False);

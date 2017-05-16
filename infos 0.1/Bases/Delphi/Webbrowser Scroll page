@@ -1,0 +1,50 @@
+// Scroll up
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  WebBrowser1.OleObject.Document.ParentWindow.ScrollBy(0, -100);
+end;
+
+// Scroll left
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  WebBrowser1.OleObject.Document.ParentWindow.ScrollBy(-100, 0);
+end;
+
+// Scroll down
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  WebBrowser1.OleObject.Document.ParentWindow.ScrollBy(0, +100);
+end;
+
+// Scroll right
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  WebBrowser1.OleObject.Document.ParentWindow.ScrollBy(+100, 0);
+end;
+
+// Scroll to the Bottom, Top, Right of the Document:
+type
+  TWBPosition = (wbPosBottom, wbPosTop, wbPosRight);
+
+function WB_ScrollTo(WB: TWebBrowser; Position: TWBPosition):Boolean;
+var
+  ParentW: OLEVariant;
+begin
+  Result := WB.Document <> nil;
+  if Result then
+  begin
+    ParentW := WB.OleObject.Document.ParentWindow;
+    case Position of
+      wbPosBottom: ParentW.ScrollTo(0, ParentW.Screen.Height);
+      wbPosTop: ParentW.ScrollTo(0, 0);
+      wbPosRight: ParentW.ScrollTo(ParentW.Screen.Width, 0);
+    end;
+  end;
+end;
+
+// Example: Scroll to the bottom of the document:
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  WB_ScrollTo(WebBrowser1, wbPosBottom);
+end;
+

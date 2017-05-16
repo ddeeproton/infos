@@ -1,0 +1,2 @@
+// Configurer la carte réseau
+ifconfig lnc0 downifconfig lnc0 inet 192.168.3.3 netmask 255.255.255.0 uproute add default 192.168.3.3echo "nameserver 192.168.3.254" > /etc/resolv.conf

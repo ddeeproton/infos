@@ -1,0 +1,14 @@
+
+{             Jouer un son        }
+
+// Rajouter dans uses
+
+uses
+mmSystem;
+
+procedure ...
+begin
+
+  PlaySound('C:\Program Files\Skype+\sons\connect.wav', handle,SND_ASYNC);
+
+end;

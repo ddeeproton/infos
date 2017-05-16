@@ -1,0 +1,27 @@
+<HTML><HEAD>
+<TITLE>Exemple VBScript</TITLE>
+<SCRIPT LANGUAGE="VBScript">
+<!--
+Sub Verif_OnClick
+Dim f
+Set f = Document.form
+If f.num.Value < 1 Or f.num.Value > 10 Then 
+MsgBox "Entrez un nombre entre 1 et 10 !" 
+Else 
+MsgBox "Saisie Ok !" 
+End If
+End Sub
+-->
+</SCRIPT>
+</HEAD>
+<BODY>
+<H1>Formulaire</H1>
+<BR>
+<FORM NAME="form">
+Entrez un nombre entre 1 et 10 : 
+<INPUT NAME="num" TYPE="TEXT" SIZE="2">
+<INPUT NAME="Verif" TYPE="BUTTON" VALUE="Valider">
+</FORM>
+</BODY>
+</HTML>
+

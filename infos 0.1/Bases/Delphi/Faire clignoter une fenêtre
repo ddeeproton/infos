@@ -1,0 +1,2 @@
+
+FlashWindow(findwindow(nil,'Project1'),true);

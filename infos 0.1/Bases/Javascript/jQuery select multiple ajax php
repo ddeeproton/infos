@@ -1,0 +1,28 @@
+<?php  
+if(isset($_POST['selected'])) {
+	echo json_encode($_POST['selected']);
+	exit;
+}
+?>
+<select id="allproducts" multiple>
+	<option value="test1">test1</option>
+	<option value="test2">test2</option>
+</select>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$(".btnAddProd").click(function() {
+		// Récupère la liste sélectionnée 
+		var selected = Array();
+		$("#allproducts  option:selected").each(function() {
+			selected[selected.length] = $(this).val();
+		});
+		// Envoi en ajax POST
+		$.post( "search.php", { 'selected[]': selected } , function( data ) {
+			// Réponse en JSON
+			var obj = $.parseJSON(data);
+			alert(obj.length);
+		});
+	});
+});
+</script>

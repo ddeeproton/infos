@@ -1,0 +1,19 @@
+Contenu du fichier ini:
+=======================================================================
+[Setup]
+Mode=Reveil
+Son=c:\windows\media\tada.wav
+Etat=Activé
+Heure=03:18:20
+=======================================================================
+Uses inifiles;
+var  Setup: TIniFile;
+
+  // Creation du Fichier Ini si Absent dans le repertoire de l'EXE
+  Setup := TIniFile.Create(ExtractFileDir(Application.ExeName) + '\Setup.ini');
+
+  // Lire
+  Label3.Caption := Setup.ReadString('Setup', 'Heure', 'Heure' );
+
+  // Ecrire
+  Setup.WriteString('Setup', 'Heure', '12:00:00');

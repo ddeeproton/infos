@@ -1,0 +1,21 @@
+Faire de la 3D avec du PHP
+Il faut télécharger:
+Easyphp: www.easyphp.org
+PHP-GTK: http://gtk.php.net/do_download.php?download_file=php-gtk-2.0.0beta-win32.zip (lien trouvé sur cette page http://gtk.php.net/download.php )
+Gtk Open Glide: http://www.bonifazi.eu/appunti/gtkglext-win32-1.2.0.exe (lien trouvé sur cette page http://www.k-3d.org/gtkglext/Main_Page#Binaries )
+
+EasyPHP
+Dans le repertoire d'installation d'Easyphp il y a un dossier nommé PHP, pour simplifier les choses on va utiliser ce dossier pour y installer GTK et l'extention Open Glide pour la 3D. Donc installer EasyPHP.
+
+PHP-GTK
+Décompresser le fichier gtk-2.0.0beta-win32.zip, copier-coller le contenu du dossier "php-gtk" dans le dossier "php" d'EasyPHP de sorte à avoir les nouvelles dll et dossiers à côté du programme "php.exe".
+
+Gtk Open Glide:
+Installer le programme gtkglext-win32-1.2.0.exe dans le répertoire par défaut (peut importe). Aller ensuite dans le répertoire d'installation et copier le contenu du dossier "1.0\bin" dans le dossier "php" d'EasyPHP.
+
+Maintenant on peut tester pour s'amuser.
+Prennez un script php, mettez le dans le dossier php, ensuite executez le script php en ligne de commande comme suit: php.exe monscript.php
+
+Des exemples de scripts sont disponibles ici 
+http://www.siteduzero.com/news-62-29-p1-de-la-3d-en-php.html
+http://pear.php.net/package/Image_3D

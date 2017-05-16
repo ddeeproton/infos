@@ -1,0 +1,7 @@
+            Dim MenuTab(9, 9) As String
+
+            For i As Integer = 0 To MenuTab.GetUpperBound(0)
+                For j As Integer = 0 To MenuTab.GetUpperBound(1)
+                    MenuTab(i, j) = i.ToString & " - " & j.ToString
+                Next j
+            Next i

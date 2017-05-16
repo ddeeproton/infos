@@ -1,0 +1,26 @@
+uses ShellApi;
+
+
+
+function SupprimeRep(Dossier: String; Vider: Boolean): Boolean; 
+var 
+  Rep: TshFileOpStruct; 
+begin 
+  if not DirectoryExists(Dossier) then Exit; //si le dossier existe 
+  
+  if Vider then begin //si il faut le vider 
+    if Dossier[Length(Dossier)] <> '\' then Dossier := Dossier + '\'; 
+    Dossier := Dossier + '*.*' 
+  end 
+  else //sinon 
+    if Dossier[Length(Dossier)] = '\' then Delete(Dossier,Length(Dossier), 1); 
+  
+  //régle les paramètre 
+  FillChar(Rep, SizeOf(Rep), 0); 
+  Rep.wFunc := FO_DELETE; 
+  Rep.pFrom := PChar(Dossier); 
+  Rep.fFlags := FOF_ALLOWUNDO or FOF_NOCONFIRMATION; 
+  //supprime 
+  Result := ((ShFileOperation(Rep) = 0) and (not Rep.fAnyOperationsAborted)); 
+end; 
+

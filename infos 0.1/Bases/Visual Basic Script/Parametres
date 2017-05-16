@@ -1,0 +1,12 @@
+if WScript.Arguments.Count > 0 then
+  MsgBox WScript.Arguments(0)
+  WScript.Quit  
+end if 
+
+MsgBox "First argument is not set"
+WScript.Quit  
+
+
+For Each arg in WScript.Arguments
+
+Next

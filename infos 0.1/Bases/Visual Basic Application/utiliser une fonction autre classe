@@ -1,0 +1,3 @@
+'utiliser une fonction de la master page
+
+CType(Page.Master, NomClasseMasterPage).FunctionDeLaMasterPage()

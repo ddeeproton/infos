@@ -1,0 +1,49 @@
+// http://www.genshuixue.com/i-cxy/p/11572509
+
+package com.everSeeker;
+ 
+import org.xbill.DNS.Message;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+public class UDPServer {
+	private static DatagramSocket socket;
+
+	public UDPServer() {
+		//socket UDP 53
+		try {
+			this.socket = new DatagramSocket(53);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void start() {
+		System.out.println("Starting&#12290;&#12290;&#12290;&#12290;&#12290;&#12290;\n");
+		while (true) {
+			try {
+				byte[] buffer = new byte[1024];
+				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+				socket.receive(request);
+				// DNS
+				InetAddress sourceIpAddr = request.getAddress();
+				int sourcePort = request.getPort();
+				System.out.println("\nsourceIpAddr = " + sourceIpAddr.toString() + "\nsourcePort = " + sourcePort);
+				// System.out.println("data = " + new String(request.getData(), 0 , request.getLength()));
+
+				Message indata = new Message(request.getData());
+				System.out.println("indata = " + indata.toString());
+			} catch (SocketException e) {
+				System.out.println("SocketException:");
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("IOException:");
+				e.printStackTrace();
+			}
+		}
+	}
+}

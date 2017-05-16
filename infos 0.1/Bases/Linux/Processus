@@ -1,0 +1,6 @@
+
+// Afficher le processus synergy
+ps -ax | grep "synergy"
+
+//Tuer un processus qui refuse de se tuer
+kill -9 PID

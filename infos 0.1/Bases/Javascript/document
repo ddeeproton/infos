@@ -1,0 +1,10 @@
+// DOCS
+// https://developer.mozilla.org/fr/docs/Web/API/Document/getElementById
+
+document.getElementById('first-operand').value
+
+document.getElementById('result').innerHTML = txt;
+
+
+var element = document.createElement("div");
+element.id = 'testqq';

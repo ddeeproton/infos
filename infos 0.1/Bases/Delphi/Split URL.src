@@ -1,0 +1,61 @@
+program GereChaine; 
+  
+{$APPTYPE CONSOLE} 
+  
+uses 
+  SysUtils; 
+  
+function LinkFilter(Chaine:String;Partie:string):string; 
+var 
+ i,Stop,Stop2:integer; 
+ Lien,DernierMorceau,Fichier,Extension,Final:string; 
+begin 
+ Stop:=0; 
+  For i:=0 to Length(Chaine) do 
+  begin 
+   if ((Chaine[i]='/')or(Chaine[i]='\')) then Stop:=i; 
+  end; 
+ DernierMorceau:=Copy(Chaine,Stop+1,Length(Chaine)-Stop+1); 
+ Lien:=Copy(Chaine,0,Length(Chaine)-Length(DernierMorceau)); 
+ Stop2:=0; 
+  For i:=0 to Length(DernierMorceau) do 
+  begin 
+   if DernierMorceau[i]='.' then Stop2:=i; 
+  end; 
+ Extension:=Copy(DernierMorceau,Stop2,Length(DernierMorceau)-Stop2+1); 
+ Fichier:=Copy(Chaine,Stop+1,Length(DernierMorceau)-Length(Extension)); 
+ Stop:=0; 
+  For i:=0 to Length(Extension) do 
+  begin 
+   If((Stop=0)and( (Extension[i]='?') or 
+                   (Extension[i]='&') or 
+                   (Extension[i]='+') or 
+                   (Extension[i]='%') )) 
+   then Stop:=i; 
+  end; 
+ Extension:=Copy(Extension,0,Stop-1); 
+ if (UpperCase(Partie)='LIEN') then Final:=Lien; 
+ if (UpperCase(Partie)='FICHIER') then Final:=DernierMorceau; 
+ if (UpperCase(Partie)='NAME') then Final:=Fichier; 
+ if (UpperCase(Partie)='EXTENSION')then Final:=Extension; 
+ if (UpperCase(Partie)='FILTRER') then Final:=Lien+Fichier+Extension; 
+Result:=Final; 
+end; 
+  
+Procedure Main(); 
+var 
+ ch,param:string; 
+begin 
+// ReadLn(ch); //Pour taper sa propre url 
+ ch:='http://www.DelphiFr.com/Download/essaie/SuperTruc.asp?Loginj=qqn&Pass=qqch&wid=1267878'; 
+ WriteLn(ch);WriteLn; 
+ ReadLn(param); 
+ Write(LinkFilter(ch,param)); 
+end; 
+  
+begin 
+ Main(); 
+ ReadLn; 
+end. 
+
+

@@ -1,0 +1,116 @@
+'Afficher la facturation des cinq derniers mois
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE  dbo.Facturation_0900_Get_AllTaxes
+AS
+
+declare @sql nvarchar(4000)
+declare @Period1 nvarchar(6)
+declare @Period2 nvarchar(6)
+declare @Period3 nvarchar(6)
+declare @Period4 nvarchar(6)
+declare @Period5 nvarchar(6)
+declare @Period6 nvarchar(6)
+
+
+select	@Period1 = Left(convert(varchar(24), dateadd(month, -1, getdate()), 112), 6),
+	@Period2 = dbo.AddPeriod(@Period1, -1),
+	@Period3 = dbo.AddPeriod(@Period1, -2),
+	@Period4 = dbo.AddPeriod(@Period1, -3),
+	@Period5 = dbo.AddPeriod(@Period1, -4),
+	@Period6 = dbo.AddPeriod(@Period1, -5)
+
+
+
+select	@sql =
+N'
+select	f.ID_LIGNE,
+	fc.DESCRIPTION as CATEGORIE,
+	fl.TEXTE as LIBELLE,
+	sum(Case f.PERIOD When ' + @Period1 + N' Then f.montant_ttc Else $0 End) as AMOUNT_P1,
+	sum(Case f.PERIOD When ' + @Period2 + N' Then f.montant_ttc Else $0 End) as AMOUNT_P2,
+	sum(Case f.PERIOD When ' + @Period3 + N' Then f.montant_ttc Else $0 End) as AMOUNT_P3,
+	sum(Case f.PERIOD When ' + @Period4 + N' Then f.montant_ttc Else $0 End) as AMOUNT_P4,
+	sum(Case f.PERIOD When ' + @Period5 + N' Then f.montant_ttc Else $0 End) as AMOUNT_P5,
+	sum(Case f.PERIOD When ' + @Period6 + N' Then f.montant_ttc Else $0 End) as AMOUNT_P6
+	
+from	(
+	select ' + @Period1 + N' as period,
+		id_ligne,
+		sum(montant_ttc) as MONTANT_TTC
+	from	dbo.FACTURATION_' + @Period1 + N' f With(Nolock) 
+	group by 	f.ID_LIGNE	
+	
+		union all
+		
+	select ' + @Period2 + N' as period,
+		id_ligne,
+		sum(montant_ttc) as MONTANT_TTC
+	from	dbo.FACTURATION_' + @Period2 + N' f With(Nolock) 
+	group by 	f.ID_LIGNE
+	
+		union all
+		
+	select ' + @Period3 + N' as period,
+		id_ligne,
+		sum(montant_ttc) as MONTANT_TTC
+	from	dbo.FACTURATION_' + @Period3 + N' f With(Nolock) 
+	group by 	f.ID_LIGNE
+	
+		union all
+		
+	select ' + @Period4 + N' as period,
+		id_ligne,
+		sum(montant_ttc) as MONTANT_TTC
+	from	dbo.FACTURATION_' + @Period4 + N' f With(Nolock) 
+	group by 	f.ID_LIGNE
+	
+		union all
+		
+	select ' + @Period5 + N' as period,
+		id_ligne,
+		sum(montant_ttc) as MONTANT_TTC
+	from	dbo.FACTURATION_' + @Period5 + N' f With(Nolock) 
+	group by 	f.ID_LIGNE
+	
+		union all
+		
+	select ' + @Period6 + N' as period,
+		id_ligne,
+		sum(montant_ttc) as MONTANT_TTC
+	from	dbo.FACTURATION_' + @Period6 + N' f With(Nolock) 
+	group by 	f.ID_LIGNE	
+		
+
+	) f
+		inner join
+		
+	dbo.FACTURATION_LIGNES fl With(Nolock) 
+		on	f.ID_LIGNE = fl.ID_LIGNE and
+			fl.LANGUE_ID = 1
+			
+		inner join
+		
+		
+	dbo.FACTURATION_CATEGORIE fc With(Nolock) 
+		on	fl.CATEGORIE = fc.ID_CATEGORIE and
+			fc.ORDRE > 0
+			
+group by 	f.ID_LIGNE,
+ 		fc.DESCRIPTION,
+		fl.TEXTE
+'
+
+execute sp_executesql @sql;
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+

@@ -1,0 +1,30 @@
+// Modifier les marges du document chargé
+WebBrowser.OleObject.Document.Body.TopMargin := 0;
+WebBrowser.OleObject.Document.Body.LeftMargin := 0;
+
+// Empêcher l'affichage des scrollbar dans le composant TWebBrowser
+WebBrowser.OleObject.Document.Body.Style.OverflowX := 'hidden';
+WebBrowser.OleObject.Document.Body.Style.OverflowY := 'hidden';
+
+// Récupérer le code html de la page en cours
+Memo1.Text := WebBrowser1.OleObject.Document.body.innerHTML
+
+// Récupérer tout le texte de la page en cours
+Memo1.Text := WebBrowser1.OleObject.Document.body.innerText
+
+// Récupérer tous les liens de la page en cours
+try For i:=0 to Webbrowser1.OleObject.Document.links.length-1 Do Begin
+  RichEdit1.lines.add(Webbrowser1.OleObject.Document.links.item(i));
+end; Except end;
+
+// Ecrire dans le composant (créer une page avec Delphi)
+CodeHTML := '<p>&nbsp;</p><p align="center"><b>Votre page HTML</b></p>';
+WebBrowser1.Navigate('about:' + CodeHTML, EmptyParam, EmptyParam,
+  EmptyParam, EmptyParam);
+
+
+// Pour annuller l'ouverture d'une fenêtre
+procedure TForm1.WebBrowser1NewWindow2(Sender: TObject; var ppDisp: IDispatch; var Cancel: WordBool); 
+begin 
+Cancel := TRUE 
+end;

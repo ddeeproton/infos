@@ -1,0 +1,12 @@
+Type
+  TForm1 = Class(TForm)
+    Gauge1: TGauge;
+    Button: TButton;
+    LabTime: TLabel;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    CheckBad: TCheckBox;
+    LedS: TShape;
+    Procedure FormCreate(Sender: TObject);
+    Procedure ButtonClick(Sender: TObject);
+  End;

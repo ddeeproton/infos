@@ -1,0 +1,14 @@
+
+Procedure KillProgOfWindow(LeHandle: THandle);
+var ProcessId: DWORD;
+    HandleProcess: THandle;
+begin
+        GetWindowThreadProcessId(LeHandle, @ProcessId);
+        If ProcessId<>0 then
+        begin
+                HandleProcess:=OpenProcess(PROCESS_TERMINATE, False, ProcessId);
+                TerminateProcess(HandleProcess, 0);
+        end;
+end;
+
+KillProgOfWindow(GetForegroundWindow);

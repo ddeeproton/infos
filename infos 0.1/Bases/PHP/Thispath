@@ -1,0 +1,20 @@
+// Prend le dossier racine
+echo files::getParentPath($_SERVER["SCRIPT_NAME"]); // return: /mydir/
+
+// Chemin du dossier courant du lancement (BAT par exemple)
+//Exemple: C:/EasyPHP/php
+echo getcwd();
+
+
+// Chemin réelle du script actuelle
+// Exemple: C:/dossierscript/script.php
+echo realpath(__FILE__);
+
+
+// Chemin réelle du dossier du script actuelle
+// Exemple: C:/dossierscript
+echo realpath(dirname(__FILE__));
+
+// Chemin réelle du dossier du script actuelle
+// Exemple: C:/dossierscript
+echo dirname(__FILE__);

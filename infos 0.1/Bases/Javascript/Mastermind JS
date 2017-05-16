@@ -1,0 +1,419 @@
+// Mastermind JS
+
+const COLORS = ['blue', 'red', 'green', 'purple', 'teal', 'orange', 'lime'];
+const HIDDEN = 'grey';
+
+/**
+ *
+ * @return {String} a color picked randomely
+ */
+function pickRandomColor(c) {
+	let i = getRandomArbitrary(0, c.length-1);
+	return c[i];
+}
+
+function pickOnyNewRandomColor(tab) {
+	let filtered_colors = COLORS.slice(0);
+	for(let v of filtered_colors){
+		let index = tab.indexOf(v);
+		if(index == -1) {
+			continue;
+		}
+		let i = filtered_colors.indexOf(v);
+		if(i!=-1) {
+			filtered_colors.splice(i,1);
+		}
+	}
+	return pickRandomColor(filtered_colors);
+}
+
+function getRandomArbitrary(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
+
+/**
+ * @class MastermindGame
+ * host the game logic
+ */
+class MastermindGame {
+  constructor() {
+    /**
+     * @property {Combination} mystery
+     * @private
+     */
+    this.mystery = null;
+    /**
+     * @property {Array.<Combination>} attemps
+     * @private
+     */
+    this.attemps = [];
+	
+
+
+  }
+
+  /**
+   * take a combination, log it as an attempt check for validity return the difference
+   * @param {Combination} suggestion
+   * @return {Difference}
+   */
+  submit(suggestion) {
+		this.attemps.push(suggestion);
+		return suggestion.compareTo(this.mystery);
+  }
+
+  /**
+   * Generate an array of 4 randomely picked color,
+   * create a combination with it and assign the combination to the mystery property
+   */
+	pickMystery() {
+		let isMultipleColorsAllowed = document.getElementById('checkbox-multiple-colors').checked;
+		let tab = [];
+		for(let i = 0; i < 4; i++){
+			if(isMultipleColorsAllowed) {
+				tab[i] = pickRandomColor(COLORS);
+			}else{
+				tab[i] = pickOnyNewRandomColor(tab);
+			}
+		}
+		this.mystery = new Combination(tab);
+	}
+}
+
+/**
+ * @class Combination
+ * represent a combination of color
+ */
+class Combination {
+  constructor(colors) {
+	  
+    this.pins = colors;
+  }
+
+  /**
+   * return the difference between the given and the current combinations
+   * @param otherCombination {Combination}
+   * @return {Difference}
+   */
+  compareTo(otherCombination) {
+    // store the index that already have been delt with
+    let matchedIdx = [];
+    // a copy that can be changed without creating reference problem elsewhere
+    let theirPinsCopy = otherCombination.pins.concat();
+    // count the number of correctly placed items
+    let correctCount = 0;
+    let misplacedCount = 0;
+
+    // 1 - check correct matches
+
+    //For every pin in the current combination:
+	for(let i = 0; i < this.pins.length; i++) {
+      // if the other combination has the same color then
+	  if(otherCombination.pins[i] === this.pins[i]){
+			// increment correctCount
+	  		correctCount++;
+			// add the pin's index to the matchedIdx list
+			matchedIdx.push(i);
+			// and remove the corresponding pin from theirPinsCopy
+			theirPinsCopy.splice(i - correctCount, 1); // this does the removal
+	  }
+	}
+    // end for
+
+    // 2 - check misplaced
+    // if the otherCombination wasn't entirely identical to us
+	if(correctCount != this.pins.length) {
+		// for each of our pins:
+		for(let i = 0; i < this.pins.length; i++) {
+			// if its idx isn't in the matchedIdx
+			if(!matchedIdx.includes(i)){
+				let idx = theirPinsCopy.indexOf(this.pins[i]);
+				
+			  // try to find it in the otherCombination's pin that are left (i.e. in theirPinCopy)
+			  //if found, remove the item from theirPinsCopy and incremment the misplacedCount
+			  if(idx != -1) {
+				  theirPinsCopy.splice(idx);
+				  misplacedCount++;
+			  }
+			}
+		}
+	
+
+
+	}
+    return new Difference(correctCount, misplacedCount);
+  }
+}
+
+/**
+ * @class Difference
+ * represent the difference between two combinations
+ */
+class Difference {
+  /**
+   * Difference is a readonly class
+   * @param nbCorrect {Number}
+   * @param nbMisplaced {Number}
+   */
+  constructor(nbCorrect, nbMisplaced) {
+    /**
+     * @property _nbCorrect {Number}
+     * @private
+     */
+    this._nbCorrect = nbCorrect;
+    /**
+     * @property _nbMisplaced {Number}
+     * @private
+     */
+    this._nbMisplaced = nbMisplaced;
+  }
+
+  get nbCorrect() {
+	  console.log("nbCorrect");
+    return this._nbCorrect;
+  }
+
+  get nbMisplaced() {
+    return this._nbMisplaced;
+  }
+}
+
+/**
+ * @class MysteryUI
+ * represents the mystery within a div
+ */
+class MysteryUI {
+  /**
+   * @param div {HTMLelement}
+   */
+  constructor(div) {
+    this.div = div;
+  }
+
+  /**
+   * Hide combination 
+   */
+  hide() {
+    let pins = this.getPins();
+    for (let pin of pins) {
+      for (let color of COLORS) {
+        pin.classList.remove(color);
+      }
+      pin.classList.add(HIDDEN);
+      pin.textContent = '?';
+    }
+  }
+  /**
+   * Hide combination 
+   * @param combination {Combination}
+   */
+  reveal(combination) {
+    let pins = this.getPins();
+    for (let i = 0; i < combination.pins.length; i++) {
+      let pinElement = pins[i];
+      let pin = combination.pins[i];
+      pinElement.textContent = '';
+      pinElement.classList.remove(HIDDEN);
+      pinElement.classList.add(pin);
+    }
+  }
+  /**
+   * return the buttons with attribute data-role="pin"
+   * @return buttons {HTMLCollectionelement}}
+   */
+  getPins() {
+    return this.div.querySelectorAll('button[data-role="pin"]');
+  }
+}
+
+/**
+ * @class AttemptUI
+ * represents a suggestion made by the user and it's correction
+ */
+class AttemptUI {
+  constructor(combination, difference, div) {
+    if (!div) {
+      this._div = document.createElement('div');
+      this.initUI();
+    } else {
+      this._div = div;
+    }
+	console.log("difference = "+ difference);
+    this.updateSuggestionUI(combination, difference);
+  }
+
+  get div() {
+    return this._div;
+  }
+
+  static createPin(color) {
+    let button = document.createElement('button');
+    button.className = `btn-floating waves-effect waves-light ${color || ''}`;
+    button.setAttribute('data-role', 'pin');
+    let div = document.createElement('div');
+    div.className = 'col s3';
+    div.appendChild(button);
+    return div;
+  }
+
+  initUI() {
+    this._div.className = "row";
+    this._div.setAttribute('data-role', 'suggestion');
+
+    let pins = document.createElement('div');
+    pins.setAttribute('data-role', 'pins');
+    pins.className = 'col s9';
+    for (let i = 0; i < 4; i++) {
+      pins.appendChild(AttemptUI.createPin());
+    }
+    this._div.appendChild(pins);
+
+    let difference = document.createElement('div');
+    difference.setAttribute('data-role', 'difference');
+    difference.className = 'col s3';
+    difference.innerHTML = '<div data-role="correctly-placed" class="chip red white-text"></div>' +
+        '<div data-role="misplaced" class="chip white"></div>';
+    this._div.appendChild(difference);
+  }
+
+  /**
+   *
+   * @param {Combination} combination
+   * @param {Difference} difference
+   */
+  updateSuggestionUI(combination, difference) {
+    let pins = this._div.querySelectorAll('[data-role="pin"]');
+    for (let i = 0; i < combination.pins.length; i++) {
+      let pin = pins[i];
+      pin.classList.remove(pin.getAttribute('data-color-idx'));
+      pin.classList.add(combination.pins[i]);
+      pin.setAttribute('data-color-idx', COLORS.indexOf(combination.pins[i]));
+    }
+    let correctChip = this._div.querySelector('[data-role="correctly-placed"]');
+	console.log(difference);
+    correctChip.textContent = difference.nbCorrect;
+    let misplacedChip = this._div.querySelector('[data-role="misplaced"]');
+    misplacedChip.textContent = difference.nbMisplaced;
+  }
+}
+
+class MastermindUI {
+  constructor() {
+    this.game = new MastermindGame();
+    this.div = document.getElementById('mastermind-board');
+    this.mysteryUI = new MysteryUI(this.div.querySelector('[data-role="solution-holder"]'));
+    this.suggestionsDiv = this.div.querySelector('[data-role="suggestions-tracker"]');
+    this.newSuggestionDiv = this.div.querySelector('[data-role="suggestion-builder"]');
+    this.clearSuggestions();
+    // init suggestion building area
+    let pins = this.newSuggestionDiv.querySelectorAll('button[data-role="pin"]');
+    for (let pin of pins) {
+      pin.setAttribute('data-color-idx', 0);
+      pin.classList.remove('grey');
+      pin.classList.add(COLORS[0]);
+    }
+    let btns = this.newSuggestionDiv.getElementsByTagName('button');
+    for (let btn of btns) {
+      btn.setAttribute('disabled', true);
+    }
+    // put the event listener in place
+    this.newSuggestionDiv.addEventListener('click', (evt) => {
+      // ~~~~~~~~~~ THIS BLOCK IS *NOT* CLEAR ~~~~~~~~
+      let elm = evt.target;
+      // try to find out the
+      while(elm && elm.tagName  && elm.tagName !== 'BUTTON') {
+        elm = elm.parentNode;
+      }
+      if (elm.tagName === 'BUTTON' && !elm.hasAttribute('disabled') ) {
+        // check if button was submit or a pin
+        let role = elm.getAttribute('data-role');
+        if (role === 'go') {
+          this.makeSuggestion();
+        } else if (role === 'pin') {
+          //then rotate the color.
+          let idx = elm.getAttribute('data-color-idx');
+          elm.classList.remove(COLORS[idx]);
+          if (evt.shiftKey || evt.metaKey || evt.ctrlKey) {
+            idx--;
+            if (idx < 0) {
+              idx += COLORS.length;
+            }
+          } else {
+            idx++;
+          }
+          idx = idx % COLORS.length;
+          elm.classList.add(COLORS[idx]);
+          elm.setAttribute('data-color-idx', idx);
+        }
+      }
+    });
+    this.div.querySelector('button[data-role="give-up"]').addEventListener('click', () => {
+      this.giveUp();
+    });
+  }
+
+  start() {
+//debugger; 
+    // hide the mystery combination UI
+    this.mysteryUI.hide();
+    // remove all existing suggestions
+    this.clearSuggestions();
+    // make the game pick a new mystery combination
+    this.game.pickMystery();
+    // activate the submit button
+    let btns = this.newSuggestionDiv.getElementsByTagName('button');
+    for (let btn of btns) {
+      btn.removeAttribute('disabled');
+    }
+  }
+
+  giveUp() {
+    // reveal the mystery
+    this.mysteryUI.reveal(this.game.mystery);
+    // deactivate the submission
+    let btns = this.newSuggestionDiv.getElementsByTagName('button');
+    for (let btn of btns) {
+      btn.setAttribute('disabled', true);
+    }
+  }
+
+  makeSuggestion() {
+	 
+	 console.log("makeSuggestion");
+	 
+    // fetch the user's input
+    let pins = this.newSuggestionDiv.querySelectorAll('[data-role="pin"]');
+    let colors = [];
+    for (let pin of pins) {
+      colors.push(COLORS[pin.getAttribute('data-color-idx')]);
+    }
+	
+	/*
+	// colors => ["blue", "red", "red", "blue"]
+	 console.log("colors => ");
+	 console.log(colors);
+	*/
+	
+	
+    // build a combination
+    let userCombination = new Combination(colors);  // color est stoqué dans userCombination.pins;
+    // pass it to the game
+    let diff = this.game.submit(userCombination);
+	
+	//console.log("diff="+diff);
+	
+    // check the result
+    let attemptUI = new AttemptUI(userCombination, diff);
+    this.suggestionsDiv.appendChild(attemptUI.div);
+  }
+
+  clearSuggestions() {
+    this.suggestionsDiv.innerHTML = "";
+  }
+}
+
+let game = new MastermindUI();
+document.getElementById("newGame").addEventListener('click', function () {	
+  game.start();
+});

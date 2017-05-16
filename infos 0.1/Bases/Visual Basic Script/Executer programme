@@ -1,0 +1,10 @@
+
+
+' Executer et ne pas attendre
+set WshShell = createObject("WScript.shell")
+Wshshell.run "IEXPLORE.exe"
+
+
+' Executer et attendre
+Set WshShell = WScript.CreateObject("WScript.Shell")
+WshShell.run "notepad", 1, true

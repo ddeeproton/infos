@@ -1,0 +1,14 @@
+echo date("H:i:s d.m.Y");
+print date("H:i:s");
+
+date("H") donne l'heure numérique
+date("i") donne les minutes
+
+date("d") donne le jour du mois
+date("m") donne le mois en numérique
+date("Y") donne l'année
+date("w") donne le jour de la semaine de 0 (pour dimanche) 
+                à 6 (pour samedi)
+strftime('%c') pour jour/mois/annee heure:minute
+
+$today = date("Y-m-d",strtotime("+1 day")); //Date de demain

@@ -1,0 +1,4 @@
+'Donne le nom du mois et l'année
+' month = le nombre de mois qu'on veux reculer ou avancer par rapport à maintenant
+System.Globalization.CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(Now.AddMonths(Month).ToString("MMMM yyyy"))
+

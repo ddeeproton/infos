@@ -1,0 +1,4 @@
+   // Pour créer un dossier avec les permissions d'écriture
+   $oldumask = umask(0000);
+   mkdir('Bases/'.$PHP_AUTH_USER);
+   umask($oldumask);

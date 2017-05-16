@@ -1,0 +1,11 @@
+<table width="230" cellpadding="0" cellspacing="0" border="0" onmouseover="document.bigPict1.src='/xobix_media/images/tsr/2005/actu20050710_5932374_0.jpg';" onmouseout="document.bigPict1.src='/xobix_media/images/tsr/2005/actu20050710_5932374_1.jpg';">
+<tr height="165" valign="top">
+<td class="s-FxPhotoFormat">
+
+<div style="display:none"><img src="/xobix_media/images/tsr/2005/actu20050710_5932374_0.jpg"></div>
+
+<div style="position:relative; z-index:99;">
+<img name="bigPict1" style="position:absolute; right:0px"  src="/xobix_media/images/tsr/2005/actu20050710_5932374_1.jpg" border="0" alt="La trajectoire de Dennis">
+</div>
+</td></tr>
+</table>

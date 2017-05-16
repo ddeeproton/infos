@@ -1,0 +1,148 @@
+//Description
+// Convert Hashtable from and to XML (string or file)
+
+
+// use
+using System.Diagnostics;
+using System.Collections;
+using System.Globalization;
+using System.Xml;
+
+// global
+Config conf = null;
+
+// load
+conf = new Config("config.xml");
+textBoxIP.Text = conf.get("textBoxIP", "127.0.0.1");
+
+// save
+conf.set("textBoxIP", textBoxIP.Text);
+conf.doSave();
+
+// class
+
+    class Config
+    {
+        public Hashtable data = null;
+        public string xmlfile = null;
+
+        public Config()
+        {
+        }
+
+        public Config(string filename)
+        {
+            xmlfile = filename;
+            this.doLoad();
+        }
+
+        public string get(string i)
+        {
+            if (data.ContainsKey(i))
+            {
+                return data[i].ToString();
+            }
+            return "";
+        }
+        public string get(string i, string text_default)
+        {
+            if (data.ContainsKey(i))
+            {
+                return data[i].ToString();
+            }
+            return text_default;
+        }
+
+        public void set(string i, string value)
+        {
+            if (i == "") return;
+            if (data.ContainsKey(i))
+            {
+                data[i] = value;
+            }
+            else
+            {
+                data.Add(i, value);
+            }
+        }
+
+        public void doSave() {
+            XmlTextWriter textWriter = new XmlTextWriter(xmlfile, null);
+            textWriter.WriteStartDocument();
+            foreach (string i in data.Keys)
+            {
+                if (i == "") continue;
+                textWriter.WriteStartElement(i);
+                textWriter.WriteString(this.get(i));
+                textWriter.WriteEndElement();
+            }
+            textWriter.WriteEndDocument();
+            textWriter.Close();
+        }
+
+        public void doLoad()
+        {
+            XmlTextReader textReader = null;
+            data = new Hashtable();
+            try
+            {
+                textReader = new XmlTextReader(xmlfile);
+                textReader.Read();
+            }
+            catch (Exception e)
+            {
+                return;
+            }
+            
+            // If the node has value
+            while (textReader.Read())
+            {
+                // Move to fist element
+                textReader.MoveToElement();
+                this.set(textReader.Name, textReader.ReadString());
+            }
+            textReader.Close();
+        }
+        
+        
+        public string getXML()
+        {
+            StringWriter str = new StringWriter();
+            XmlTextWriter textWriter = new XmlTextWriter(str);
+            textWriter.WriteStartDocument();
+            textWriter.WriteStartElement("config");
+            foreach (string i in data.Keys)
+            {
+                if (i == "") continue;
+                textWriter.WriteElementString(i, this.get(i));
+            }
+            textWriter.WriteEndElement();
+            textWriter.WriteEndDocument();
+            textWriter.Close();
+            return str.ToString();
+        }
+
+        public void setXML(string XMLstr)
+        {
+            XmlTextReader textReader = null;
+            data = new Hashtable();
+            try
+            {
+                textReader = new XmlTextReader(new StringReader(XMLstr));
+            }
+            catch (Exception e)
+            {
+                return;
+            }
+
+            // If the node has value
+            while (textReader.Read())
+            {
+                // Move to fist element
+                //textReader.MoveToElement();
+                string v = textReader.ReadString();
+                this.set(textReader.Name, v);
+            }
+            textReader.Close();
+        }
+    }

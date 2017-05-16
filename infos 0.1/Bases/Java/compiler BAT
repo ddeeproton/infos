@@ -1,0 +1,19 @@
+"C:\Program Files\Java\jdk1.8.0_101\bin\javac.exe" DNSServer.java
+"C:\Program Files\Java\jdk1.8.0_101\bin\java.exe" DNSServer
+@pause
+
+________________
+ou:
+
+c:
+cd C:\Program Files\Java\jdk1.5.0\bin
+javac.exe -g "C:\Documents and Settings\Administrateur\Bureau\lecture_fichier_texte.java"
+@pause
+
+___________
+Executer:
+
+c:
+cd C:\Program Files\Java\jre1.5.0\bin
+java.exe TestCalc
+@pause

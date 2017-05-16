@@ -1,0 +1,24 @@
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  diviseur, reste : Integer;
+  Prem : boolean;
+begin
+
+  Prem:=True;
+
+  for diviseur := 2 to (StrToInt(Edit1.Text)-1) do
+  begin
+      reste := StrToInt(Edit1.Text) mod diviseur;
+      if reste = 0 then
+      begin
+        Prem := false;
+        break;
+      end;
+  end;
+
+  if Prem then
+    Memo1.lines.Add(Edit1.Text + ' est un nombre premier !!')
+  else
+    Memo1.lines.Add(Edit1.Text +' n''est pas un nombre premier!');
+
+end;

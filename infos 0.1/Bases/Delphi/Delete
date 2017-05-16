@@ -1,0 +1,54 @@
+DeleteFile(PAnsiChar(Form1.GetCurrentDir+'\Temp\'+SearchFile.Name));
+
+RemoveDirectory(pchar(Form1.GetCurrentDir+'\Temp'));
+
+
+
+procedure TForm5.VideDossierTemporaire();
+var
+    Resultat  : integer;        // Si = 0 : On a trouvé un fichier correspondant
+    SearchFile     : TSearchRec; // Répertorie les caract. du fichier en cours
+begin
+  Resultat := FindFirst(Form1.GetCurrentDir+'\Temp\*.*',Attributs,SearchFile);
+  while Resultat = 0 do begin
+    DeleteFile(PAnsiChar(Form1.GetCurrentDir+'\Temp\'+SearchFile.Name));
+    Resultat := FindNext(SearchFile);
+  end;
+  FindClose(SearchFile);// libération de la mémoire
+  RemoveDirectory(pchar(Form1.GetCurrentDir+'\Temp'));
+end;
+
+
+
+
+
+
+
+// Supprimer un fichier
+windows.DeleteFile(PAnsiChar(path)); 
+
+
+// Supprimer un dossier
+uses ShellApi;
+
+function SupprimeRep(Dossier: String; Vider: Boolean): Boolean; 
+var 
+  Rep: TshFileOpStruct; 
+begin 
+  if not DirectoryExists(Dossier) then Exit; //si le dossier existe 
+  
+  if Vider then begin //si il faut le vider 
+    if Dossier[Length(Dossier)] <> '\' then Dossier := Dossier + '\'; 
+    Dossier := Dossier + '*.*' 
+  end 
+  else //sinon 
+    if Dossier[Length(Dossier)] = '\' then Delete(Dossier,Length(Dossier), 1); 
+  
+  //régle les paramètre 
+  FillChar(Rep, SizeOf(Rep), 0); 
+  Rep.wFunc := FO_DELETE; 
+  Rep.pFrom := PChar(Dossier); 
+  Rep.fFlags := FOF_ALLOWUNDO or FOF_NOCONFIRMATION; 
+  //supprime 
+  Result := ((ShFileOperation(Rep) = 0) and (not Rep.fAnyOperationsAborted)); 
+end;

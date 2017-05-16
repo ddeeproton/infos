@@ -1,0 +1,6 @@
+Select [ Case ] testexpression
+    [ Case expressionlist
+        [ statements ] ]
+    [ Case Else
+        [ elsestatements ] ]
+End Select

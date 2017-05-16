@@ -1,0 +1,6 @@
+$(document).ready(function() {
+	$("form").submit(function(event) {
+		if(!confirm("Do you really want to submit the form?")) 
+			event.preventDefault();
+	});
+});

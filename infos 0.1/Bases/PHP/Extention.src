@@ -1,0 +1,7 @@
+<?php
+function getExtension($filename){
+$filename = "some.tar.gz";
+$dot = substr (strrchr ($filename, "."), 1);
+return ($dot);
+}
+?>

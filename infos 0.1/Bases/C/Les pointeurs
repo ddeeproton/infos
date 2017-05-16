@@ -1,0 +1,57 @@
+//---------------------------------------------------------------------------
+
+#pragma hdrstop
+#pragma argsused
+typedef struct
+{
+  int NbrEntier;
+
+}NomType;
+
+void multiplie(int *Pchiffre)
+{
+  *Pchiffre *= 2;
+}
+//---------------------------------------------------------------------------
+
+void print(int *value)
+{
+    printf(\"%d\\n\", *value);
+}
+//---------------------------------------------------------------------------
+void PointeurType(void)
+{
+  NomType VarType, *PType = &VarType;
+  (*PType).NbrEntier = 1;
+  PType->NbrEntier = 2;
+  printf(\"%d\\n\", PType->NbrEntier);
+}
+
+void PointeurTableau(void)
+{
+  int *PInt;
+  int Tab[20];
+  Tab[0] = 1;
+  Tab[1] = 2;
+  PInt = &Tab[0];
+  *PInt = 10;
+  print(PInt);
+}
+//---------------------------------------------------------------------------
+
+void main(void)
+{
+
+   int Test;
+   int *PTest;
+   PTest = &Test;
+   Test = 10;           print(&Test);
+   *PTest = 20;         print(&Test);
+   (*PTest)++;          print(&Test);
+   multiplie(PTest);    print(&Test);
+   PointeurTableau();
+   PointeurType();
+   getch();
+
+}
+//---------------------------------------------------------------------------

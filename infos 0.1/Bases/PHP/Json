@@ -1,0 +1,30 @@
+<?php
+
+function json_decode($d){
+	$d = str_replace("}","",$d);
+	$d = str_replace("{",'",',$d);
+	$d = str_replace('","','|',$d);
+	$d = str_replace('",','|',$d);
+	$d = str_replace(',""','|',$d);
+	$d = str_replace('":"','§',$d);
+	$d = str_replace(':"','§',$d);
+	$d = str_replace('":','§',$d);
+	
+	$result = array();
+	$i = 0;
+	foreach(explode("\n",$d) as $l) {
+		if(strlen($l) > 0) {
+			foreach(explode('|',$l) as $data) {
+				$res = explode('§',$data);
+				if(count($res) > 1) {
+					list($varname, $content) = $res;
+					$content = str_replace('\n',chr(10),$content);
+					$result[$i][$varname] = $content;
+				}
+			}
+		}
+		$i++;
+	}
+	return $result;
+}
+?>

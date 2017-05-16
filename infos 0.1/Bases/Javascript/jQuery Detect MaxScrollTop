@@ -1,0 +1,8 @@
+$(window).scroll(function () {
+	var docElement = $(document)[0].documentElement;
+	var winElement = $(window)[0];
+
+	if ((docElement.scrollHeight - winElement.innerHeight) == winElement.pageYOffset) {
+		alert('bottom');
+	}
+});

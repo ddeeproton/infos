@@ -1,0 +1,6 @@
+WScript.Echo "Line 1" & vbCrlf_
+  	& "Line 2"
+  	
+
+WScript.Echo "Line 1" & vbReturn & vbCrlf _
+  	& "Line 2" 	

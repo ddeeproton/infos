@@ -1,0 +1,55 @@
+// Lecture dans fichier texte
+function LireFichier(Filename: string):String;
+var
+  Fichier        : textfile;
+  texte          : string;
+begin
+  result:= '';
+  assignFile(Fichier, Filename);
+  reset(Fichier); // ouvre en lecture
+  while not eof(Fichier) do begin
+    read(Fichier, texte);
+    result := result + texte;
+  end;
+  closefile(Fichier);
+end;
+
+// ou Lecture dans fichier texte 2
+function LireFichier(Filename: string):String;
+var
+  Fichier        : textfile;
+  texte          : string;
+begin
+  result:= '';
+  assignFile(Fichier, Filename);
+  reset(Fichier); // ouvre en lecture
+  while not eof(Fichier) do begin
+    readln(Fichier, texte);
+    result := result + texte + #13 + #10;
+  end;
+  closefile(Fichier);
+end;
+
+//==============================================================
+// Ecriture dans fichier texte
+procedure TForm1.ecrireDansUnFichier(Fichier, txt : string);
+var
+  Fp : textfile;
+begin
+  assignFile(Fp, Fichier);
+  reWrite(Fp); // ouvre en lecture
+  Writeln(Fp, txt);
+  closefile(Fp);
+end;
+
+// Ecriture avec SaveDialog
+procedure TForm1.ecrireDansUnFichier( txt : string);
+var
+  Fichier        : textfile;
+begin
+  if not SaveDialog1.Execute then exit;
+  assignFile(Fichier, SaveDialog1.FileName);
+  reWrite(Fichier); // ouvre en lecture
+  Writeln(Fichier, txt);
+  closefile(Fichier);
+end;

@@ -1,0 +1,41 @@
+
+  // Config Network card from Registry
+  keys := ListKeys(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkCards');
+  for i := 0 to keys.Count-1 do
+  begin
+    MemoLogs.Lines.Add ('');
+    idnetcard := ReadString(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkCards\'+keys.Strings[i], 'ServiceName');
+    Description := ReadString(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkCards\'+keys.Strings[i], 'Description');
+
+    if ReadStringExists(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'DhcpIPAddress') then
+    begin
+      DhcpIPAddress := ReadString(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'DhcpIPAddress');
+      //MemoLogs.Lines.Add (DhcpIPAddress);
+    end;
+    if ReadStringExists(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'NameServer') then
+    begin
+      MemoLogs.Lines.Add (Description);
+      NameServer := ReadString(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'NameServer');
+      MemoLogs.Lines.Add (NameServer);
+    end;
+
+
+    if ReadStringExists(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'IPAddress') then
+    begin
+
+    IPAddress := ReadBinaryData(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'IPAddress');
+    MemoLogs.Lines.Add (IPAddress);
+      //MemoLogs.Lines.Add (ReadType(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard, 'IPAddress'));
+      //MemoLogs.Lines.Add (IPAddress);
+    end;
+
+
+    {
+    keys2 := ListValues(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\'+idnetcard);
+    MemoLogs.Lines.Add ('');
+    for i2 := 0 to keys2.Count-1 do
+    begin
+      MemoLogs.Lines.Add ('  '+keys2.Strings[i2]);
+    end;
+     }
+  end;

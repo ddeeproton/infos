@@ -1,0 +1,58 @@
+messagebox(0, ' Le fichier est vide! ', 'Erreur', MB_OK);
+
+
+
+// ou
+  MessageBeep(MB_ICONQUESTION);
+  MessageDlg('Le fichier existe déjà, voulez-vous le remplacer?', 'Sauvegarde', mtConfirmation, [mbYes, mbNo], 0);
+
+  MessageBeep(MB_OK);
+  MessageDlg('Vraiment sûr?', mtError, [mbOk], 0);
+
+
+
+  MessageBeep(MB_OK);
+  if MessageDlg('Effacer?',mtConfirmation, mbOKCancel, 0)  = mrOK then 
+    ShowMessage(txt);
+    
+    
+mtWarning 	Displays a exclamation symbol
+mtError 	Displays a red 'X'
+mtInformation 	Displays an 'i' in a bubble
+mtConfirmation 	Displays an question mark
+mtCustom 	Displays just the message
+
+
+mbYes 	Displays a 'Yes' button
+mbNo 	Displays a 'No' button
+mbOK 	Displays an 'OK' button
+mbCancel 	Displays a 'Cancel' button
+mbAbort 	Displays an 'Abort' button
+mbRetry 	Displays a 'Retry' button
+mbIgnore 	Displays an 'Ignore' button
+mbAll 	Displays an 'All' button
+mbNoToAll 	Displays a 'No to all' button
+mbYesToAll 	Displys a 'Yes to all' button
+mbHelp 	Displays a 'Help' button
+
+
+mbYesNoCancel 	= [mbYes,mbNO,mbCancel]
+mbYesAllNoAllCancel 	=[mbYes,mbYesToAll, mbNo,mbNoToAll,mbCancel]
+mbOKCancel 	=[mbOK,mbCancel]
+mbAbortRetryCancel 	=[mbAbort,mbRetry,mbCancel]
+mbAbortIgnore 	=[mbAbort,mbIgnore]
+
+mrYes 	= 6
+mrNo 	= 7
+mrOK 	= 1
+mrCancel = 2
+mrAbort = 3
+mrRetry = 4
+mrIgnore = 5
+mrAll = 8
+mrNoToAll = 9
+mrYesToAll = 10
+
+
+
+

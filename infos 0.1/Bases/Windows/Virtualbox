@@ -1,0 +1,68 @@
+list:
+VBoxManage list runningvms
+
+start:
+VBoxHeadless -s vmname
+
+stop:
+VBoxManage controlvm vmnamepoweroff
+
+
+
+
+
+
+Création d’une machine virtuelle en ligne de commande
+
+Cette VM fera tourner Ubuntu Server 9.10. Il est nécessaire pour cela de télécharger l’iso dans un premier temps. Il se trouve dans cet exemple dans /tmp/ubuntu-9.10-server-amd64.iso
+
+VBoxManage createvm –name « my_vm » –register
+
+VBoxManage modifyvm « my_vm » –memory 512 –acpi on –boot1 dvd –nic1 bridged –bridgeadapter1 eth0
+
+VBoxManage createhd –filename my_vm.vdi –size 5000 –register
+
+VBoxManage storagectl « my_vm » –name « IDE Controller » –add ide
+
+VBoxManage storageattach « my_vm » –storagectl « IDE Controller » –port 0 –device 0 –type hdd –medium my_vm.vdi
+
+VBoxManage storageattach « my_vm » –storagectl « IDE Controller » –port 1 –device 0 –type dvddrive –medium /home/luc/ubuntu-9.10-server-i386.iso
+
+Liste des machines virtuelles
+
+VBoxManage list vms
+
+La machine virtuelle précédemment créée apparait dans la liste ci-dessus.
+
+Listes des machines virtuelles activées
+
+VBoxManage list runningvms
+
+Lancement de la machine virtuelle my_vm en ligne de commande
+
+nohup VBoxHeadless -s my_vm &
+
+Installation de l’OS
+
+Une fois lancée, la machine virtuelle peut etre accedée via RDP (port 3089). L’installation de l’OS peut donc se faire depuis la machine distante sur une GUI.
+
+Arret de la machine virtuelle my_vm
+
+VBoxManage controlvm my_vm poweroff
+
+Export de la machine virtuelle my_vm
+
+Cette commande ne peut etre lancée que si la machine virtuelle à exporter est arretée
+
+VBoxManage export my_vm -o ./my_vm.ovf
+
+Cela va créer trois fichiers:
+– my_vm.ovf
+– my_vm.mf
+– my_vm.vmdk
+
+Import de la machine virtuelle my_vm
+
+VBoxManage import my_vm.ovf –dry-run (option dry-run afin de simuler l’import et détecter des problèmes éventuels)
+
+Plusieurs questions seront alors posées à l’utilisateur lors de l’import afin de configurer le hardware (des valeurs par défauts seront proposées)

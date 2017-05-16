@@ -1,0 +1,14 @@
+switch ($i) {
+case 0:
+   echo "i égale 0";
+   break;
+case 1:
+   echo "i égale 1";
+   break;
+case 2:
+   echo "i égale 2";
+   break;
+default:
+   echo "default";
+
+}

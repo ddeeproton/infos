@@ -1,0 +1,6 @@
+
+// Ecrire
+Memo1.lines.Add('coucou');
+
+// Effacer
+Memo1.Clear;

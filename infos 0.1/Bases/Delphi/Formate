@@ -1,0 +1,1 @@
+  Memo2.Lines.Add(Format('Tentative d''envoi du message n°%d',[i]));

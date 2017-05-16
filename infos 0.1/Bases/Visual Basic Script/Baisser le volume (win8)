@@ -1,0 +1,18 @@
+'Script pour dormir. 
+'Mettre de la musique et lancer ce script qui va baisser petit à petit le volume
+
+set WshShell = WScript.CreateObject("WScript.Shell")
+   WshShell.Run "SndVol.exe"
+   WScript.Sleep 1000
+   WshShell.AppActivate "Mélangeur de volume"
+   WScript.Sleep 1000
+   WshShell.SendKeys "+{TAB}"
+   WshShell.SendKeys "+{TAB}"
+   WshShell.SendKeys "{DOWN}"
+   WScript.Sleep 60000
+
+
+====== FICHIER BAT =======
+:start
+@wscript.exe volume.vbs
+@goto start

@@ -1,0 +1,24 @@
+POUR INSTALLER [(ngModel)]
+
+// on sauvegarde d'abord le projet
+npm install --save @angular/forms
+
+// importer FormsModule dans app.module.ts
+import { FormsModule } from '@angular/forms';
+
+// ajouter FormsModule dans imports
+@NgModule({
+  imports: [ BrowserModule, FormsModule ],
+  declarations: [ AppComponent ],
+  bootstrap: [ AppComponent ]
+})
+
+
+//editer: system.config.js
+// dessous la ligne:
+      '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
+// ajouter:
+      '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
+
+
+

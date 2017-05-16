@@ -1,0 +1,22 @@
+' Ouvre une boite de dialogue pour sélectionner un dossier
+Function SelectDirectory()
+  dim objShell
+  dim ssfWINDOWS
+  dim objFolder
+  iOptions = &H4000
+  vRootFolder = 17
+  set objShell = CreateObject("Shell.Application")
+  set objFolder = objShell.BrowseForFolder(0, "Example", iOptions , vRootFolder)
+  if (not objFolder is nothing) then
+    if (InStr(1, objFolder.Title, ":")) then
+      SelectDirectory = Mid(objFolder.Title, InStr(1, objFolder.Title, ":")-1, 2)
+    else
+      SelectDirectory = objFolder.ParentFolder.ParseName(objFolder.Title).Path
+    end if
+  end if
+  set objFolder = nothing
+  set objShell = nothing
+End Function
+
+
+MsgBox(SelectDirectory())

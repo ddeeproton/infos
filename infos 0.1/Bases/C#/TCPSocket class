@@ -1,0 +1,220 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// added
+using System.Net;
+using System.Net.Sockets;
+
+namespace ChatClient
+{
+    class TCPSocket
+    {
+        public IPEndPoint remoteIp;
+        public IPEndPoint localIp;
+        public string error_message = "";
+
+        TcpClient clientSocket = null;
+        bool isServer = false;
+        string IPaddr = null;
+        string port = null;
+
+        public bool connected = false;
+        NetworkStream serverStream;
+
+        public TCPSocket(string in_IPaddr, string in_port, bool in_isServer)
+        {
+            IPaddr = in_IPaddr;
+            port = in_port;
+            isServer = in_isServer;
+            if (isServer)
+            {
+                create_server_socket();
+            }
+            else
+            {
+                create_client_socket();
+            }
+        }
+
+        private bool create_client_socket()
+        {
+            connected = false;
+            try
+            {
+                clientSocket = new TcpClient(IPaddr, Int32.Parse(port)); // create the Client, and thereby the connection, this blocks until connection is made
+            }
+            catch (Exception e)
+            {
+                connected = false;
+                error_message = e.Message.ToString();
+                return false;
+            }
+            connected = clientSocket.Connected;
+            if (!connected)
+            {
+                error_message = "Error: client not connected";
+                return false;
+            }
+            serverStream = clientSocket.GetStream();
+            /*
+            stream = client.GetStream(); // create a NetworkStream to read/write to.
+            clientStreamReader = new StreamReader(stream);
+            clientStreamWriter = new StreamWriter(stream);
+                */
+            //remoteIp =  new IPAddress(IPAddress.Parse(IPaddr).GetHashCode());
+            remoteIp = new IPEndPoint(IPAddress.Parse(IPaddr), Int32.Parse(port));
+
+
+            //localIp = clientSocket.LocalEndPoint as IPEndPoint;
+            return true;
+        }
+
+        TcpListener serverSocket;
+
+        public int idConnexion;
+
+        private TcpListener create_server_socket()
+        {
+            serverSocket = new TcpListener(IPAddress.Parse(IPaddr), Int32.Parse(port));
+            serverSocket.Start();
+            idConnexion = 0;
+            return serverSocket;
+        }
+
+        public TcpClient on_client_connected()
+        {
+            TcpClient c;
+            try
+            {
+                c = serverSocket.AcceptTcpClient();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+            idConnexion++;
+            connected = true;
+            return c;
+        }
+
+
+        public NetworkStream on_client_message(TcpClient c)
+        {
+            connected = true;
+            try
+            {
+                return c.GetStream();
+            }
+            catch (Exception e)
+            {
+                connected = false;
+                error_message = e.Message.ToString();
+                return null;
+            }
+        }
+
+
+        public string read()
+        {
+            if (isServer)
+            {
+                return null;
+            }
+            int BufferSize = (int)clientSocket.ReceiveBufferSize;
+            byte[] inStream = new byte[BufferSize];
+            int numberOfBytesRead = serverStream.Read(inStream, 0, BufferSize);
+            return System.Text.Encoding.ASCII.GetString(inStream, 0, numberOfBytesRead);
+        }
+
+
+        public string read(TcpClient c, NetworkStream n)
+        {
+            if (isServer)
+            {
+                int BufferSize = c.ReceiveBufferSize;
+                byte[] bytesFrom = new byte[BufferSize];
+                int numberOfBytesRead;
+                try
+                {
+                    numberOfBytesRead = n.Read(bytesFrom, 0, BufferSize);
+                }
+                catch (Exception e)
+                {
+                    //Console.WriteLine(ex.ToString());
+                    connected = false;
+                    error_message = e.Message.ToString();
+                    return null;
+                }
+                if (numberOfBytesRead == 0)
+                {
+                    connected = false;
+                    return null;
+                }
+                return Encoding.ASCII.GetString(bytesFrom, 0, numberOfBytesRead);
+            }
+            else
+            {
+                int BufferSize = (int)clientSocket.ReceiveBufferSize;
+                byte[] inStream = new byte[BufferSize];
+                int numberOfBytesRead = serverStream.Read(inStream, 0, BufferSize);
+                return System.Text.Encoding.ASCII.GetString(inStream, 0, numberOfBytesRead);
+            }
+
+
+        }
+
+
+        public void write(string txt)
+        {
+            if (isServer)
+            {
+                return;
+            }
+            else
+            {
+                if (txt == "") return;
+                byte[] outStream = System.Text.Encoding.ASCII.GetBytes(txt);
+                serverStream.Write(outStream, 0, outStream.Length);
+                serverStream.Flush();
+            }
+
+        }
+
+        public void write(string txt, NetworkStream n)
+        {
+            if (isServer)
+            {
+                Byte[] sendBytes = Encoding.ASCII.GetBytes(txt);
+                try
+                {
+                    n.Write(sendBytes, 0, sendBytes.Length);
+                }
+                catch (Exception e)
+                {
+                    connected = false;
+                    error_message = e.Message.ToString();
+                    return;
+                }
+                n.Flush();
+            }
+            else
+            {
+                byte[] outStream = System.Text.Encoding.ASCII.GetBytes(txt);
+                serverStream.Write(outStream, 0, outStream.Length);
+                serverStream.Flush();
+            }
+
+        }
+
+        public void close()
+        {
+            if (serverSocket != null) serverSocket.Stop();
+            if (clientSocket != null) clientSocket.Close();
+            if (serverStream != null) serverStream.Close();
+
+        }
+
+
+    }
+}

@@ -1,0 +1,2 @@
+'Ajoute la fonction JavaScript refreshSMSLenLeft(); à l'élément TextArea nommé "TextAreaSMSPromoMessage" pour l'évenement "onkeydown"
+TextAreaSMSPromoMessage.Attributes.Add("onkeydown", "Javascript:refreshSMSLenLeft();")

@@ -1,0 +1,7 @@
+FOR /F "tokens=*" %%D IN ('DIR "*WindowsServer2003*x86*-ENU*.exe" /S /B') DO "%%D" /quiet /norestart
+FOR /F "tokens=*" %%D IN ('DIR "*Windows2003*x86*-ENU*.exe" /S /B') DO "%%D" /quiet /norestart
+
+@echo PC will reboot after keypress
+@pause
+shutdown -f -r -t 0
+

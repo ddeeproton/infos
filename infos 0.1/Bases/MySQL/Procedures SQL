@@ -1,0 +1,207 @@
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `dbtransporteur`.`PTransZurich` $$
+CREATE PROCEDURE `dbtransporteur`.`PTransZurich` ()
+BEGIN
+
+SELECT a.nomtransp FROM `ttransporteur` a,`tville` b
+WHERE b.nomville = 'Zurich' AND b.idville = a.idville;
+
+
+END $$
+
+DELIMITER ;
+
+
+-------------------------------------------------------------
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `dbtransporteur`.`PCommDubois` $$
+CREATE PROCEDURE `dbtransporteur`.`PCommDubois` ()
+BEGIN
+
+SELECT a.idcommande FROM tclient b, tcommande a
+WHERE b.nomclient = 'Dubois' AND b.idclient = a.idclient AND a.volume < 50;
+
+END $$
+
+DELIMITER ;
+
+------------------------------
+
+A.3 Pas fait!
+
+------------------------------
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `dbtransporteur`.`FCommTot` $$
+CREATE FUNCTION `dbtransporteur`.`FCommTot` () RETURNS INT
+
+begin
+
+  DECLARE tmp INT DEFAULT 0;
+
+  SELECT COUNT(*) into tmp FROM tcommande t;
+
+  return tmp;
+
+END $$
+
+DELIMITER ;
+
+
+______________________________________________
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `dbtransporteur`.`PTransZurich` $$
+CREATE PROCEDURE `dbtransporteur`.`PTransZurich` ()
+BEGIN
+
+Epreuve MySQL 
+Edi Mihut
+InfoD4a 
+22.05.2008
+
+Réponses:
+___________________________________________________________________
+
+A.1) 
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `dbtransporteur`.`PTransZurich` $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `PTransZurich`()
+BEGIN
+
+SELECT t.nomtransp FROM `ttransporteur` t,`tville` v
+WHERE v.nomville = 'Zurich' AND v.idville = t.idville;
+
+
+END $$
+
+DELIMITER ;
+
+
+___________________________________________________________________
+
+A.2) 
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `dbtransporteur`.`PCommDubois` $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `PCommDubois`()
+BEGIN
+
+SELECT d.idcommande FROM tclient c, tcommande d
+WHERE c.nomclient = 'Dubois' AND c.idclient = d.idclient AND d.volume < 50;
+
+END $$
+
+DELIMITER ;
+
+
+
+___________________________________________________________________
+
+A.3) 
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `dbtransporteur`.`PClientPlusCinqComm` $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `PClientPlusCinqComm`()
+BEGIN
+
+SELECT t.idclient FROM tcommande t WHERE MONTH(t.datecom) = MONTH(CURDATE());
+
+END $$
+
+DELIMITER ;
+
+___________________________________________________________________
+B.4) 
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `dbtransporteur`.`FCommTot` $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `FCommTot`() RETURNS int(11)
+begin
+
+  DECLARE tmp INT DEFAULT 0;
+
+  SELECT COUNT(*) into tmp FROM tcommande t;
+
+  return tmp;
+
+END $$
+
+DELIMITER ;
+
+___________________________________________________________________
+B.5) 
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `dbtransporteur`.`FNbrTransFribourg` $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `FNbrTransFribourg`() RETURNS int(11)
+BEGIN
+
+
+  DECLARE tmp INT DEFAULT 0;
+
+  SELECT COUNT(a.nomtransp) into tmp FROM `ttransporteur` a,`tville` b
+  WHERE b.nomville = 'Fribourg' AND b.idville = a.idville;
+
+  return tmp;
+
+END $$
+
+DELIMITER ;
+
+___________________________________________________________________
+C.6) 
+
+DROP VIEW IF EXISTS `dbtransporteur`.`vtransparville`;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` 
+SQL SECURITY DEFINER VIEW `vtransparville` AS 
+select `t`.`nomtransp` AS `nomtransp`,`t`.`adressetransp` AS `adressetransp`,`t`.`idville` AS `idville` 
+from `ttransporteur` `t` order by `t`.`idville`;
+
+___________________________________________________________________
+C.7) 
+
+DROP VIEW IF EXISTS `dbtransporteur`.`vtranslausanne`;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost`
+ SQL SECURITY DEFINER VIEW `vtranslausanne` AS 
+select `t`.`nomtransp` AS `nomtransp`,`t`.`adressetransp` AS `adressetransp`,`t`.`idville` AS `idville` 
+from (`ttransporteur` `t` join `tville` `v`) 
+where ((`t`.`idville` = `v`.`idville`) and (`v`.`nomville` = _latin1'Lausanne'));
+
+___________________________________________________________________
+C.8) 
+
+DROP VIEW IF EXISTS `dbtransporteur`.`vplus50kmzurich`;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vplus50kmzurich` AS 
+select `t`.`idville` AS `idville`,`t`.`idville2` AS `idville2` 
+from (`teloignede` `t` join `tville` `v`) 
+where ((`t`.`distance` > 50) and (`t`.`idville` = `v`.`idville`) and (`v`.`nomville` = _latin1'Zurich'));
+
+___________________________________________________________________
+C.9) 
+
+** Pas fait **
+
+___________________________________________________________________
+C.10) 
+
+DROP VIEW IF EXISTS `dbtransporteur`.`vclientberneplus10kg`;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vclientberneplus10kg` AS 
+select `t`.`idclient` AS `idclient` 
+from ((`tcommande` `c` join `tville` `v`) join `tclient` `t`) 
+where ((`c`.`poids` > 10) and (`t`.`idclient` = `c`.`idclient`) and (`t`.`idville` = `v`.`idville`) and (`v`.`nomville` = _latin1'Berne'));
+
+___________________________________________________________________

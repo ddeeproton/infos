@@ -1,0 +1,6 @@
+
+        Dim listeEvenements() As String = {"onblur", "onfocus", "onkeyup", "onkeydown"}
+
+        For Each evenement As String In listeEvenements
+            Console.Out.WriteLine(evenement)
+        Next

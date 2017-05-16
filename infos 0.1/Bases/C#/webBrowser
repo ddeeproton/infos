@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WebbrowserProgrammable
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private HtmlElement GetElementByClass(string classname, string tagname, int position)
+        {
+            var links = webBrowser1.Document.GetElementsByTagName(tagname);
+            int i = 0;
+            foreach (HtmlElement link in links)
+            {
+                if (link.GetAttribute("className") == classname)
+                {
+                    if (i == position)
+                    {
+                        return link;
+                        
+                    }
+                    i++;
+                }
+            }
+            return null;
+        }
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            //
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.facebook.com");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Document.GetElementById("email").SetAttribute("value", "aa@aa.aa");
+            webBrowser1.Document.GetElementById("pass").SetAttribute("value", "aaaaaa");
+            webBrowser1.Document.GetElementById("u_0_q").InvokeMember("click");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.facebook.com/messages");
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+            var links = webBrowser1.Document.GetElementsByTagName("li");
+     
+            foreach (HtmlElement link in links)
+            {
+                if (link.GetAttribute("className").StartsWith("_5l-3 _1ht1"))
+                {
+                    HtmlElement a = link.GetElementsByTagName("a")[0];
+                    textBox1.AppendText("<<" + a.GetAttribute("data-href") + ">>\r\n");
+                    textBox1.AppendText("<<" + a.GetElementsByTagName("span")[0].InnerText + ">>\r\n");
+                    textBox1.AppendText("<<" + a.GetElementsByTagName("span")[1].InnerText + ">>\r\n\r\n");
+                }
+            }
+            string txt = webBrowser1.Document.GetElementById("js_1").InnerText.ToString().Replace("\r\n\r\n", "\r\n").Replace("\r\n\r\n", "\r\n").Replace("\r\n\r\n", "\r\n");
+
+            textBox1.AppendText("<<" +  txt + ">>\r\n\r\n");
+        }
+    }
+}

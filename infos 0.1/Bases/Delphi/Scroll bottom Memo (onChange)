@@ -1,0 +1,7 @@
+
+procedure TForm1.MemoLogsChange(Sender: TObject);
+var LineCount: Integer;
+begin
+  LineCount := MemoLogs.Perform(EM_GETLINECOUNT, 0, 0) - 1;
+  SendMessage(MemoLogs.Handle, EM_LINESCROLL, 0, LineCount);
+end;

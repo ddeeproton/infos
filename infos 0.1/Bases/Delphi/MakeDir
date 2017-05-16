@@ -1,0 +1,19 @@
+var
+  error : Integer;
+
+begin
+  // Try to create a new subdirectory in the current directory
+  // Switch off I/O error checking
+  {$IOChecks off}
+  MkDir('TempDirectory');
+
+  // Did the directory get created OK?
+  error := IOResult;
+  if error = 0
+  then ShowMessage('Directory created OK')
+  else ShowMessageFmt('Directory creation failed with error %d',[error]);
+
+  // Delete the directory to tidy up
+  RmDir('TempDirectory');
+  {$IOChecks on}
+end;

@@ -1,0 +1,19 @@
+  Sub EcrireDansFichierText(fichier, contenu)
+    Dim fileWriter, fso
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set fileWriter = fso.OpenTextFile(fichier, 2, True)
+    fileWriter.WriteLine contenu
+    Set fileWriter = Nothing
+    Set fso = Nothing
+  end Sub
+  
+Function LireDansFichierText(fichier)
+	Dim fileWriter, fso
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	Set fileReader = fso.OpenTextFile(fichier, 1)
+	sReadAll = fileReader.ReadAll
+	fileReader.Close
+	Set fileReader = Nothing
+	Set fso = Nothing
+	LireDansFichierText = sReadAll
+end Function

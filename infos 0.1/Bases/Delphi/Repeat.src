@@ -1,0 +1,8 @@
+'Répète les instructions ci dessous 
+'jusqu'a que until soit vrai
+
+    compteur := 0;
+    Repeat
+      INC(compteur); '$compteur++;
+    until compteur = StrToInt(Edit1.Text);
+

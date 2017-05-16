@@ -1,0 +1,9 @@
+uses
+  URLMon;
+
+if URLDownloadToFile(nil,pchar(Edit1.text), pchar(Edit2.text),0, nil) <> 0 then
+  if FileExists(Edit2.text) then
+    ShowMessage('Téléchargement réussi, allez dans c:\ et vérifiez si le fichier'+ Edit2.text+ 'est bien présent !'#13'Cliquer dessus, vous vrez il s''agit bien d''un fichier exe qui contient un bouton.'#13'Voilà c''est tout !');
+  else
+    ShowMessage('Le téléchargement n''a pu être effectué  !');
+end;

@@ -1,0 +1,7 @@
+
+// installer un fichier tgz sur BSD
+tar xvzf downloadedfile.tgz 
+cd downloadedfile
+./configure
+make
+make install

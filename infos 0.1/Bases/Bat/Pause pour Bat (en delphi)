@@ -1,0 +1,38 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs;
+
+type
+  TForm1 = class(TForm)
+    procedure FormCreate(Sender: TObject);
+  private
+    { Déclarations privées }
+  public
+    { Déclarations publiques }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Application.ShowMainForm := false;
+  if ParamCount = 0 then
+  begin
+    Sleep(10000);
+  end else
+  begin
+    Sleep(StrToInt(ParamStr(1)));
+  end;
+  Application.Terminate;
+end;
+
+end.

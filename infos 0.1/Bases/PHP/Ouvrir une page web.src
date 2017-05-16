@@ -1,0 +1,12 @@
+
+      $fd = @fopen ("http://www.salut.com/?a=1", "r"); 
+
+      if($fd)
+      {
+        $message = ""; 
+        while (!feof ($fd)) 
+        { 
+          $message .= fgets($fd, 4096); 
+        } 
+      }
+      @fclose ($fd); 

@@ -1,0 +1,91 @@
+function appdata
+	Set objShell = CreateObject( "WScript.Shell" )
+	appdata=objShell.ExpandEnvironmentStrings("%APPDATA%")
+end function
+
+
+Sub set_file(fichier, contenu)
+	Dim fileWriter, fso
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	Set fileWriter = fso.OpenTextFile(fichier, 2, True)
+	fileWriter.Write contenu
+	Set fileWriter = Nothing
+	Set fso = Nothing
+end Sub
+
+
+Function get_file(fichier)
+	Dim fileWriter, fso
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	Set fileReader = fso.OpenTextFile(fichier, 1)
+	sReadAll = fileReader.ReadAll
+	fileReader.Close
+	Set fileReader = Nothing
+	Set fso = Nothing
+	get_file = sReadAll
+end Function
+
+Sub delete_file(fichier)
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	if is_file(fichier) then
+		objFSO.DeleteFile(fichier)
+	end if
+end sub
+
+function is_file(file)
+	Set fs = CreateObject("Scripting.FileSystemObject")
+	is_file = fs.FileExists(file)
+end function
+
+Function get_subdir(dir)
+	Set oFs = CreateObject("Scripting.FileSystemObject")
+	Set oFolder = oFs.GetFolder(dir)
+	Set tabdirs = oFolder.SubFolders
+	Dim result()
+	redim result(tabdirs.Count-1)
+	i=0
+	For Each oDir In tabdirs
+		result(i) = oDir.Name
+		i = i + 1
+	Next
+	get_subdir = result
+end Function
+
+Function get_dir(dir)
+	Set fs = CreateObject("Scripting.FileSystemObject")
+	Set oFolder = fs.GetFolder(dir)
+	Set tabfiles = oFolder.Files
+	Dim result()
+	redim result(tabfiles.Count-1)
+	i=0
+	For Each oFile In tabfiles
+		result(i) = oFile.Name
+		i = i + 1
+	Next
+	get_dir = result
+end Function
+
+'For Each f In get_dir("C:\xampp\webdav")
+'	msgbox f
+'Next
+
+Function get_size(file) 'Octets
+	SET objFSO = CREATEOBJECT("Scripting.FileSystemObject")
+	SET objFile = objFSO.GetFile(file)
+	size = objFile.Size
+	Set objFSO = Nothing
+	Set objFile = Nothing
+	get_size = size 
+end Function
+
+
+Function get_filemtime(file) 
+	SET objFSO = CREATEOBJECT("Scripting.FileSystemObject")
+	SET objFile = objFSO.GetFile(file)
+	mtime = CDATE( objFile.DateLastModified)
+	Set objFSO = Nothing
+	Set objFile = Nothing
+	get_filemtime = mtime 
+end Function
+
+ 

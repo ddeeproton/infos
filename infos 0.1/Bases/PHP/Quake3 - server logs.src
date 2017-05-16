@@ -1,0 +1,91 @@
+<?php 
+/* 
+Q3 log PARSER - by mOut (mouton_85@hotmail.com) 
+repris et modifié par oXid_FoX (oxid_fox@hotmail.com) 
+*/ 
+  
+$filename="games.log"; //adresse du fichier de log à lire (on peur mettre l'adresse absolue) 
+$log=file($filename); 
+$n=count($log); 
+  
+for($i=0;$i<$n;$i++){ 
+    if(ereg("InitGame:",$log[$i])){ 
+        $test[$i]=explode("\\", $log[$i]); 
+    } 
+    while(ereg("score:",$log[$i])){ 
+        $test2[$i]=ereg_replace("(.*)score: (.*) ping: (.*) client: (.*) (.*)","\\5 : <b>\\2</b> &nbsp; ",$log[$i]); 
+        $i++; 
+    } 
+} 
+$n=count($test); 
+$str=current($test); //pointeurs 
+$str2=current($test2); 
+$z=0; 
+$suppr = array("^1","^2","^3","^4","^5","^6","^7","^8","^9","^0","^b","^B"); //couleurs pour le pseudo du joueur 
+$gametype = array("DM","Tourney","Single player","TDM","CTF"); 
+  
+//pour chercher le numero de la map 
+for($nom_map=0;$str[$nom_map]!="mapname";$nom_map++){ 
+} 
+$nom_map += 1; //pour passer à la ligne d'apres (le nom de la map) 
+  
+//pour chercher le numero du mod 
+for($nom_mod=0;$str[$nom_mod]!="gamename";$nom_mod++){ 
+} 
+$nom_mod += 1; //pour passer à la ligne d'apres (le nom du mod) 
+  
+//pour chercher le numero du type de jeu (0=DM, 1=Tourney, 2=single, 3=TDM, 4=CTF) 
+for($type_jeu=0;$str[$type_jeu]!="g_gametype";$type_jeu++){ 
+} 
+$type_jeu += 1; //pour passer à la ligne d'apres (le nom du type de jeu) 
+  
+//pour chercher la timelimit 
+for($timelimit=0;$str[$timelimit]!="timelimit";$timelimit++){ 
+} 
+$timelimit += 1; //pour passer à la ligne d'apres (la timelimit) 
+  
+echo "<div align=\"center\"><p>SCORES de Quake 3 (scores individuels)</p><p>mod : ".$str[$nom_mod]."</p>"; 
+  
+for($i=0;$i<$n;$i++){ 
+    $cle=key($test); 
+  
+    if($str[$type_jeu]=="4"){ 
+        //pour chercher la capturelimit (la fraglimit ne nous intéresse pas en CTF) 
+        for($gamelimit=0;$str[$gamelimit]!="capturelimit";$gamelimit++){ 
+        }//on ne passe pas à la ligne d'apres car on va afficher le nom et après la valeur (la capturelimit) 
+    } else { 
+        //pour chercher la fraglimit 
+        for($gamelimit=0;$str[$gamelimit]!="fraglimit";$gamelimit++){ 
+        }//on ne passe pas à la ligne d'apres car on va afficher le nom et après la valeur (la fraglimit) 
+    } 
+  
+    $final[$z] = "<i>serveur</i> : <b>".$str[18]."</b> &mdash;&mdash; <i>map</i> : <b>".$str[$nom_map]."</b> &mdash;&mdash; <i>gametype</i> : <b>".$gametype[$str[$type_jeu]]."</b> &mdash;&mdash; <i>timelimit</i> : <b>".$str[$timelimit]."</b> &mdash;&mdash; <i>".$str[$gamelimit]."</i> : <b>".$str[$gamelimit+1]."</b><br>"; 
+    $str=next($test); 
+    $cle_suiv=key($test); 
+    $cle2=key($test2); 
+    $winner=TRUE; //gagnant en rouge 
+  
+    while(($cle2<$cle_suiv || !$cle_suiv) && $cle2>$cle){ 
+  
+        if($winner){ 
+            $final[$z] .= "<span style=\"color: red\">".$str2."</span>"; 
+        }else{ 
+            $final[$z] .= $str2; 
+        } 
+        $winner=FALSE; 
+        $str2=next($test2); 
+        $cle2=key($test2); 
+    } 
+    $z++; 
+} 
+echo "<p>".$n." matches loggés.</p><p>Affichage de la partie la plus r&eacute;cente &agrave; la plus ancienne : </p></div><hr>"; 
+  
+// pour supprimer les caracteres de coloration du nom du joueur 
+$final=str_replace($suppr,"",$final); 
+  
+for($i=count($final)-1;$i>=0;$i--){ //affichage a l'envers 
+    if(substr_count($final[$i], "<b>")>0){ //si pas de score pour la map (jeu pas fini), on n'affiche pas. 
+        echo $final[$i]."<hr>"; 
+    } 
+} 
+?> 

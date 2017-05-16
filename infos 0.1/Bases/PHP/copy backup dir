@@ -1,0 +1,71 @@
+<?php 
+
+// Recursive copy directories 
+// Resume if exited during execution 
+// All files are memorized in "scanned.json" (so delete it if you want to restart a full copy)
+
+$scanned = array();
+if(is_file("scanned.json")){
+	$scanned = json_decode(file_get_contents("scanned.json"));
+}
+
+copyDir("C:/Users/user/Desktop/BACKUP","Y:/H");
+
+
+
+
+
+function copyDir($source, $dest){
+	global $lasterror, $scanned;
+	if(in_array(md5($source.$dest),$scanned)){
+		echo "[already copied] $source\n\n";
+		return;
+	}
+	
+	if (is_file($source)) {
+		echo "[copy] $source";
+		$success_copy = @copy($source, $dest);
+		echo "\r";
+		$scanned[] = md5($source.$dest);
+		file_put_contents("scanned.json", json_encode($scanned));
+		if($success_copy) {
+			echo "[copied] $source\n\n";
+		}else{
+			echo "[error copy file] $source\n\n";
+		}
+		return;
+	}
+	if (!is_dir($dest)) {
+		if(!@mkdir($dest)) {
+			$scanned[] = md5($source.$dest);
+			file_put_contents("scanned.json", json_encode($scanned));
+			echo "[error create dir] $dest\n\n";
+			return;
+		}
+	}
+	$success = true;
+	$lasterror = "";
+	try{
+		
+		if($dir = @dir($source)){
+				
+			while (false !== $entry = $dir->read()) {
+				if ($entry == '.' || $entry == '..') {
+					continue;
+				}
+				if(in_array("$source/$entry",$scanned)){
+					echo "[already copied] $source/$entry\n\n";
+					continue;
+				}
+				copyDir("$source/$entry", "$dest/$entry");
+			}
+			$dir->close();
+		}else{
+			$scanned[] = md5($source.$dest);
+			file_put_contents("scanned.json", json_encode($scanned));
+		}
+	}catch(Exception $e){
+		$scanned[] = md5($source.$dest);
+		file_put_contents("scanned.json", json_encode($scanned));
+	}
+}

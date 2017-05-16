@@ -1,0 +1,6 @@
+function GetComputerName
+	 Set WshNetwork = WScript.CreateObject("WScript.Network")
+	 GetComputerName = WshNetwork.ComputerName
+end function
+
+GetComputerName

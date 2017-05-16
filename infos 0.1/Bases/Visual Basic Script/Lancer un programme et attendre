@@ -1,0 +1,5 @@
+'Lancer un programme et attendre
+
+Set WshShell = WScript.CreateObject("WScript.Shell")
+WshShell.run "notepad", 1, true
+Wscript.Echo " execution terminée " 

@@ -1,0 +1,87 @@
+$file = "data.xml";
+$xml_parser = xml_parser_create();
+
+if (!($fp = fopen($file, "r"))) {
+    die("could not open XML input");
+}
+
+$data = fread($fp, filesize($file));
+fclose($fp);
+xml_parse_into_struct($xml_parser, $data, $vals, $index);
+xml_parser_free($xml_parser);
+
+$params = array();
+$level = array();
+foreach ($vals as $xml_elem) {
+  if ($xml_elem['type'] == 'open') {
+    if (array_key_exists('attributes',$xml_elem)) {
+      list($level[$xml_elem['level']],$extra) = array_values($xml_elem['attributes']);
+    } else {
+      $level[$xml_elem['level']] = $xml_elem['tag'];
+    }
+  }
+  if ($xml_elem['type'] == 'complete') {
+    $start_level = 1;
+    $php_stmt = '$params';
+    while($start_level < $xml_elem['level']) {
+      $php_stmt .= '[$level['.$start_level.']]';
+      $start_level++;
+    }
+    $php_stmt .= '[$xml_elem[\'tag\']] = $xml_elem[\'value\'];';
+    eval($php_stmt);
+  }
+}
+
+echo "<pre>";
+print_r ($params);
+echo "</pre>";
+
+
+/*
+// Affiche :
+Array
+(
+    [ZZ] => Array
+        (
+            [NAME] => My Land
+            [LOCATION] => 15E
+            [AREA] => 40000
+            [STATE1] => Array
+                (
+                    [NAME] => Hi State
+                    [AREA] => 1000
+                    [POPULATION] => 2000
+                    [CITY1] => Array
+                        (
+                            [LOCATION] => 13E
+                            [POPULATION] => 500
+                            [AREA] => 500
+                        )
+
+                    [CITY2] => Array
+                        (
+                            [LOCATION] => 13E
+                            [POPULATION] => 500
+                            [AREA] => 5000
+                        )
+
+                )
+
+            [STATE2] => Array
+                (
+                    [NAME] => Low State
+                    [AREA] => 3000
+                    [POPULATION] => 20000
+                    [CITY1] => Array
+                        (
+                            [LOCATION] => 15E
+                            [POPULATION] => 5000
+                            [AREA] => 1500
+                        )
+
+                )
+
+        )
+
+)
+*/

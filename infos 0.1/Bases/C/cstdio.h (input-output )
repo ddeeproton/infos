@@ -1,0 +1,8 @@
+<cstdio.h> pour C standard input-output : 
+
+affichage : printf("entier : %d, flottant : %f, caractère : %c, chaîne : %s\n", 1, 1.0, 'c', "chaine"); 
+
+saisie : scanf("%d", &variable_entiere);
+
+On utilise le caractère correspondant au type (%d, %f, %c, %s).
+Attention : le & est obligatoire pour saisir un entier, un fottant ou un caractère mais il ne doit pas être utilisé lors de la saisie d'une chaîne de caractères. 

@@ -1,0 +1,196 @@
+<?php
+
+require('classFiles.php');
+
+
+
+function affichage($isLogged) {
+	?>
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title></title>
+	</head>
+	<body>
+
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+		
+		<script>
+
+			class Gallery {
+				constructor(imagesListSelector, imageOutSelector) {
+					this.imagesListSelector = imagesListSelector;
+					this.imageOutSelector = imageOutSelector;
+					this.imagesList;
+					this.imageIndex = 0;
+					this.getImages();
+					let i = this.imageIndex;
+					this.showImage(this.imagesList[i]);
+				}
+				getImages() {
+					let base = this;
+					this.imagesList = [];
+					$(this.imagesList+" ul li").each(function() {
+						base.imagesList.push($("img",this).attr("src"));
+					});
+				}
+				showImage(img) {
+					$(this.imageOutSelector).attr("src", img);
+				}
+				showImageIndex(i) {
+					this.imageIndex = i;
+					$(this.imageOutSelector).attr("src", this.imagesList[i]);
+					$(".gallery .imageList ul li").removeClass("selected");
+					$(".gallery .imageList ul li:eq("+i+")").addClass("selected");
+				}
+				btnLeft() {
+					this.imageIndex--;
+					let i = this.imageIndex;
+					this.showImageIndex(i);
+				}
+				btnRight() {
+					this.imageIndex++;
+					let i = this.imageIndex;
+					this.showImageIndex(i);
+				}
+			}
+			
+
+
+			$(document).ready(function () {
+				
+				let gallery = new Gallery(".gallery .imageList", ".gallery .image img");
+				
+				$(".btnLeft").click(function() {
+					gallery.btnLeft();
+					console.log("click gauche");
+				});
+				$(".btnRight").click(function() {
+					gallery.btnRight();
+					console.log("click droite");
+				});
+				$(".gallery .imageList ul li").each(function(i) {
+					$(this).click(function() {
+						gallery.showImageIndex(i);
+						$(window).scrollTop(0);
+					});
+				});
+				
+				$(".login input[name=username]").focus();
+			});
+		</script>
+		<style>
+			.gallery {position:relative;}
+			.gallery .btn {position:absolute;top:40%;	width:50px;background-image:linear-gradient(0deg, #000, #444);background-color:blue;color:white;font-size:40px;border-radius:50px;text-align:center;cursor:pointer;}
+			.gallery .btn {position:absolute;top:40%;	width:50px;background-image:linear-gradient(0deg, #000, #444);background-color:blue;color:white;font-size:40px;border-radius:50px;text-align:center;cursor:pointer;}
+			.gallery .btnLeft {left:20px;}
+			.gallery .btnRight {right:20px;}
+			.gallery .hidden {display:none;}
+			.gallery .image {text-align:center;}
+			.gallery .image img {width:100%;max-height:100%;}
+			.gallery .imageList ul li {float:left;height:150px;list-style:none;cursor:pointer;}
+			.gallery .imageList ul li:hover {position:relative;top:1px;left:1px;}
+			.gallery .imageList ul li.selected {border:5px solid red;}
+			.gallery .imageList img {height:150px;}
+			.login {width:300px;margin:0 auto;margin-top:20%;}
+			.cadre {margin:5px;padding:10px;background-color:#444;color:#fff;background-image:linear-gradient(0deg, #000, #444);border-radius:10px;font-size:16px;}
+			.cadre .item {width:290px;padding:0 5px 10px 5px	;}
+			.cadre .item input {float:right;background-color:#000;border:2px solid #fff;color:#fff;}
+			.clr {clear:both;}
+		   
+		</style>
+
+		<?php if($isLogged == false) { ?>
+
+		<div class="login cadre">
+			<form method=post>
+				<div class="item errorLogin"></div>
+				<div class="item name"><label>Username:<input type="text" name="username" /><div class="clr"></div></label></div>
+				<div class="item pass"><label>Password:<input type="password" name="password" /><div class="clr"></div></label></div>
+				<div class="item button"><input type="submit" value="OK" /><div class="clr"></div></div>
+				
+			</form>
+		</div>
+		<?php } ?>
+		
+		<?php if($isLogged == true) { ?>
+ 		<div class="gallery">
+			<div class="btn btnLeft"><</div>
+			<div class="btn btnRight">></div>
+			<div class="image cadre"><img src="" /></div>
+			<div class="imageList">
+				<ul>
+					<?php
+					
+					$images = getImages();
+					foreach($images as $img) {
+						if($img == "") continue;
+						echo "<li class=\"cadre\"> <img src=\"$img\" /> </li>\n";  
+					}
+					?>
+				</ul>
+			</div>
+		</div>
+		<?php } ?>
+
+	</body>
+	</html>
+
+	
+	<?php
+	
+	
+}
+function getImages() {		
+	$return = array();
+	$dirs = array('*');
+	$i = 0;
+	while($i < count($dirs)) {
+		foreach(files::listFilesInDir($dirs[$i],GLOB_ONLYDIR) as $dir){
+			$dirs[] = $dir;
+		}
+		foreach(files::listFilesInDir($dirs[$i].'/*.[jJ][pP][gG]') as $img){
+			$return[] = $img;
+		}
+		$i++;
+	}
+	return $return;
+}
+
+
+
+
+
+function isLoginValid() {
+	if(!isset($_POST['username']) || !isset($_POST['password'])) {
+		return false;
+	}
+	$name = $_POST['username'];
+	$pass = $_POST['password'];
+	
+	$userlist = array(
+		0 => array('toto','tata'),
+		1 => array('admin','pass2')
+	);
+	
+	foreach($userlist as $user) {
+		list($n, $p) = $user;
+		if($n == $name && $p == $pass){
+			return true;
+		}
+	}
+	return false;
+	
+}
+
+
+
+
+
+
+$isLogged = isLoginValid();
+affichage($isLogged);
+
+

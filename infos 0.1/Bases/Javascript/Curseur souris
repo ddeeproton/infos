@@ -1,0 +1,26 @@
+Changer le curseur
+<a href="page.html" style="cursor:url(http://stargatesg11.free.fr/anneau.cur);">ton texte</a>
+
+
+Tu peut même aller jusqu'à définir pplusieurs curseurs différents, au cas où le tien ne serait plus dispo ou que la lenteur de la connexion fasse en sorte qu'il ne soit pas encore chargé quand l'internaute voudra cliquer : 
+<a href="page.html" style="cursor:url(cursor1.cur),url(cursor2.cur),pointer;">ton texte</a>
+
+Le code ci-dessus mettra le cursor1 par défaut s'il est trouvé, sinon le cursor2, et au pire un pointeur simple (la ptite fleche blanche). 
+
+Tu as plusieurs styles différents par défaut intégrés aux css : 
+default -> The default cursor (often an arrow) 
+auto -> The browser sets a cursor 
+crosshair -> The cursor render as a crosshair 
+pointer -> The cursor render as a pointer (a hand) that indicates a link 
+move -> The cursor indicates something that should be moved 
+e-resize -> The cursor indicates that an edge of a box is to be moved right (east) 
+ne-resize -> The cursor indicates that an edge of a box is to be moved up and right (north/east) 
+nw-resize -> The cursor indicates that an edge of a box is to be moved up and left (north/west) 
+n-resize -> The cursor indicates that an edge of a box is to be moved up (north) 
+se-resize -> The cursor indicates that an edge of a box is to be moved down and right (south/east) 
+sw-resize -> The cursor indicates that an edge of a box is to be moved down and left (south/west) 
+s-resize -> The cursor indicates that an edge of a box is to be moved down (south) 
+w-resize -> The cursor indicates that an edge of a box is to be moved left (west) 
+text -> The cursor indicates text 
+wait -> The cursor indicates that the program is busy (often a watch or an hourglass) 
+help -> The cursor indicates that help is available (often a question mark or a balloon)

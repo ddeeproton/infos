@@ -1,0 +1,4 @@
+<%=Resources.Strings.Message%>
+
+Mais dans une balise on doit écrire:
+<balise value="<%$ Resources:Strings, Message%>">

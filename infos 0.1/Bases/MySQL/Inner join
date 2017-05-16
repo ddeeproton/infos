@@ -1,0 +1,5 @@
+select DISTINCT D.id_battery, D.battery_name_fr, D.battery_name_it, D.battery_name_en
+									from `wheelz` A 
+									inner join `wheelz_names` B on B.id_name=A.idname
+									inner join `wheelz_batteries` D on D.id_battery=A.idbattery
+									ORDER BY D.battery_order ASC

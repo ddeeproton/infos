@@ -1,0 +1,124 @@
+<?php
+dl('..\\Program Files\\EasyPHP1-7\\php\\extensions\\php_imap.dll');
+
+
+function AnalysePieceJointe($sujet,$date,$filename,$contenu) {
+  //if($sujet == "")
+  print $date." ".$filename." \n";
+  
+  //print $contenu."\n";
+
+}
+
+function AnalyseEMail($sujet,$date,$contenu) {
+  //if($sujet == "")
+  print $date." ".$filename." \n";
+  
+  //print $contenu."\n";
+
+}
+
+
+  ob_flush();
+  set_time_limit(0);
+  //Tout d'abord, on ouvre une boite mail
+  //$mail = imap_open("{mail.dpadmin.net:110}INBOX",'user','pass');
+  $mail = imap_open("{mail.dpadmin.net}INBOX", 'user','pass');
+if (!$imap) {
+   print_r(imap_errors());
+}
+
+ print ($mail) ? "ouvert":"fermé"; 
+  //Quitte à la faire, autant le faire pour chaque message !
+  $nbmess = imap_num_msg($mail);
+  if ($nbmess == 0)
+  {
+    print "Aucun message présent sur le serveur.";
+  } 
+  else
+  {   
+
+    for($j=1;$j<=$nbmess;$j++)
+    {
+      //AnalyseMessage($mail,$j);
+    
+
+      //Extraction du sujet du message, pour ceux qui voudrait faire un test sur un titre au préalable
+      $header = imap_headerinfo($mail,$j);
+      $sujet = $header->subject;
+      $date = $header->date;
+      
+
+
+/*
+$header = imap_headerinfo($mbox, $_GET['mail'], 80, 80);
+$header->fromaddress;
+$header->toaddress;
+$header->ccaddress;
+$header->date;
+$subject = $header->subject;
+$subject = decoder($subject);
+$body = imap_fetchbody($mbox, $_GET['mail'],"2");
+$body = decoder($body); 
+$header->Size;
+AnalyseEMail
+
+*/    
+      $body = imap_fetchbody($mail,$j,"1");
+      
+      if(eregi("DataRapportBackup",$sujet))
+        print $sujet."\n".$body."\n\n\n";
+        
+      //Extraction de la structure du message	
+      $struct = imap_fetchstructure($mail,$j);
+
+      // On compte le nombre de partie dans la structure du message
+      if ($struct->type == 1) {
+        $nbrparts = !$struct->parts ? "1" : count($struct->parts);
+      }
+
+      //On place le code binaire de la pièce dans un tableau
+      $piece = array();
+      for($h=1;$h<=$nbrparts;$h++)
+      {
+        
+        $part = $struct->parts[$h] ;
+
+        //Extraction du code binaire de la pièce jointe
+        $piece = imap_fetchbody($mail,$j,$h);
+                   
+        //Le 3 est spécifique à l'encodage en base64 (le plus répandu) pour les pièces jointes.
+        //if ($part->encoding == "4") 
+        //{
+         
+          //Comptage du nombre de parametres
+          $nbparam =  count($part->parameters);
+		      
+          for ($i = 0; $i < $nbparam ; $i++)
+          {
+            //Récupération du nom de la pièce jointe
+            
+            $param = $part->parameters[$i];
+            
+            if ($param->attribute == "name")
+            {
+              $nom_fichier = $param->value;
+              //AnalysePieceJointe($sujet,$date,$nom_fichier, $piece);
+            }
+            else
+            {
+              $nom_fichier = "Nom de fichier introuvable";
+              
+            }
+          }
+         
+          //Décodage du code binaire de la pièce jointe
+       //   $piece[$h] = imap_base64($piece[$h]);
+
+        //}  
+      }
+      
+    }
+    
+  }
+?>

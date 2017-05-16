@@ -1,0 +1,44 @@
+
+procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
+var
+  s: PChar;
+  DelimiterIndex: Integer;
+  Item: String;
+begin
+  s:=PChar(Source);
+  repeat
+    DelimiterIndex:=Pos(Delimiter, s);
+    if DelimiterIndex=0 then Break;
+    Item:=Copy(s, 1, DelimiterIndex-1);
+    DelimitedList.Add(Item);
+    inc(s, DelimiterIndex + Length(Delimiter)-1);
+  until DelimiterIndex = 0;
+  DelimitedList.Add(s);
+end;
+
+
+procedure OnOutput(txt:String);
+var
+  sl: TStringList;
+
+  date:string;
+  time:string;
+  ipclient:string;
+  ipdomain:string;
+  domain:string;
+
+begin
+  sl:=TStringList.Create;
+  // explode
+  // 04.03.17; 09:33:09; 127.0.0.1; 185.22.116.72; tf1.fr.
+  SplitStr(txt,';',sl);
+  if sl.Count >= 5 then
+  begin
+    date:sl.ValueFromIndex[0];
+    time:sl.ValueFromIndex[1];
+    ipclient:sl.ValueFromIndex[2];
+    ipdomain:sl.ValueFromIndex[3];
+    domain:sl.ValueFromIndex[4];
+  end;
+  sl.Free;
+end;

@@ -1,0 +1,17 @@
+
+
+// Appel au Thread
+unit2.UnThread.Create(false);
+
+//*********************** Le Thread ******************//
+  UnThread = class(TThread)
+  private
+    { Déclarations privées }
+  protected
+    procedure Execute; override;
+  end;
+
+procedure TConversion.Execute;
+begin
+  Form5.LectureVitesseMax();
+end;

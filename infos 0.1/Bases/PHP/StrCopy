@@ -1,0 +1,2 @@
+// Sort l'extention
+substr($nom_file, -3)

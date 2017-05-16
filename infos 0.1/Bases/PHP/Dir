@@ -1,0 +1,19 @@
+  if ($handle = opendir('.')) {
+    while (false !== ($file = readdir($handle))) {
+      if ($file != "." && $file != "..") {
+        echo "$file\n";
+      }
+    }
+    closedir($handle);
+  }
+
+// =================== 
+
+function listFilesInDir($dir, $type = GLOB_NOSORT){
+	if(is_dir($dir)) $dir .='/*';
+	$files = glob($dir, $type);
+	return is_array($files) ? $files : array();
+}
+//use
+//files::listFilesInDir('/images/'); 
+//files::listFilesInDir('/images/*.[jJ][pP][gG]'); 

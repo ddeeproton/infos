@@ -1,0 +1,13 @@
+ShellApi
+
+
+procedure OuvreProprieteFichier(NomFichier:String);
+Var ShellExecuteInfo:TShellExecuteInfo;
+begin
+  FillChar(ShellExecuteInfo, SizeOf(ShellExecuteInfo), 0);
+  ShellExecuteInfo.cbSize := SizeOf(ShellExecuteInfo);
+  ShellExecuteInfo.fMask := SEE_MASK_INVOKEIDLIST;
+  ShellExecuteInfo.lpVerb := 'properties';
+  ShellExecuteInfo.lpFile := PChar(NomFichier);
+  ShellExecuteEx(@ShellExecuteInfo);
+end;

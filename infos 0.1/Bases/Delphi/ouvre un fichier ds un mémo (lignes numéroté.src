@@ -1,0 +1,14 @@
+var Fichier  : textfile;
+    texte    : string;
+    compteur : integer;
+begin
+  if opendialog1.Execute = false then exit;
+  assignFile( Fichier, Opendialog1.FileName);
+    reset( Fichier ); // ouvre en lecture
+    compteur := 1;
+  while not eof( Fichier ) do begin
+    readln( Fichier, texte );
+    memo1.lines.Add( IntToStr(compteur) + ' - ' + texte);
+    inc(compteur);
+  end;
+  closefile( Fichier );

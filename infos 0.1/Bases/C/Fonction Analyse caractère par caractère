@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main()
+{
+  char a[] = "hello";
+  char* txt;
+  int i;
+  
+  for(i=0;i<sizeof(a)-1;i++){
+    txt = a[i];
+    printf("%c\n",a[i]);
+  }
+  getch();
+  return 0;
+}
+//=================================================================
+#include <stddef.h>
+
+// Retourne : la longueur de la chaîne str. 
+size_t strlen(const char *str)
+{
+  const char *start = str; // start = adresse du début de la chaîne  
+  while (*str != '\0')     // Tant qu'on n'est pas en fin de chaîne 
+    ++str;                 // pointer le caractère suivant.         
+
+  return str - start;      // La longueur est la différence entre 
+                           // la fin et le début de la chaîne.    
+}

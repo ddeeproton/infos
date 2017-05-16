@@ -1,0 +1,11 @@
+Ecrire cette ligne pour résoudre les problèmes d'accent lors d'un export d'un dir dans un fichier
+
+
+@rem ANSI
+chcp 28591 > nul
+dir c: > c:\dir.txt
+
+
+@rem UT8
+chcp 65001 > nul
+dir c: > c:\dir.txt

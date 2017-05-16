@@ -1,0 +1,6 @@
+    case i of
+      0:  Rien;
+      1:  Rien;
+    else
+      // ici par défaut si aucune occurence trouvée
+    end;

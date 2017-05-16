@@ -1,0 +1,23 @@
+    // Lire
+    $fp = fopen("historique.doc", "rb");
+    $txt = fread($fp, filesize ("historique.doc"));
+    fclose($fp);
+
+    // Ecrire
+    $fp = fopen("joueurs online/".$id.".txt","w+");                 
+    fputs($fp, $ip.":".$port);            
+    fclose($fp);
+
+function lire($fichier)
+{
+    $fp = fopen($fichier, "rb");
+    $txt = fread($fp, filesize ($fichier));
+    fclose($fp);
+    return $txt;
+}
+function ecrire($fichier, $txt)
+{
+    $fp = fopen($fichier,"w+");                 
+    fputs($fp, $txt);            
+    fclose($fp);
+}

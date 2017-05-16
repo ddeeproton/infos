@@ -1,0 +1,110 @@
+#!/usr/bin/env python 
+
+# Requirements:
+# [Pyhton]
+#  http://www.python.org/getit/
+#
+# [dnspython]
+#  http://www.dnspython.org/
+#
+
+class DNSQuery:
+	def __init__(self, data):
+		self.data=data
+		self.dominio=''
+		#Opcode type de la requete _ standard (0)_ inverse (1) ou statut du serveur (2).
+		tipo = (ord(data[2]) >> 3) & 15	 # Opcode bits
+		if tipo == 0:					 # Standard query
+			ini=12
+			lon=ord(data[ini])
+			while lon != 0:
+				self.dominio+=data[ini+1:ini+lon+1]+'.'
+				ini+=lon+1
+				lon=ord(data[ini])
+	def respuesta(self, ip):
+		packet=''
+		if self.dominio:
+			packet+=self.data[:2] + "\x81\x80"
+			packet+=self.data[4:6] + self.data[4:6] + '\x00\x00\x00\x00'	 # Questions and Answers Counts
+			packet+=self.data[12:]											 # Original Domain Name Question
+			packet+='\xc0\x0c'												 # Pointer to domain name
+			packet+='\x00\x01\x00\x01\x00\x00\x00\x3c\x00\x04'				 # Response type, ttl and resource data length -> 4 bytes
+			packet+=str.join('',map(lambda x: chr(int(x)), ip.split('.'))) 	 # 4bytes of IP
+		return packet
+	def checkHost(self, domain):
+		domain = domain[:-1] # enleve le point a la fin du domaine
+		res = ''
+		fp = open('C:\WINDOWS\system32\drivers\etc\hosts', 'r')
+		
+		for line in fp.readlines():
+			if " "+domain in line:
+				res = line.split(" ")[0]
+		fp.close()
+		return res
+		
+	def checkWhiteList(self, domain):
+		res = False;
+		fp = open('white_list.txt', 'r')
+		for line in fp.readlines():
+			if line[0:0] in domain:
+				res = True
+		fp.close()
+		return res
+		
+import socket
+import dns.resolver
+from dns.exception import DNSException
+import time
+ 
+if __name__ == '__main__':
+	print 'Started'
+	udps = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	udps.bind(('192.168.0.3',53))
+	try:
+		while 1:
+			heure = time.strftime('%d.%m.%y %H:%M',time.localtime()) 
+			data, addr = udps.recvfrom(1024)
+			p=DNSQuery(data)
+
+			try:
+				if ".in-addr.arpa" in p.dominio:
+					ip = p.dominio.split(".") 
+					answer = ip[3]+"."+ip[2]+"."+ip[1]+"."+ip[0]
+					udps.sendto(answer, addr)
+					print 'Arpa -> [%s] %s %s <- %s' % (heure, addr, inHost, p.dominio)
+					#TEST
+					#answer = '127.0.0.1'
+					#print "arpa adress"
+				else:
+					if p.checkWhiteList(p.dominio) == True:
+
+						inHost = p.checkHost(p.dominio)
+						if inHost <> '':
+							udps.sendto(p.respuesta(inHost), addr)
+							print 'File host -> [%s] %s %s <- %s' % (heure, addr, inHost, p.dominio)
+						else:
+							#Serveur DNS du DHCP
+							#answer = dns.resolver.query(p.dominio, "A") 
+							#Serveur DNS par IP
+							res = dns.resolver.Resolver()
+							res.nameservers = ['208.67.222.222','208.67.220.220']
+							res.timeout = 1 # facultatif
+							answer = res.query(p.dominio, "A") 
+							ip_resolved = '%s' % answer[0]
+							udps.sendto(p.respuesta(ip_resolved), addr)
+							print '[%s] %s %s <- %s' % (heure, addr, answer[0], p.dominio)
+					else:
+						udps.sendto(p.respuesta('127.0.0.1'), addr)
+						print 'Black Listed -> [%s] %s %s <- %s' % (heure, addr, '127.0.0.1', p.dominio)
+			except DNSException:
+				print 'Erreur resolution: %s' % p.dominio
+				udps.sendto(p.respuesta('127.0.0.1'), addr)
+			except dns.resolver.NoAnswer:
+				print "*** No AAAA record for", host, "***"
+				udps.sendto(p.respuesta('127.0.0.1'), addr)
+			except dns.resolver.NXDOMAIN:
+				print "*** The name", host, "does not exist ***"
+				udps.sendto(p.respuesta('127.0.0.1'), addr)
+	except KeyboardInterrupt:
+		print 'Close'
+		udps.close()

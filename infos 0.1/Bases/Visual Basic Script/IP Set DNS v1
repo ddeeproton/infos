@@ -1,0 +1,95 @@
+Option Explicit
+
+If AppPrevInstance() Then   
+    MsgBox "Il y a une instance déjà en cours",VbExclamation,"Il y a une instance déjà en cours"    
+    WScript.Quit   
+End If   
+
+Dim Question
+Question = MsgBox("Activer le DNS?",vbYesNoCancel+VbQuestion,"")
+if Question = VbCancel then WScript.Quit  
+Call NortonConnectSafe(Question = VbYes)
+Call ListDNSInfo()
+
+Sub NortonConnectSafe(Active)
+    'On Error Resume Next
+    Dim objNetCard,arrDNSServers
+    Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\cimv2")
+
+    Set colNetCards = objWMIService.ExecQuery _
+    ("Select * From Win32_NetworkAdapterConfiguration Where IPEnabled = True")
+    If Active = True Then
+        For Each objNetCard in colNetCards
+            arrDNSServers = Array("184.169.223.35", "199.85.126.30") 'DNS Norton ConnectSafe
+            objNetCard.SetDNSServerSearchOrder(arrDNSServers)
+            If Err = 0 Then
+                MsgBox "Le service NortonConnectSafe est activé avec succès !"
+                'Call ListDNSInfo()
+            Else
+                'MsgBox Err.Description,Vbcritical,Err.Description
+            End If  
+        Next
+    Else
+        For Each objNetCard in colNetCards
+            objNetCard.SetDNSServerSearchOrder(null)
+            If Err = 0 Then
+                MsgBox "Le service NortonConnectSafe est désactivé avec succès !"
+                'Call ListDNSInfo()
+            Else
+                'MsgBox Err.Description,Vbcritical,Err.Description
+            End If  
+        Next
+    End If
+End Sub
+
+Sub ListDNSInfo()
+    Dim ComputerName,IPConfigSet,IPConfig,BailObtenu,BailExpirant
+    ComputerName="."
+    On error resume next 
+    set IPConfigSet = GetObject("winmgmts:{impersonationLevel=impersonate}!//" & ComputerName).ExecQuery _ 
+    ("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled=TRUE") 
+    If Err.Number<>0 Then 
+        wscript.echo " - non accessible -" 
+    Else 
+        for each IPConfig in IPConfigSet 
+
+            BailObtenu = IPConfig.DHCPLeaseObtained
+            BailExpirant = IPConfig.DHCPLeaseExpires
+
+'---- Convertion des date et heure d'obtention et d'expiration des baux DHCP en un format lisible par l'utilisateur. ----
+            BailObtenu = mid(BailObtenu, 7, 2) & "/" & mid(BailObtenu, 5, 2) & "/" & mid(BailObtenu, 1, 4) & " - " & mid(BailObtenu, 9, 2)& ":" & mid(BailObtenu, 11, 2)& ":" & mid(BailObtenu, 13, 2)
+            BailExpirant = mid(BailExpirant, 7, 2) & "/" & mid(BailExpirant, 5, 2) & "/" & mid(BailExpirant, 1, 4) & " - " & mid(BailExpirant, 9, 2)& ":" & mid(BailExpirant, 11, 2)& ":" & mid(BailExpirant, 13, 2)
+
+            MsgBox " Configuration réseau de l'ordinateur " & ComputerName & vbcrlf & vbcrlf & _ 
+            "Nom Machine " & vbtab & " : " & IPConfig.DNSHostName & vbcrlf & _ 
+            "Carte active" & vbtab & " : " & IPConfig.Description & vbcrlf & _ 
+            "Adresse MAC " & vbtab & " : " & IPConfig.MACAddress & vbcrlf & _ 
+            "DHCP Activé" & vbtab & " : " & IPConfig.DHCPEnabled & vbcrlf & _
+            "Adresse IP " & vbtab & " : " & IPConfig.IPAddress(0) & vbcrlf & _
+            "Masque " & vbtab & vbtab & " : " & IPConfig.IPSubnet(0) & vbcrlf & _
+            "Passerelle     " & vbtab & " : " & IPConfig.DefaultIPGateway(0) & vbcrlf & _   
+            "Serveur DHCP " & vbtab & " : " & IPConfig.DHCPServer & vbcrlf & vbcrlf & _
+            "Serveur DNS " & vbtab & " : " & IPConfig.DNSServerSearchOrder(0) & vbcrlf & _
+            "             " & vbtab & vbtab & " : " & IPConfig.DNSServerSearchOrder(1) & vbcrlf & _
+            "Serveur WINS " & vbtab & " : " & IPConfig.WINSPrimaryServer(0) & vbcrlf & _
+            "             " & vbtab & vbtab & " : " & IPConfig.WINSSecondaryServer(0) & vbcrlf & vbcrlf & _
+            " Bail obtenu " & vbtab & " : " & BailObtenu & vbcrlf & _
+            " Bail expirant " & vbtab & " : " & BailExpirant _                    
+            ,VbInformation,"Configuration réseau de l'ordinateur " 
+        Next 
+    End If
+End Sub
+
+Function AppPrevInstance()   
+    With GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")   
+        With .ExecQuery("SELECT * FROM Win32_Process WHERE CommandLine LIKE " & CommandLineLike(WScript.ScriptFullName) & _
+            " AND CommandLine LIKE '%WScript%' OR CommandLine LIKE '%cscript%'")   
+            AppPrevInstance = (.Count > 1)   
+        End With   
+    End With   
+End Function   
+
+Function CommandLineLike(ProcessPath)   
+    ProcessPath = Replace(ProcessPath, "\", "\\")   
+    CommandLineLike = "'%" & ProcessPath & "%'"   
+End Function

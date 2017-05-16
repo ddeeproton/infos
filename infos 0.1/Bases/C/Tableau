@@ -1,0 +1,31 @@
+#pragma hdrstop
+#pragma argsused
+
+int main(int argc, char* argv[])
+{
+  int k[6];
+  int i;
+
+  k[0] = 657856;
+  k[1] = 123;
+  k[2] = 34;
+  k[3] = 65;
+  k[4] = 1;
+  k[5] = 3;
+
+  for(i=0;i<=5;i++){
+     printf(\"%d\\n\", k[i]);
+
+  }
+    /*
+  printf(\"%d\\n\", k[0]);
+  printf(\"%d\\n\", k[1]);
+  printf(\"%d\\n\", k[2]);
+  printf(\"%d\\n\", k[3]);
+  printf(\"%d\\n\", k[4]);
+  printf(\"%d\\n\", k[5]);
+    */
+  getch();
+        return 0;
+}
+//---------------------------------------------------------------------------

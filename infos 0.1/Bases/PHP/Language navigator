@@ -1,0 +1,26 @@
+<?php
+
+// Exemple: fr
+echo substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2); 
+
+// Exemple: Fr (capitalize first letter)
+echo ucfirst(substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2)); 
+
+
+function getBrowserLanguage() {
+	$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+	return (in_array($lang, array('en','fr','it'))) ? ucfirst($lang) : 'En'; 
+}
+
+
+// Si changement de langue demandé
+if(isset($_GET['sellang'])) {
+	$config['langue'] = $_GET['sellang'];	
+	$_SESSION['langue'] = $_GET['sellang'];
+}else{
+	$_SERVER['HTTP_ACCEPT_LANGUAGE']; //string(35) "en-US,en;q=0.8,fr-CH;q=0.6,fr;q=0.4" 
+	$config['langue'] = ((isset($_SESSION['langue']))?$_SESSION['langue']:getBrowserLanguage());
+	$_SESSION['langue'] = $config['langue'];
+}
+
+?> 

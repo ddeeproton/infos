@@ -1,0 +1,34 @@
+  // Donne
+  //16.03.2017 17:31:25 : 
+  MemoLogs.Lines.Add (DateTimeToStr (Now)+ ' : ');
+
+
+  // Dimanche 25 janvier 2001 12:59:59
+ FormatDateTime('dddd dd mmmm yyyy hh:nn:ss', Now ) ;
+
+
+// Heure format H:m:s
+Label1.Caption := TimeToStr(Time);
+
+
+var   
+  Jour: String;
+  Mois: String;
+  Annee: String;
+  Heures: String;
+  Minutes: String;
+  SystemTime: TSystemTime;
+begin
+      GetLocalTime(SystemTime);
+      Jour := IntToStr(SystemTime.wDay);
+      if length(Jour) = 1 then Jour := '0' + Jour;
+      Mois := IntToStr(SystemTime.wMonth);
+      if length(Mois) = 1 then Mois := '0' + Mois;
+      Annee := IntToStr(SystemTime.wYear);
+      if length(Annee) = 1 then Annee := '0' + Annee;
+      Heures := IntToStr(SystemTime.wHour);
+      if length(Heures) = 1 then Heures := '0' + Heures;
+      Minutes := IntToStr(SystemTime.wMinute);
+      if length(minutes) = 1 then minutes := '0' + minutes;
+      ListBoxChat.Items.Add('R' + Jour + '/' + Mois + '/' + Annee + Heures + ':' + Minutes);
+    

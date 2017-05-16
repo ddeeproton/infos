@@ -1,0 +1,292 @@
+/*
+Exemple:
+        private void start_server()
+        {
+            server = new class_sockets("127.0.0.1", "1001", true);
+            if (!server.connected)
+            {
+                textBox1.AppendText("Server not started\r\n"+server.error_message+"\r\n");
+                return;
+            }
+            textBox1.AppendText("Server started\r\n");
+
+
+            Dictionary<object, Hashtable> Services = new Dictionary<object, Hashtable>();
+            Services.Add("array1", new Hashtable());
+            Services["array1"]["qwe"] = "123";
+            Services["array1"]["22"] = 223;
+
+            foreach (string com in Services.Keys)
+            {
+                MessageBox.Show(com);
+                foreach (string p in Services[com].Keys)
+                {
+                    MessageBox.Show(p);
+                }
+            }
+
+            Thread tmp_thread = new Thread(new ThreadStart(() =>
+            {
+                while (keepReading)
+                {
+                    if (server.listener.Pending())
+                    {
+                        server.on_server_client_connected();
+                        Thread tmp_thread2 = new Thread(new ThreadStart(() =>
+                        {
+                            while (keepReading)
+                            {
+                                if (!server.connected) return;
+                                string read = server.read();
+
+ 
+                                server.write(PIDprocessList());
+                                if (read == null || read == "") continue;
+                                this.treeView1.Invoke(new MethodInvoker(delegate()
+                                {
+                                    if (computers.ContainsKey(server.remoteIp.Address))
+                                    {
+                                        computers[server.remoteIp.Address] = parser.decode(read);
+                                    }
+                                    else
+                                    {
+                                        computers.Add(server.remoteIp.Address, parser.decode(read));
+                                    }
+                                    foreach (Hashtable com in computers.Values)
+                                    {
+                                        // Create the root nodes.
+                                        treeView1.Nodes.Clear();
+                                        /*
+                                        TreeNode docNode = new TreeNode(com);
+
+                                        foreach (DictionaryEntry p in com.Values)
+                                        {
+                                            docNode.Nodes.Add(p.Key.ToString(), p.Value.ToString());
+
+                                        }
+                                        treeView1.Nodes.Add(docNode);*/
+                                    }
+                                    
+                                   
+                                }));
+                                this.textBox1.Invoke(new MethodInvoker(delegate()
+                                {
+                                    textBox1.AppendText(server.remoteIp.Address + "\r\n" + read + "\r\n");
+                                }));
+                            }
+                        }));
+                        tmp_thread2.Start();
+                    }
+                    else
+                    {
+                        Thread.Sleep(100); //<--- timeout
+                    }
+                }
+            }));
+            tmp_thread.Start();
+        }
+
+        private void start_client()
+        {
+            if (client == null || !client.connected)
+            {
+                client = new class_sockets("127.0.0.1", "1001", false);
+            }
+            if (!client.connected)
+            {
+                textBox1.AppendText("Client not connected\r\n");
+                return;
+            }
+            client.write(PIDprocessList());
+            string read = client.read();
+            textBox1.AppendText(read);
+            parser.decode(read);
+            client.close();
+        }
+
+*/
+//=========================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// Added
+using System.Net;
+using System.Net.Sockets;
+using System.IO;
+using System.Threading;
+using System.Diagnostics;
+
+class class_sockets
+{
+    TcpClient client = null;
+    public TcpListener listener = null; // listen request
+    Socket server = null; // TCP/IP socket
+    NetworkStream stream; // stream
+    StreamReader clientStreamReader;
+    StreamWriter clientStreamWriter;
+    StreamWriter serverStreamWriter;
+    StreamReader serverStreamReader;
+    bool isServer = false;
+    string IPaddr = null;
+    string port = null;
+    public string error_message = null;
+    public bool connected = false;
+    public IPEndPoint remoteIp;
+    public IPEndPoint localIp;
+
+    public class_sockets(string in_IPaddr, string in_port, bool in_isServer)
+    {
+        IPaddr = in_IPaddr;
+        port = in_port;
+        isServer = in_isServer;
+        if (isServer)
+        {
+            create_server_socket();
+        }
+        else
+        {
+            create_client_socket();
+        }
+    }
+
+    private bool create_server_socket()
+    {
+        try
+        {
+            listener = new TcpListener(IPAddress.Parse(IPaddr), Int32.Parse(port)); // create the listener
+        }
+        catch (Exception e)
+        {
+            connected = false;
+            error_message = e.Message.ToString();
+            return false;
+        }
+        listener.Start(); // start listening, blocks until call comes in
+        connected = listener.Server.IsBound;
+        return connected;
+    }
+
+    private bool create_client_socket()
+    {
+        connected = false;
+        try
+        {
+            client = new TcpClient(IPaddr, Int32.Parse(port)); // create the Client, and thereby the connection, this blocks until connection is made
+        }
+        catch (Exception e)
+        {
+            connected = false;
+            error_message = e.Message.ToString();
+            return false;
+        }
+        connected = client.Connected;
+        if (!connected)
+        {
+            error_message = "Error: client not connected";
+            return false;
+        }
+        stream = client.GetStream(); // create a NetworkStream to read/write to.
+        clientStreamReader = new StreamReader(stream);
+        clientStreamWriter = new StreamWriter(stream);
+        return true;
+    }
+
+    public void on_server_client_connected()
+    {
+        server = listener.AcceptSocket(); // accept the call
+        if (!server.Connected)
+        {
+            connected = false;
+            return;
+        }
+        connected = true;
+        stream = new NetworkStream(server); // create the streams for I/O
+        serverStreamWriter = new StreamWriter(stream);
+        serverStreamReader = new StreamReader(stream);
+        // get ip connected
+        remoteIp = server.RemoteEndPoint as IPEndPoint;
+        localIp = server.LocalEndPoint as IPEndPoint;
+    }
+
+    public string read()
+    {
+        try
+        {
+            if (isServer)
+            {
+                return serverStreamReader.ReadLine();
+            }
+            else
+            {
+                return clientStreamReader.ReadLine();
+            }
+        }
+        catch (Exception e)
+        {
+            connected = false;
+            return "";
+        }
+    }
+
+    public void write(string txt)
+    {
+        if (!connected) return;
+        if (isServer)
+        {
+            serverStreamWriter.WriteLine(txt);
+            try
+            {
+                serverStreamWriter.Flush();
+            }
+            catch (Exception e)
+            {
+                connected = false;
+                return;
+            }
+        }
+        else
+        {
+            clientStreamWriter.WriteLine(txt);
+            try
+            {
+                clientStreamWriter.Flush();
+            }
+            catch (Exception e)
+            {
+                connected = false;
+                return;
+            }
+        }
+
+    }
+
+
+    public void close()
+    {
+        connected = false;
+        if (isServer)
+        {
+            if (listener != null)
+            {
+                listener.Stop();
+                listener = null;
+            }
+        }
+        else
+        {
+            if (client != null) {
+                client.Close();
+                client = null;
+            }
+        }
+
+    }
+
+
+
+
+
+
+
+}

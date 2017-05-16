@@ -1,0 +1,2 @@
+' Transforme les caractères spéciaux "èéà..." en code HTML
+Server.HtmlEncode()

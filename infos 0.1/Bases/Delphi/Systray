@@ -1,0 +1,90 @@
+uses Systray;
+
+...
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Systray.AjouteIconeTray(Handle,Application.Icon.Handle,'Active Webcam Alerter');
+end; 
+
+
+procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  Systray.EnleveIconeTray();
+  //ShowWindow(Application.Handle, SW_HIDE);
+end;
+
+
+procedure TForm1.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+var
+  Pos:TPoint;
+begin
+  //action kan on clique
+  GetCursorPos(Pos);//positon de la souris;
+  case X of
+    WM_LBUTTONDBLCLK: Show; //Double klik gauche
+    WM_LBUTTONDOWN:  ;    //Bouton gauche pousse
+    WM_LBUTTONUP: ; //PopupMenu1.Popup(Pos.X,Pos.Y); //Bouton gauche lève
+    WM_RBUTTONDBLCLK:; //Double klik droit
+    WM_RBUTTONDOWN:;    //Bouton droit pousse
+    WM_RBUTTONUP:PopupMenu1.Popup(Pos.X,Pos.Y); //Bouton droite lève: Popup
+  end;
+end;
+
+
+//================================================
+// Systray.pas File
+// ===============================================
+unit Systray;
+
+interface
+
+uses
+  Forms,  Messages,  ShellAPI,  Windows;
+  
+procedure EnleveIconeTray();
+procedure ModifIconeTray(Texte:String;Icone:HICON);
+procedure AjouteIconeTray(handle:HWND;Icone:HICON;Texte:string);
+
+var
+  IconeT:TNotifyIconData;
+
+implementation
+
+procedure AjouteIconeTray(handle:HWND;Icone:HICON;Texte:string);
+var a:integer;
+begin
+  IconeT.cbSize := SizeOf(IconeT); //Taille de l'icône en octet
+  IconeT.wnd := handle;      //Handle de l'application
+  IconeT.uID := 1;             //Identificateur de l'icône
+  IconeT.uFlags := NIF_ICON or NIF_TIP or NIF_MESSAGE;
+  IconeT.uCallbackMessage := WM_MOUSEMOVE;     //Renvoyer les messages concernant l'action de la souris
+  IconeT.hIcon := Icone;   //Mettre en icône l'image qui est dans le contrôle "Image1"
+  //Texte de la bulle d'aide
+  if Length(Texte) > 64 then SetLength(Texte,64);
+  IconeT.szTip:='';
+  for a:=0 to Length(Texte)-1 do IconeT.szTip[a] := Texte[a+1];
+  //Appel de la fonction pour mettre l'icône dans le système tray
+  Shell_NotifyIcon(NIM_ADD,@IconeT);
+end;
+
+procedure EnleveIconeTray();
+begin
+  IconeT.uID := 1;             
+  Shell_NotifyIcon(NIM_DELETE,@IconeT);
+end;
+
+procedure ModifIconeTray(Texte:String;Icone:HICON);
+var a:integer;
+begin
+  IconeT.uID:=1;
+  //Texte de la bulle d'aide
+  if Length(Texte) > 64 then SetLength(Texte,64);
+  IconeT.szTip:='';
+  for a:=0 to Length(Texte)-1 do IconeT.szTip[a] := Texte[a+1];
+  IconeT.hIcon := Icone; //Icone
+  Shell_NotifyIcon(NIM_MODIFY, @IconeT);  //modifie
+end;
+
+end.

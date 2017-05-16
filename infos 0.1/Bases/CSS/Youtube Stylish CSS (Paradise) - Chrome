@@ -1,0 +1,66 @@
+/*Youtube (Theme Paradise) - Stylish Extension Code - Chrome browsers */
+  #ticker-content,
+  iframe,
+  iframe *,
+  iframe video,
+  .ad-showing.ad-interrupting video,
+  .video-ads video,
+  #ticker,
+  #yt-dialog-bg,
+  .yt-dialog-base,
+  #video-masthead,
+  .ytp-cards-teaser,
+  #google_companion_ad_div,
+  #adContent-clickOverlay,
+  #chat,
+  #feed-pyv-container,
+  #google_ads_frame1,
+  iframe.ytd-live-chat-frame,
+  #primary.ytd-two-column-browse-results-renderer,
+  .alerts-wrapper {display:none;}
+  body.yt-dialog-active {overflow:scroll;}
+
+.sitewide-consent-visible.appbar-hidden #masthead-positioner-height-offset {height:90px;}
+
+
+
+
+  #guide-content.ytd-app,
+  .ytd-app-1 {background: transparent;}
+
+  body {background-image:linear-gradient(90deg, #000000, #7AD6FF);background-image: url('http://picview.info/download/20150121/ocean-blue-water-sailing-boat-1920x1080.jpg');background-attachment: fixed;background-repeat:no-repeat;}
+
+  body, #main, #main *,
+  .ytd-video-primary-info-renderer-0 .title.ytd-video-primary-info-renderer {color:#bbb;}
+  .yt-view-count-renderer-0 yt-formatted-string.yt-view-count-renderer {color:#ddd;}
+  .yt-endpoint-1 {color:#eee;}
+  .ytd-video-meta-block-0 #byline.ytd-video-meta-block {color:#ccc;}
+  #masthead{background: transparent;background-image:linear-gradient(0deg, #555, #333);}
+
+  .sitewide-consent-visible #masthead-positioner-height-offset {height: 90px}
+
+  /*Top Menu*/
+  #yt-masthead-container {background-image:linear-gradient(0deg, #ffffff, #7AD6FF); }
+
+  #masthead-appbar {opacity: 0.7;filter: alpha(opacity=70);}
+  #masthead-appbar div {background-color:transparent;}
+
+  /*Left Menu*/
+  #appbar-guide-menu {opacity: 0.7;filter: alpha(opacity=70);}
+  #appbar-guide-menu div {background-color:transparent;}
+
+  /*Result search */
+  .yt-card {opacity: 0.9;filter: alpha(opacity=90);background-color:#7AD6FF;}
+  .yt-card div,
+  .yt-card h3,
+  .yt-card a,
+  .yt-lockup .yt-lockup-byline a {background-color:#7AD6FF;color:#fff;}
+
+/* playlist (right menu) */
+#player-playlist .radio-playlist .playlist-videos-list li{opacity:1!important;filter:alpha(opacity=100)!important;}
+.watch-sidebar-gutter.yt-card.yt-card-has-padding.yt-uix-expander.yt-uix-expander-collapsed {
+  overflow-y:scroll;
+  height:1px;
+}
+/*Commentaires sous les vidéos*/
+  #watch-discussion{display:none;}

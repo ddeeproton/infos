@@ -1,0 +1,127 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+// added
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+
+namespace ChatServer
+{
+    public partial class Form1 : Form
+    {
+        Thread server_thread;
+        TCPSocket server = null;
+        bool allowToRunServer = true;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            allowToRunServer = true;
+            start_server();
+        }
+
+        private void start_server()
+        {
+            if (server != null)
+            {
+                // Reset server
+                allowToRunServer = false;
+                server.close();
+                server_thread.Abort();
+                server_thread.Join();
+                allowToRunServer = true;
+            }
+            server_thread = new Thread(new ThreadStart(() =>
+            {
+                server = new TCPSocket("0.0.0.0", "8888", true);
+                //Console.WriteLine("Server Started");
+                this.textBox1.Invoke(new MethodInvoker(delegate()
+                {
+                    textBox1.AppendText("Server Started\r\n");
+                }));
+                int idConnexion = 0;
+
+                while (allowToRunServer)
+                {
+                    TcpClient c = server.on_client_connected();
+
+                    Thread clientSocket_thread = new Thread(new ThreadStart(() =>
+                    {
+                        if (!allowToRunServer) return;
+                        idConnexion++;
+                        string _idConnexion = idConnexion.ToString();
+                        //Console.WriteLine("Connexion Client[" + idConnexion.ToString() + "]");
+                        this.textBox1.Invoke(new MethodInvoker(delegate()
+                        {
+                            textBox1.AppendText("Connexion Client[" + _idConnexion + "]: " + "\r\n");
+                        }));
+                        TcpClient _clientSocket = c;
+                        
+
+                        int requestCount = 0;
+                        while (allowToRunServer)
+                        {
+                            requestCount++;
+                            NetworkStream n = server.on_client_message(_clientSocket);
+                            string read = server.read(_clientSocket, n);
+                            if (read == null)
+                            {
+                                //Console.WriteLine("Deconnexion Client[" + _idConnexion + "]");
+                                this.textBox1.Invoke(new MethodInvoker(delegate()
+                                {
+                                    textBox1.AppendText("Deconnexion Client[" + _idConnexion + "]\r\n");
+                                }));
+                                break;
+                            }
+                            //Console.WriteLine("Client[" + _idConnexion + "]" + read);
+                            this.textBox1.Invoke(new MethodInvoker(delegate()
+                            {
+                                textBox1.AppendText("Client[" + _idConnexion + "]: " + read + "\r\n");
+                            }));
+                            server.write("A message from server", n);
+                        }
+                    }));
+                    clientSocket_thread.Start();
+                }
+
+                //clientSocket.Close();
+                //serverSocket.Stop();
+                Console.WriteLine("exit");
+                Console.ReadLine();
+            }));
+            server_thread.Start();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            close_server();            
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            close_server();
+        }
+
+        private void close_server()
+        {
+            allowToRunServer = false;
+            if (server == null)
+            {
+                return;
+            }
+            server.close();
+            server = null;
+            textBox1.AppendText("Server stopped\r\n");
+        }
+    }
+}

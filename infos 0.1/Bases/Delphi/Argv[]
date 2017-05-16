@@ -1,0 +1,11 @@
+
+var
+i: integer;
+begin
+  for i:= 1 to ParamCount do
+    WriteLn('Ligne ', i, ':' , ParamStr(i));
+end;
+
+
+//soit:
+ParamStr(ParamCount)

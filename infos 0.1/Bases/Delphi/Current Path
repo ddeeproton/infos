@@ -1,0 +1,4 @@
+ExtractFilePath(Application.ExeName);
+
+
+SetCurrentDir(ExtractFilePath(Application.ExeName)+'myDir')

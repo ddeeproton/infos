@@ -1,0 +1,2 @@
+//Mode client MySQL
+mysql.exe -h 10.134.73.53 -u user -p pass

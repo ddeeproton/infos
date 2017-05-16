@@ -1,0 +1,100 @@
+<?php
+// ====== MYSQL ======
+function Connection_MySQL($adresse, $utilisateur, $pass, $basedonnee)  {
+	mysql_connect ($adresse, $utilisateur, $pass)
+	or die('Erreur lors de la connexion à MySQL '.mysql_error ());
+	mysql_select_db($basedonnee) 
+	or die('Erreur lors de la sélection de la base MySQL '.mysql_error ());
+}
+
+function RequeteMySQL($requete) {
+	$req = mysql_query($requete);
+	return mysql_fetch_array($req);
+}
+
+
+function Deconnection_MySQL() {
+	mysql_close();
+}
+
+
+// ====== LOGIN ======
+
+function login($user, $pass) {
+	$_SESSION['user']   = $user;
+	$_SESSION['pass'] = md5($pass);  
+}
+
+
+// Pour l'exemple seul l'utilisateur admin avec le pass 1234 peut se connecter
+function isLogged() {
+	return !isset($_SESSION['user']) || !isset($_SESSION['pass']) 
+		|| $_SESSION['user'] != "admin" ||  $_SESSION['pass'] != md5("1234");
+}
+
+function isLoggedMysql() {
+	$req = RequeteMySQL("
+		SELECT count(*)
+		FROM `personne` 
+		WHERE `login` = '".$_SESSION['user']."' 
+		AND `pass` = '".$_SESSION['pass']."'
+	");
+	return $req['count(*)'] != 0;
+}
+
+function disconnect() {
+	session_destroy();
+	session_start();
+}
+// ====== POST ======
+function _post($index) {
+	return isset($_POST[$index]) ? $_POST[$index] : "";
+}
+function _get($index) {
+	return isset($_GET[$index]) ? $_GET[$index] : "";
+}
+
+// ====== LOAD ======
+session_start();
+//Connection_MySQL('localhost','test','test','Gestion_note');
+
+// ====== BUTTONS ======
+if(isset($_POST['btnLogin'])){
+	login($_POST["user"], $_POST["pass"]);
+} 
+
+if(isset($_POST['btnDisconnect'])){
+	disconnect();
+} 
+
+// ====== DISPLAY ======
+
+// Si utilisareur n'existe pas
+//if(isLoggedMysql()) {
+if(isLogged()) {
+	if(isset($_POST['btnLogin'])){
+		echo "<h1><font color=red>Mauvais login</font></h1>";
+	}
+	?>
+	<div class="login">
+		<form action="" method="post">
+			User: <input type="text" name="user" value="<?php echo _post('user'); ?>" /><br/>
+			Pass: <input type="password" name="pass" value="<?php echo _post('pass'); ?>" /><br/>
+			<input type="submit" name="btnLogin" value="Login" />
+		</form>
+	</div>
+	<?php
+	//Deconnection_MySQL();
+	exit;
+}
+
+// ====== CONNECTED ======
+?>
+
+<form action="" method="post">
+	<input type="submit" name="btnDisconnect" value="Déconnecter" />
+</form>
+<h1>Bienvenue</h1>
+<?php
+//Deconnection_MySQL();
+?>

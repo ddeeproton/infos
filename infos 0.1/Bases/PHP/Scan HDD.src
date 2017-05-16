@@ -1,0 +1,53 @@
+<?php
+  $dir = array(".."); // Dossier à scanner
+  $fp = fopen("MonHDD.doc","w+");  // Résultat dans le fichier "MonHDD.txt"
+  $files = '';
+  set_time_limit(0);  
+  for( $i = 0; $i < count($dir); $i++)
+    if ($handle = opendir($dir[$i]))
+    { 
+      while (false !== ($file = readdir($handle))) 
+        if ($file != "." && $file != ".." ) 
+          if ( is_file($dir[$i].'/'.$file) )
+          {	
+            fputs($fp, $dir[$i].'/'.$file."\n");     print '[File]'.$dir[$i].'/'.$file."\n";
+          }
+          elseif ( is_dir( $dir[$i] ) )
+          {
+            $dir[] = $dir[$i].'/'.$file.'/';    print '[Dir]'.$dir[$i].'/'.$file."\n";	
+          }
+      closedir($handle);
+    }		
+  fclose($fp);         
+?>
+// ********  ou *********
+<?php
+  set_time_limit(0);  
+ 
+  $dir = array(".."); // Dossier à scanner
+  $fp = fopen("MonHDD.txt","w+");  // Résultat dans le fichier "MonHDD.txt"
+  
+  $files = '';
+  for( $i = 0; $i < count($dir); $i++)
+  {
+    if ($handle = opendir($dir[$i])) 
+    {
+      while (false !== ($file = readdir($handle))) 
+      {
+        if ($file != "." && $file != ".." ) 
+        {
+          if ( is_file($dir[$i].'/'.$file) )	
+          {
+            fputs($fp, $dir[$i].'/'.$file);     print '[File]'.$dir[$i].'/'.$file."\n";
+          }
+          elseif ( is_dir( $dir[$i] ) )
+          {
+            $dir[] = $dir[$i].'/'.$file.'/';    print '[Dir]'.$dir[$i].'/'.$file."\n";	
+          }
+        }
+      }
+      closedir($handle);
+    }		
+  }
+  fclose($fp);         
+?>

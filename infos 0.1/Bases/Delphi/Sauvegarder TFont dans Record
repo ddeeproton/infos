@@ -1,0 +1,52 @@
+  TSaveData = record
+    Font: TFont;
+  end;
+
+//Label1
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  f: file;
+  SaveData: TSaveData;
+  test: TFont;
+begin
+    SaveData.Font       := TFont.Create;
+    test := TFont.Create;
+    test := Label1.Font;
+
+    SaveData.Font.Color := test.Color;
+    SaveData.Font.Name  := test.Name;
+    SaveData.Font.Size  := test.Size;
+
+    AssignFile(f, 'C:\JIYUU2004\Delphi\Jikken.sav');
+    Rewrite(f,1);
+    BlockWrite(f, savedata, sizeof(TSaveData));
+    CloseFile(f);
+
+    SaveData.Font.Destroy;
+    test.Destroy;
+end;
+
+//Label1
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  f: file;
+  LoadData: TSaveData;
+  test: TFont;
+begin
+    LoadData.Font := TFont.Create;
+    test := TFont.Create;
+
+    AssignFile(f, 'C:\JIYUU2004\Delphi\Jikken.sav');
+    Reset(f,1);
+    BlockRead(f, LoadData, sizeof(TSaveData));
+    CloseFile(f);
+
+    test.Color := LoadData.Font.Color;
+    test.Name  := LoadData.Font.Name;
+    test.Size  := LoadData.Font.Size;
+
+    Label1.Font := test;
+
+    LoadData.Font.Destroy;
+    test.Destroy;
+end;

@@ -1,0 +1,5 @@
+CREATE TABLE temp  SELECT logs.filename FROM logs WHERE `file_scanned` = \'2007-00-00 00:00:00\';
+CREATE TABLE temp2 SELECT logs.filename FROM logs WHERE `file_scanned` = \'2006-00-00 00:00:00\';
+SELECT temp2.filename FROM temp2 LEFT JOIN temp ON temp.filename = temp2.filename WHERE temp.filename IS NULL;
+DROP TABLE temp;
+DROP TABLE temp2;

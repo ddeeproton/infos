@@ -1,0 +1,38 @@
+<?php
+
+set_time_limit(0);
+
+$address = '0.0.0.0';
+$port = 80;
+
+$sock = socket_create(AF_INET, SOCK_STREAM, 0);
+socket_bind($sock, $address, $port) or die('Could not bind to address');
+
+$output = "<html>
+		<title>
+			Site bloqué
+		</title>
+		<style>
+			body {background-color:#000;color:#fff;}
+		</style>
+		<body>
+			<h1>Site bloqué</h1>
+			<p>
+				Ce site est bloqué
+			</p>
+		</body>
+	</html>";
+
+while(1)
+{
+    socket_listen($sock);
+    $client = socket_accept($sock);
+    $input = socket_read($client, 1024);
+    //echo $input;
+    socket_write($client, $output);
+    socket_close($client);
+}
+
+socket_close($sock);
+
+?>

@@ -1,0 +1,6 @@
+uses 
+  ShellApi,  ...
+
+ShellExecute(Handle,'open',PChar('C:\\Windows\\NotePad.exe'),PChar(edit1.Text),nil,SW_SHOW);
+ShellExecute('null','open',PChar('C:\\Windows\\NotePad.exe'),PChar(edit1.Text),nil,SW_SHOW);
+ShellExecute(0,'OpEn','http://www.progzed.com','null','null',SW_NORMAL);

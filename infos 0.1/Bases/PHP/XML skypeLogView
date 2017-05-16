@@ -1,0 +1,90 @@
+<?php
+function parse_xml($file) {
+	$xml = file_get_contents($file);
+	$xml = utf16_to_utf8($xml);
+	$xml = str_replace(\'<br>\',\'\', $xml);
+	$xml = xml2array($xml);
+	$xml = xml_parser_to_array($xml);
+	//var_dump($xml);
+	return $xml;
+}
+
+function xml_parser_to_array($xml) {
+	$res = array();
+	$bi = array();
+
+	$level = 0;
+	foreach($xml as $x) {
+		if($x[\"type\"] == \"open\") {
+			if(isset($bi[$level])) $bi[$level]++; else $bi[$level] = 0;
+			$level++;
+		}
+		if($x[\"type\"] == \"close\") {
+			$level--;
+		}
+		if($x[\"type\"] == \"complete\") {
+			if(isset($bi[$level])) $bi[$level]++; else $bi[$level] = 0;
+			if($level==2) $res[$bi[1]][$x[\"tag\"]] = $x[\"value\"];
+		}
+	}
+	
+	return $res;
+}
+
+function utf16_to_utf8($str) {
+    $c0 = ord($str[0]);
+    $c1 = ord($str[1]);
+
+    if ($c0 == 0xFE && $c1 == 0xFF) {
+        $be = true;
+    } else if ($c0 == 0xFF && $c1 == 0xFE) {
+        $be = false;
+    } else {
+        return $str;
+    }
+
+    $str = substr($str, 2);
+    $len = strlen($str);
+    $dec = \'\';
+    for ($i = 0; $i < $len; $i += 2) {
+        $c = ($be) ? ord($str[$i]) << 8 | ord($str[$i + 1]) : 
+                ord($str[$i + 1]) << 8 | ord($str[$i]);
+        if ($c >= 0x0001 && $c <= 0x007F) {
+            $dec .= chr($c);
+        } else if ($c > 0x07FF) {
+            $dec .= chr(0xE0 | (($c >> 12) & 0x0F));
+            $dec .= chr(0x80 | (($c >>  6) & 0x3F));
+            $dec .= chr(0x80 | (($c >>  0) & 0x3F));
+        } else {
+            $dec .= chr(0xC0 | (($c >>  6) & 0x1F));
+            $dec .= chr(0x80 | (($c >>  0) & 0x3F));
+        }
+    }
+    return $dec;
+}
+function xml2array($xml) {
+	$xml_parser = xml_parser_create();
+	xml_parse_into_struct($xml_parser, $xml, $vals, $index);
+	xml_parser_free($xml_parser);
+	return $vals;
+}
+
+/*
+Usage:
+
+	$skype = parse_xml($output_xml);
+	
+	foreach($skype as $s) {
+		if($s[\"ACTION_TYPE\"] == \"Message Chat\") {
+			$d = $s;
+		}
+		if($s[\"ACTION_TYPE\"] == \"Voicemail\") {
+			
+		}
+		if($s[\"ACTION_TYPE\"] == \"Chat\") {
+			
+		}
+	}
+*/
+
+?> 

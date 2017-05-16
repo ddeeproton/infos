@@ -1,0 +1,47 @@
+Fichier index.php
+<?php 
+$url = $_SERVER["REQUEST_URI"];
+set_time_limit(0);
+http_response_code(200);
+header(get_headers($url)[3]);
+echo file_get_contents($url);
+?>
+
+
+Fichier httpd.conf de Apache.
+
+Ajouter la ligne suivante:
+    ErrorDocument 404 /index.php
+
+Comme ici:
+
+<Directory "C:/xampp/htdocs">
+    #
+    # Possible values for the Options directive are "None", "All",
+    # or any combination of:
+    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews
+    #
+    # Note that "MultiViews" must be named *explicitly* --- "Options All"
+    # doesn't give it to you.
+    #
+    # The Options directive is both complicated and important.  Please see
+    # http://httpd.apache.org/docs/2.4/mod/core.html#options
+    # for more information.
+    #
+    Options Indexes FollowSymLinks Includes ExecCGI
+
+    #
+    # AllowOverride controls what directives may be placed in .htaccess files.
+    # It can be "All", "None", or any combination of the keywords:
+    #   AllowOverride FileInfo AuthConfig Limit
+    #
+    AllowOverride All
+
+    #
+    # Controls who can get stuff from this server.
+    #
+    Require all granted
+
+    ErrorDocument 404 /index.php
+
+</Directory>

@@ -1,0 +1,50 @@
+<?php
+
+class DBFactory {
+	
+	public static $instance;
+	public static $bdd;
+    public function __construct() {
+        self::$instance = $this;
+		self::$bdd;		
+	}
+	public static function connectDB_PV1() {
+		self::$bdd = new mysqli('127.0.0.1', 'root', '', 'PV1');
+		return new CSQLQuery(self::$bdd);
+	}
+
+}
+
+class CSQLQuery {
+	public static $instance;
+	public static $bdd;
+	public static $resultQuery;
+
+    public function __construct($bdd) {
+        self::$instance = $this;
+		self::$bdd = $bdd;
+		self::$resultQuery;
+	}
+	
+	public function query($sql){
+		//echo "<br>".$sql."<br>";
+		if(!(self::$resultQuery = self::$bdd->query($sql))) echo 'erreur sql: '.mysql_error();
+		return self::$instance;
+	}
+	
+	public function fetchAll(){
+		$result = array();
+		while($row = self::$resultQuery->fetch_assoc()) {
+			
+			foreach($row as $i => $v) {
+				//echo "$i = $v<br>";
+			}
+			$result[] = $row;
+		}
+		return $result;
+	}
+	
+	public function exec(){
+		return array();
+	}
+}

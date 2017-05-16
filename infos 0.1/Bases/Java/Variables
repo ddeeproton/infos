@@ -1,0 +1,9 @@
+int i;
+string s;
+
+s = String.ValueOf(i);
+i = Integer.parseInt(s);
+
+int[] Tableau = new int[8];
+
+enum e{oui, non};

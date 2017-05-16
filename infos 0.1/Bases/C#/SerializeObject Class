@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+//added
+using System.Xml.Serialization;
+using System.IO;
+
+namespace ChatClient
+{
+    class SerializeObject
+    {
+        public static string serialize(object o)
+        {
+            XmlSerializer serializer = new XmlSerializer(o.GetType());
+            StringWriter sw = new StringWriter();
+            serializer.Serialize(sw, o);
+            return sw.ToString();
+        }
+
+        public static object deserialize(string txt, Type t)
+        {
+            TextReader tr = new StringReader(txt);
+            XmlSerializer deserializer = new XmlSerializer(t);
+            return deserializer.Deserialize(tr);
+        }
+
+    }
+}
+/*
+USE:
+        private void button_Click(object sender, EventArgs e)
+        {
+            MessageChat m = new MessageChat("test", "test2", 2);
+            string s = SerializeObject.serialize(m);
+            MessageBox.Show(s);
+
+            MessageChat d = (MessageChat)SerializeObject.deserialize(s, typeof(MessageChat));
+            MessageBox.Show(d.Name);
+        }
+  
+     public class MessageChat
+    {
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public int ID { get; set; }
+
+        private MessageChat()
+        {
+        }
+
+        public MessageChat(string name, string surname, int id)
+        {
+            this.Name = name;
+            this.Surname = surname;
+            this.ID = id;
+        }
+    }
+*/

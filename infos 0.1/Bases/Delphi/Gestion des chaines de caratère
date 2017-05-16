@@ -1,0 +1,235 @@
+unit MultiStrings;
+
+interface
+uses
+  Classes, SysUtils;
+
+{------------------------------------------------------------------------------}
+{ MultiString helper functions.
+  MultiStrings are PChar strings concatenated with #0 as separator:
+  ex: string1#0string2#0#0
+{------------------------------------------------------------------------------}
+
+type
+  TStringArray = array of string;
+  PCharArray = ^TCharArray;
+  TCharArray = array[0..32767] of Char;
+  PMultiString = PCharArray;
+
+function MultiStringToStringArray(const MultiString: PMultiString): TStringArray;
+procedure MultiStringToStrings(const MultiString: PMultiString; const Strings: TStrings);
+function StringArrayToMultiString(const Strings: TStringArray): PMultiString;
+function StringsToMultiString(const Strings: TStrings): PMultiString;
+function MultiStringLength(const MultiString: PMultiString): cardinal;
+function MultiStringCount(const MultiString: PMultiString): cardinal;
+procedure AddStringToMultiString(var MultiString: PMultiString; AString: string);
+function NewMultiString(const AString: string): PMultiString;
+procedure MultiStringDispose(var MultiString: PMultiString);
+function GetMultiStringItem(const MultiString: PMultiString; const Index: Integer): string;
+function NewMultiStringCopy(const MultiString: PMultiString): PMultiString;
+
+type
+  EMultiStringError = Exception;
+
+implementation
+
+ResourceString
+  MultiStringBadIndex = 'Index out of range'; {translate this}
+
+function MultiStringToStringArray(const MultiString: PMultiString): TStringArray;
+var
+  p, f: ^AnsiChar;
+  count, len: Integer;
+begin
+  count:= 0;
+  SetLength(result, Count);
+  p:= Pointer(MultiString);
+  while p^ <> #0 do
+  begin
+    f:= p;
+    Inc(Count);
+    SetLength(result, Count);
+    while p^ <> #0 do
+      Inc(p);
+    len:= Integer(p) - Integer(f);
+    SetLength(result[Count - 1], len);
+    Move(f^, result[Count - 1][1], len);
+    Inc(p);
+  end;
+end;
+
+{------------------------------------------------------------------------------}
+procedure MultiStringToStrings(const MultiString: PMultiString; const Strings: TStrings);
+var
+  p, f: ^AnsiChar;
+  len: Integer;
+  s: string;
+begin
+  Strings.Clear;
+  p:= Pointer(MultiString);
+  while p^ <> #0 do
+  begin
+    f:= p;
+    s:= '';
+    while p^ <> #0 do
+      Inc(p);
+    len:= Integer(p) - Integer(f);
+    SetLength(s, len);
+    Move(f^, s[1], len);
+    Strings.Add(s);
+    Inc(p);
+  end;
+end;
+
+{------------------------------------------------------------------------------}
+function StringArrayToMultiString(const Strings: TStringArray): PMultiString;
+var
+  i, len: Integer;
+  p: PByte;
+begin
+  len:= 1;
+  for i:=Low(Strings) to High(Strings) do
+    Inc(len, Length(Strings[i]) + 1);
+
+  GetMem(result, len);
+  p:= Pointer(result);
+  for i:=Low(Strings) to High(Strings) do
+  begin
+    len:= Length(Strings[i]);
+    Move(Strings[i][1], p^, len);
+    Inc(p, len);
+    p^:= 0;
+    Inc(p);
+  end;
+  p^:= 0;
+end;
+
+{------------------------------------------------------------------------------}
+function StringsToMultiString(const Strings: TStrings): PMultiString;
+var
+  i, len: Integer;
+  p: PByte;
+begin
+  len:= 1;
+  for i:=0 to Strings.Count - 1 do
+    Inc(len, Length(Strings[i]) + 1);
+
+  GetMem(result, len);
+  p:= Pointer(result);
+  for i:=0 to Strings.Count - 1 do
+  begin
+    len:= Length(Strings[i]);
+    Move(Strings[i][1], p^, len);
+    Inc(p, len);
+    p^:= 0;
+    Inc(p);
+  end;
+  p^:= 0;
+end;
+
+{------------------------------------------------------------------------------}
+function MultiStringLength(const MultiString: PMultiString): cardinal;
+var
+  p, start: PByte;
+begin
+  p:= Pointer(MultiString);
+  start:= p;
+  while p^ <> 0 do
+  begin
+    while p^ <> 0 do
+      Inc(p);
+    Inc(p);
+  end;
+  result:= Integer(p) - Integer(start);
+end;
+
+{------------------------------------------------------------------------------}
+function MultiStringCount(const MultiString: PMultiString): cardinal;
+var
+  p: PByte;
+begin
+  result:= 0;
+  p:= Pointer(MultiString);
+  while p^ <> 0 do
+  begin
+    while p^ <> 0 do
+      Inc(p);
+    Inc(p);
+    Inc(result);
+  end;
+end;
+
+{------------------------------------------------------------------------------}
+procedure AddStringToMultiString(var MultiString: PMultiString; AString: string);
+var
+  msLen, sLen: Cardinal;
+  newString: PMultiString;
+begin
+  if MultiString = nil then
+    MultiString:= NewMultiString(AString)
+  else
+  begin
+    msLen:= MultiStringLength(MultiString);
+    sLen:= Length(AString);
+    newString:= AllocMem(msLen + sLen + 2);
+    Move(MultiString[0], newString[0], msLen);
+    Move(AString[1], newString[msLen], sLen);
+    newString[msLen + sLen]:= #0;
+    newString[msLen + sLen + 1]:= #0;
+    MultiString:= newString;
+  end;
+end;
+
+{------------------------------------------------------------------------------}
+function NewMultiString(const AString: string): PMultiString;
+begin
+  result:= AllocMem(1);
+  AddStringToMultiString(result, AString);
+end;
+
+{------------------------------------------------------------------------------}
+procedure MultiStringDispose(var MultiString: PMultiString);
+begin
+  FreeMem(MultiString);
+  MultiString:= nil;
+end;
+
+{------------------------------------------------------------------------------}
+function GetMultiStringItem(const MultiString: PMultiString; const Index: Integer): string;
+var
+  p, f: ^AnsiChar;
+  count, len: Integer;
+  msCount: Integer;
+begin
+  msCount:= MultiStringCount(MultiString);
+  if (Index < 0) or (Index >= msCount) then
+    raise EMultiStringError.Create(MultiStringBadIndex);
+
+  count:= 0;
+  p:= Pointer(MultiString);
+  f:= p;
+  while (p^ <> #0) and (count <= Index) do
+  begin
+    f:= p;
+    Inc(Count);
+    while p^ <> #0 do
+      Inc(p);
+    Inc(p);
+  end;
+  len:= Integer(p) - Integer(f) - 1;
+  SetLength(result, len);
+  Move(f^, result[1], len);
+end;
+
+{------------------------------------------------------------------------------}
+function NewMultiStringCopy(const MultiString: PMultiString): PMultiString;
+var
+  msLen: Integer;
+begin
+  msLen:= MultiStringLength(MultiString);
+  GetMem(result, msLen + 1);
+  Move(MultiString^, result^, msLen);
+  result[msLen]:= #0;
+end;
+
+end.

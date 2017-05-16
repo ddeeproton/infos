@@ -1,0 +1,33 @@
+uses  ActiveX;
+
+procedure TForm1.WebBrowserSetText(Text:string);
+var
+  HTMLCode: string;
+  ss: TStringStream;
+  sa: TStreamAdapter;
+begin
+HTMLCode := 'salut';
+  // Il est nécessaire de réinitialiser la page avec un appel à Navigate
+  AWebBrowser.Navigate('about:blank');
+
+  // Il faut attendre que le navigateur soit prêt
+  while AWebBrowser.ReadyState < READYSTATE_INTERACTIVE do
+   Application.ProcessMessages;
+
+  if Assigned(AWebBrowser.Document) then
+  begin
+    // On crée un flux
+    ss:= TStringStream.Create(HTMLCode);
+    try
+      // et un adaptateur IStream
+      sa:= TStreamAdapter.Create(ss); // Ne pas libérer
+
+      // On appelle la méthode de chargement du WebBrowser
+      (AWebBrowser.Document as IPersistStreamInit).Load(sa);
+    finally
+      // On libère le flux
+      ss.Free;
+    end;
+  end;
+end;
+

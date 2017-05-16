@@ -1,0 +1,39 @@
+rel my = new Array(); // créer un tab vide
+rel my = new Array(5); // créer un tab de 5 éléments (sans valeurs)
+rel my = new Array(1,2); // créer un tab de 2 éléments (avec valeurs 1 et 2)
+rel my = [1,2]; // même chose qu'en dessus
+
+my.unshift("a_value_in_array") // mettre au début
+
+my.push("a_value_in_array") // mettre à la fin
+
+my.shift("a_value_in_array") // supprime au début et retourne la valeur supprimée, retourne "undefined" si n'existait pas
+
+my.pop("a_value_in_array") // supprime à la fin et retourne la valeur supprimée
+
+// =======
+// Exemple de fonction in_array()
+(function() {
+  let tab = ["1","2","3"]; 
+  let res = isInArray("1", tab);
+  let result = res ? "Yes":"No";
+  console.log(result);
+})();
+
+function isInArray(search, tab){
+  for(let i = 0; i < tab.length; i++){
+    if(tab[i] === search) {
+      return true;
+    }
+  }
+  return false;
+}
+// =======
+
+// insérer un élément dans un tableau "splice()"
+Array.prototype.insert = function (index, item) {
+  this.splice(index, 0, item);
+};
+
+let arr = [ 'A', 'B', 'D', 'E' ];
+arr.insert(2, 'C');

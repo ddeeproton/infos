@@ -1,0 +1,88 @@
+
+Créer une page à Session
+http://www.phpdebutant.org/article69.php
+
+
+
+
+Qu'est-ce qu'une session
+
+
+Les sessions sont plus sécurisées que des cookies car stockées sur le serveur .Elles ont pour fonction de garder confidentielles des données vous concernant. Grace aux sessions il est possible de gérer un panier d'achat , authentifier un visiteur, etc..... 
+
+Au lieu de stocker vos informations chez le visiteur, vous les stockez sur le serveur.Mais la session n'a qu'un temps de vie limité et elle peut être aussi la cible d'une attaque , donc méfiance quand au stockage de données trop confidentielles 
+ Cas concret de session
+
+Voici un cas concret tiré de phpdébutant : http://www.phpdebutant.org/article113.php
+
+<?php 
+include 'session.php';
+$bouton = $_POST['bouton'];
+if(!empty($bouton)) {
+$log = trim($_POST['log']);
+$pass = trim($_POST['pass']);
+if ($log=='jenny' && $pass == 'foo') {
+$_SESSION['login'] = 'ok';
+echo ' >> suite >>';
+}
+else {
+echo 'mauvais login/pass';
+}
+}
+?> 
+
+<form action="exemple6.php" method="post">
+Login :<input type="text" name="log" 
+value="">
+
+Pass :<input type="text" name="pass" value="">
+
+<input type="submit" value="envoyer" name="bouton">
+
+Voici comment récupérer les variables session par le bon tableau. Récupération d'une session 
+<php
+include 'session.php';
+if($_SESSION['login'] == 'ok') {
+echo 'vous êtes bien connecté';
+}
+else {
+die('pas en session');
+}
+?> 
+ Variables de sessions utiles
+
+Voici quelques variables de session qui peuvent vous servir : - Démarrer une session : session_start();
+- Enregistrer une variable de session : session_register();
+- Vérifier si une variable est déclaré pour la session en cours : session_is_registered();
+- Destruction de la session en cours : session_destroy();
+- Destruction de toutes les variables pour la session en cours : session_unset();
+- Effacer une variable de session : session_unregister();
+- Le numéro de session en cours : session_id();
+- Le nom de la session par défaut (souvent c'est PHPSESSID) : session_name(); 
+ Cas d'une session stockant des variables
+
+Deux variables $login et $password seront stockées dans la session et seront donc accessibles pour les autres pages affichées durant cette session. <?php 
+session_start();
+$login = 'deny';
+$password = 'pass';
+session_register('login', 'password');
+?>
+
+Pour afficher nos variables de session:
+<?php 
+function test_session() {
+$GLOBALS['variable'] = 'pass';
+session_register('variable');
+}
+test_session();
+echo "var de session : {$_SESSION['variable']}";
+?>
+ Suppression d'une variable de session
+
+<?php session_start();
+$_SESSION['nom'] = 'deny';
+echo $_SESSION['nom']; // affiche deny
+session_destroy();
+unset($_SESSION);
+echo $_SESSION['nom'] ; // n'affiche rien
+?>

@@ -1,0 +1,61 @@
+//==============================================================================
+//== Helper function to display elipsed time correctly for humain. 
+//==============================================================================
+function TimePassToStr(ElipsedTime: extended): string;
+resourcestring
+strMinSize = '0 second';
+strSec = 'ss';
+strMin = 'nn:ss';
+strHrs = 'hh:nn:ss';
+strSecUnit=' sec.';
+strMinUnit=' min.';
+strHrsUnit=' hrs';
+strDayUnit= ' Day(s) ';
+const
+cstIntFmt='0';
+cstDemiSec=(1/(60*60*24))/2;
+cstOneSec = (1/(60*60*24))-cstDemiSec;
+cstOneMin = (1/(60*24))-cstDemiSec;
+cstOneHour = (1/24)-cstDemiSec;
+cstOneday = (1)-cstDemiSec;
+begin
+Result := strMinSize;
+if (ElipsedTime <= 0) then
+Exit;
+if (ElipsedTime < cstOneMin) then
+begin
+//Plus petit qu'une minutes, affiche des secondes
+Result := FormatDateTime(strSec,ElipsedTime)+strSecUnit;
+Exit;
+end;
+if (ElipsedTime < cstOneHour) then
+begin
+//Plus petit qu'une Heure, affiche des Minutes + secondes
+Result := FormatDateTime(strMin,ElipsedTime)+strMinUnit;
+Exit;
+end;
+if (ElipsedTime < cstOneday) then
+begin
+//Plus petit qu'une Journée, affiche des Heures+Minutes + secondes
+Result := FormatDateTime(strHrs,ElipsedTime)+strHrsUnit;
+Exit;
+end;
+// Nbr de jour + Heures+Minutes + secondes
+Result := IntToStr(trunc(ElipsedTime))+strDayUnit+FormatDateTime(strHrs,ElipsedTime);
+end;
+
+
+Pour faire un test rapide de cette fonction:
+
+procedure TfrmMain.Button1Click(Sender: TObject);
+var
+Start:TDateTime;
+Stop:TDateTime;
+Diff:extended;
+begin
+Start:=Now();
+sleep(5000);
+Stop:=Now();
+Diff:=Stop-Start;
+Button1.Caption:=TimePassToStr(Diff);
+end;

@@ -1,0 +1,11 @@
+<?php
+  // Execute un processus et lit la réponse
+  error_reporting(E_ALL);
+
+/* Ajoute une redirection pour que vous puissiez lire stderr */
+  $handle = popen("C:\\WINDOWS\\system32\\cmd.exe", 'r');
+  echo "'$handle'; " . gettype($handle) . "\n";
+  $read = fread($handle, 2096);
+  echo $read;
+  pclose($handle);
+?>

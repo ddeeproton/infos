@@ -1,0 +1,42 @@
+<?php 
+// cette ligne est importante, 
+//elle dira au navigateur que la page retourne une image png 
+header ("Content-type: image/png"); 
+// connection à la base de donnée et soumet de la requete 
+$db = @mysql_connect('addr_serveur','login','password'); 
+@mysql_select_db("compteur",$db); 
+$query = 'SELECT * FROM cpt_page WHERE 1 ORDER BY nbr ASC'; 
+$req = @mysql_query($query); 
+// prend le premier élément de la requete 
+$data = @mysql_fetch_array($req); 
+// hauteur de l'image 
+$hauteur = 200; 
+// largeur de l'image, en fonction du nombre de lignes dans la table 
+$largeur = 50+100*mysql_num_rows($req); 
+// défini le maximum (rapport proprortionnelle pour l'affichage) 
+$maxi = $data[1] + 3; 
+// créer l'image 
+$im = imagecreate($largeur,$hauteur); 
+// définie les différentes couleurs (la première est la couleur de fond) 
+$bleute = ImageColorAllocate($im, 245, 245, 255); 
+$violet = ImageColorAllocate($im, 204, 51, 255); 
+$noir = ImageColorAllocate($im, 0, 0, 0); 
+// dessine l'axe des absisses 
+ImageLine($im,5,$hauteur-20,$largeur-5,$hauteur-20,$noir); 
+// et le cadres de l'image 
+ImageRectangle($im,0,0,$largeur-1,$hauteur-1,$noir); 
+// boucle qui affiche les batonnets 
+$i=0; 
+do 
+{ 
+// affiche le nom de la page en dessous de l'axe des absisses 
+ImageString($im,3,$i*100 + 20,$hauteur-20,$data[0],$noir); 
+// affiche le nombre de visites au dessus des batonnets 
+ImageString($im,3,$i*100+50,185-($data[1]*200/$maxi),$data[1],$noir); 
+// affiche les batonnets 
+ImageFilledRectangle($im,$i*100+50,200-($data[1]*200/$maxi),$i*100+60,$hauteur-20,$violet); 
+$i++; 
+}while($data = @mysql_fetch_array($req) ); // prend l'élément suivant dans la requetes 
+// affiche l'image 
+ImagePng($im); 
+?> 

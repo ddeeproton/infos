@@ -1,0 +1,39 @@
+
+// Enlève le saut à la ligne
+$txt = str_replace( array( chr(13), chr(10) ) ,"",$txt); 
+
+function convert_special_chars($text)
+{
+  $text = str_replace("Ã¨","è",$text); 
+  $text = str_replace("Ã»","û",$text); 
+  $text = str_replace("Ã©","é",$text); 
+  $text = str_replace("Ã¹","ù",$text); 
+  $text = str_replace("Ã«","ë",$text); 
+  $text = str_replace("Ãª","ê",$text); 
+  $text = str_replace("Ã ","à",$text); 
+  $text = str_replace("Ã¼","ü",$text); 
+  $text = str_replace("Ã¢","â",$text); 
+  $text = str_replace("Ã§","ç",$text); 
+  $text = str_replace("Ã´","ô",$text); 
+  $text = str_replace("Â¨","u",$text); 
+  $text = str_replace(";",".",$text); 
+ return $text;
+}
+
+function convert_special_chars_4url($text)
+{
+  $text = str_replace(" ","%20",$text); 
+  $text = str_replace("è","%E8",$text); 
+  $text = str_replace("û","%fb",$text); 
+  $text = str_replace("é","%E9",$text); 
+  $text = str_replace("ù","%F9",$text); 
+  $text = str_replace("ë","%EB",$text); 
+  $text = str_replace("ê","%EA",$text); 
+  $text = str_replace("à","%e0",$text); 
+  $text = str_replace("ü","%fc",$text); 
+  $text = str_replace("â","%E2",$text); 
+  $text = str_replace("ç","%E7",$text); 
+  $text = str_replace("ô","%F4",$text); 
+ return $text;
+}
+

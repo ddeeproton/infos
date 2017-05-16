@@ -1,0 +1,100 @@
+'====================================================================
+' Description: Ce script lance les webalizers en limitant le nombre d'executions simultanés
+'====================================================================
+
+  const NbrProcessusMax = 5
+  const DossierPrincipal = "D:\RESTORE_TEMP\accounts"
+  const webalizerDir = "WWW\Webalizer"
+  const webalizer = "webalizer.exe"
+
+
+
+  Sub EcrireDansFichierText(fichier, contenu)
+    Dim fileWriter, fso
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set fileWriter = fso.OpenTextFile(fichier, 2, True)
+    fileWriter.WriteLine contenu
+    Set fileWriter = Nothing
+    Set fso = Nothing
+  end Sub
+  
+'====================================================================
+
+  ' Lance le webalizer (retourne zero si pas d'erreur)
+  Function LancerAppli(Executable,Dossier,ExecEnArrierePlan)
+    strComputer = "."
+    Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+    Set objStartup = objWMIService.Get("Win32_ProcessStartup")
+
+    Const HIDDEN_WINDOW = 12
+    Set objConfig = objStartup.SpawnInstance_
+    
+    if ExecEnArrierePlan then
+      objConfig.ShowWindow = HIDDEN_WINDOW
+    end if
+    Set objProcess = GetObject("winmgmts:root\cimv2:Win32_Process")
+    errReturn = objProcess.Create(Executable, Dossier, objConfig, intProcessID)
+    LancerAppli = errReturn
+  End Function
+
+
+
+
+
+'====================================================================
+
+  ' Retourne le nombre de processus en train de tourner
+  Function NbrProcessusAyantCommeNom(NomDuProcessus)
+    strComputer = "."
+    Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+    Set colProcessList = objWMIService.ExecQuery("Select * from Win32_Process Where Name = '" & NomDuProcessus & "'")
+    NbrProcessusAyantCommeNom = colProcessList.count
+    Set objWMIService = Nothing
+    Set colProcessList = Nothing
+  End Function
+
+
+
+'====================================================================
+
+  ' Fonction main (ici que le programme commence)
+  sub LancerLesWebalizers  
+    Dim fc, f, fso
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set f = fso.GetFolder(DossierPrincipal)
+    'peut prendre  f.Files ou f.SubFolders
+    set fc = f.SubFolders
+    
+    MsgErreurs = ""
+
+    For Each f1 in fc
+     Dossier = DossierPrincipal & "\" & f1.name & "\" &  webalizerDir
+     if LancerAppli(Dossier & "\" & webalizer, Dossier, 0) > 0 then
+       MsgErreurs = MsgErreurs & "[Error] " & f1.name
+     else
+       MsgErreurs = MsgErreurs & "[OK] " & f1.name
+     end if
+     MsgErreurs = MsgErreurs & chr(13) & chr(10)
+     'Reste en attente si on execute trop de programmes
+     do while NbrProcessusAyantCommeNom(webalizer) >= NbrProcessusMax
+       wscript.sleep 200
+     loop
+   Next
+   ' Log les lancements des webalizers dans log.txt
+   EcrireDansFichierText "log.txt", MsgErreurs
+
+   Dim WshShell
+   Set WshShell = WScript.CreateObject("WScript.Shell")
+   ' Affiche le fichier log.txt
+   LancerAppli "notepad.exe log.txt", WshShell.CurrentDirectory, 0
+   wscript.sleep 800
+   wscript.echo "Execution des Webalizers terminée! "&chr(13)&chr(10)&"L'historique est affiché dans le Notepad qui vient de se lancer (log.txt)."
+   Set fc = Nothing
+   Set f = Nothing
+  end sub
+
+  ' Lance le programme
+  LancerLesWebalizers
+
+'====================================================================

@@ -1,0 +1,19 @@
+
+  for diviseur := 2 to (StrToInt(Edit1.Text)-1) do
+  begin
+      reste := StrToInt(Edit1.Text) mod diviseur;
+      if reste = 0 then
+      begin
+        Prem := false;
+        break;
+      end;
+  end;
+
+  for diviseur := 2 to (Nb-1) do
+  begin
+     reste:= Nb mod diviseur;
+  end;
+
+
+  for i:=0 to 9 do
+    MonTableau[i]:=i;

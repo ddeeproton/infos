@@ -1,0 +1,37 @@
+[sous Linux]¨
+mettez vous en root et entrez les commandes suivantes :
+
+echo 1 > /proc/sys/net/ipv6/conf/all/use_tempaddr
+
+echo 1 > /proc/sys/net/ipv6/conf/default/use_tempaddr
+
+echo 1 > /proc/sys/net/ipv6/conf/eth0/use_tempaddr
+
+Pour faire en sorte que ce paramètre soit actif à chaque boot, c'est presque comme pour MacOSX, il faut ajouter la ligne suivante au fichier /etc/sysctl.d/randomv6.conf (ou autre nom de votre choix)
+
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2
+____________________
+
+[Sous Windows 7]¨
+pour savoir si votre IPv6 est "anonymisée", tapez dans une invite de commande MSDOS :
+
+netsh interface ipv6 show privacy
+
+
+-Pour activer le mode anonymisant IPv6, entrez la commande suivante :
+
+netsh interface ipv6 set privacy state=enabled
+_________________________
+
+[sous OSX (et FreeBSD)]:
+
+sudo sysctl -w net.inet6.ip6.use_tempaddr=1 (pensez à relancer l'interface réseau avec un ifconfig en0 down suivi d'un ifconfig en0 up)
+
+D'ailleurs, pour activer ce paramètre à chaque reboot, pensez à ajouter la ligne suivante dans le fichier /etc/sysctl.conf (créez le si il n'existe pas encore)
+
+net.inet6.ip6.use_tempaddr=1
+
+___________________
+Source
+http://korben.info/ipv6-anonymat.html

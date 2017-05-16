@@ -1,0 +1,3 @@
+
+string[] files = System.IO.Directory.GetFiles(e.FullPath); 
+

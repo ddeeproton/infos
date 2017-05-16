@@ -1,0 +1,5 @@
+<?php
+filter_var("", FILTER_VALIDATE_EMAIL)
+
+checkdate()
+?> 

@@ -1,0 +1,88 @@
+<?php
+// Un exemple de classe
+class MaClasse
+{
+    /**
+     * Fonction de test
+     *
+     * Le premier paramètre doit être un objet de type AutreClasse
+     */
+    public function test(AutreClasse $autreclasse) {
+        echo $autreclasse->var;
+    }
+
+
+    /**
+    * Une autre fonction de test
+    *
+    * Le premier paramètre doit être un tableau
+    */
+    public function test_array(array $input_array) {
+        print_r($input_array);
+    }
+    
+    /**
+     * Le premier paramètre doit être un itérateur
+     */
+    public function test_interface(Traversable $iterator) {
+        echo get_class($iterator);
+    }
+    
+    /**
+     * Le premier paramètre doit être une fonction de rappel (callable)
+     */
+    public function test_callable(callable $callback, $data) {
+        call_user_func($callback, $data);
+    }
+}
+
+// Un autre exemple de classe
+class AutreClasse {
+    public $var = 'Bonjour le monde!';
+}
+?>
+==== USE =====
+<?php
+// Une instance de chaque classe
+$maclasse = new MaClasse;
+$autreclasse = new AutreClasse;
+
+// Erreur fatale : Argument 1 doit être un objet de la classe AutreClasse
+$maclasse->test('salut');
+
+// Erreur fatale : Argument 1 doit être une instance de AutreClasse
+$foo = new stdClass;
+$maclasse->test($foo);
+
+// Erreur fatale : Argument 1 ne doit pas être null
+$maclasse->test(null);
+
+// Fonctionne : Affiche 'Bonjour le monde!'
+$maclasse->test($autreclasse);
+
+// Erreur fatale : Argument 1 doit être un tableau
+$maclasse->test_array('a string');
+
+// Fonctionne : Affiche le tableau
+$maclasse->test_array(array('a', 'b', 'c'));
+
+// Fonctionne : Affiche ArrayObject
+$maclasse->test_interface(new ArrayObject(array()));
+
+// Fonctionne : Affiche int(1)
+$maclasse->test_callable('var_dump', 1);
+?>
+
+============== Le typage objet autorise la valeur NULL : ============
+
+<?php
+
+/* On accepte la valeur NULL */
+function test(stdClass $obj = NULL) {
+
+}
+
+test(NULL);
+test(new stdClass);
+
+?>

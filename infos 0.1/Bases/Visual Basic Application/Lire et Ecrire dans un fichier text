@@ -1,0 +1,16 @@
+'Lire
+  
+Dim objstreamreader as system.io.streamreader 
+openfiledialog1.showdialog() 'affiche la boite de dialogue pour recherche un fichier' 
+objstreamreader=system.io.file.opentext(openfiledialog1.filename) 
+textbox1.text=objstreamreader.readtoend() 
+objstreamreader.close() 
+  
+
+ 'Ecrire 
+    Private Sub EcrireDansFichier(ByVal fichier As String, ByVal contenu As String)
+        Dim objstreamwriter As System.IO.StreamWriter
+        objstreamwriter = System.IO.File.AppendText(fichier)
+        objstreamwriter.writeline(contenu)
+        objstreamwriter.close()
+    End Sub

@@ -1,0 +1,15 @@
+
+' Executer et ne pas attendre
+Sub exec_and_continue(exec)
+	set WshShell = createObject("WScript.shell")
+	Wshshell.run exec
+end sub
+
+' Executer et attendre
+Sub exec_and_wait(exec)
+	Set WshShell = WScript.CreateObject("WScript.Shell")
+	WshShell.run exec, 1, true
+end sub
+
+'exec_and_continue "C:\WINDOWS2\system32\calc.exe"
+'exec_and_wait "C:\WINDOWS2\system32\calc.exe"

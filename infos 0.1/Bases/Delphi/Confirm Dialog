@@ -1,0 +1,2 @@
+    if MessageDlg('Etes-vous sûr de vouloir quitter?',  mtConfirmation, [mbYes, mbNo], 0) = IDNO then
+      Exit; // exit si on ne veut pas supprimer.

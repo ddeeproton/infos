@@ -1,0 +1,5 @@
+
+foreach ($argv as $agument)
+{
+
+}

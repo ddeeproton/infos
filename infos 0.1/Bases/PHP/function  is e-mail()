@@ -1,0 +1,10 @@
+   function isemail($email)
+   {
+       // regx to test for valid e-mail adres
+       $regex = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]{2,})+$';
+
+       if (eregi($regex, $email)) 
+         return true;
+       else 
+         return false;
+   }

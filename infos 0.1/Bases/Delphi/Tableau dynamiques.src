@@ -1,0 +1,18 @@
+  TableauDynamiqueMultiple : array of array of integer;
+begin
+  SetLength(TableauDynamiqueMultiple, 2); // nombre de ligne
+  SetLength(TableauDynamiqueMultiple[0], 8); // nombre de colonne de la ligne 1
+  SetLength(TableauDynamiqueMultiple[1], 8); // nombre de colonne de la ligne 2
+  
+  TableauDynamiqueMultiple[0,0] := 5;
+  TableauDynamiqueMultiple[0,1] := 3;
+  ...
+  TableauDynamiqueMultiple[0,7] := 15;
+  TableauDynamiqueMultiple[1,0] := 5;
+  TableauDynamiqueMultiple[1,1] := 3;
+  ...
+  TableauDynamiqueMultiple[1,7] := 15;
+  for i:=0 to 1 do
+    for j:=0 to 2 do
+        writeln(TableauDynamiqueMultiple[i,j]);
+  Readln;

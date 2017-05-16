@@ -1,0 +1,2 @@
+Cacher application de la barre des taches
+SetWindowLong(Application.Handle, GWL_EXSTYLE, WS_EX_TOOLWINDOW);

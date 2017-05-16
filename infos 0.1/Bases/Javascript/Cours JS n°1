@@ -1,0 +1,39 @@
+// Cours JS n°1 (18 juillet 2016)
+
+
+// STRUCTURE d'un jeu de dame
+
+// Check coups possibles
+//   Pour chacun de nos pions, vérifie les coups possibles (si case libre et occupé) 
+		Si occupé, 
+			Check si on peut manger le pion
+				Si oui mange le pion
+				Si non passe au pion suivant
+		Si pas occupé
+			Check si on va se faire manger en avancant le pion
+			
+			
+			
+			/*
+	
+	
+	
+	DEVOIRS
+	-Chercher une idée d'un programme qu'on pourrait découper en petite instruction
+	
+	-Faire le diagrame d'un programme de chat ou l'utilisateur parle avec le PC
+	
+	infos:
+	-pour dessiner un algorithme, le prof recommande -> Flowcharts (ou http://draw.io)
+	
+	
+	Legende d'un logigrame
+	-- (Bloc conditionel) les losanges veut dire le test (if)
+	-- (bloc lecture écriture) un rectangle avec les bords à 45°
+	-- (bloc appel d'un sous programme) permet d'appeller un autre logigrame (un rectangle droit avec sur les côtés deux traits au lieu d'un)
+	
+	
+	email du prof: 
+	leo.jpod(at)gmail.com
+	
+	

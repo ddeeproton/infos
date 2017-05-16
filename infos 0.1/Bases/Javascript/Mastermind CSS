@@ -1,0 +1,13 @@
+[data-role="mastermind-board"] {
+
+}
+[data-role="pins"] {
+    /*display: table-row;*/
+}
+[data-role="pin"] {
+    /*border: solid 1px black;*/
+    /*width: 20%;*/
+    /*display: table-cell;*/
+    /*height:0;*/
+    /*padding-bottom: 20%;*/
+}

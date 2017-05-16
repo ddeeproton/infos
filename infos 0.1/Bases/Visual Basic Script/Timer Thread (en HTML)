@@ -1,0 +1,29 @@
+<HEAD>
+<TITLE>Loading REQ77</TITLE>
+<HTA:APPLICATION
+  WindowsState = "normal"
+/>
+<script type="text/vbscript">
+
+Dim i, iTimerID
+Dim YourArray(50)
+Sub window_OnLOad
+  i = 0
+  iTimerID = window.setInterval("Looping",100)
+End Sub
+
+Sub Looping
+  If i <= UBound(YourArray) Then
+    Junk.InnerText = "Proccessing " & Cstr(i+1)
+    'Code for whatever you're doing with the array here
+    i = i + 1
+  Else
+    window.clearInterval(iTimerID)
+  End If
+End Sub
+</script></HEAD>
+
+
+<body>
+<span id="Junk"></span>
+</body>

@@ -1,0 +1,6 @@
+  // Executer sans attendre
+  pclose(popen("start /b \"titre\" \"".$thispath."\\curl.exe.bat\"", "w"));
+
+  // Executer et attendre
+  $exe = $thispath."\Quake3.bat";
+  exec("start /b \"titre\" \"".$exe."\"");

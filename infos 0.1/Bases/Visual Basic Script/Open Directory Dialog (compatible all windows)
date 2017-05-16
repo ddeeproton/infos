@@ -1,0 +1,36 @@
+' ----------------------------------------------------------
+' Script VBS de boite de dialogue de sélection de dossier
+' JC BELLAMY © 2001
+' ----------------------------------------------------------
+BIF_returnonlyfsdirs   = &H0001
+BIF_dontgobelowdomain  = &H0002
+BIF_editbox            = &H0010
+BIF_validate           = &H0020
+BIF_browseforcomputer  = &H1000
+
+Dim shell, item
+Set shell = WScript.CreateObject("Shell.Application")
+flag=BIF_returnonlyfsdirs 
+titre="Test de sélection de dossier"
+Set Item = shell.BrowseForFolder(0,titre,flag, dirinit)
+If isvalue(Item) Then
+	Result=Item.Title
+' Test si on a sélectionné la racine d'une partition 
+	If InStr(1,Result,":")=0 Then
+		Result=Item.ParentFolder.ParseName(Item.Title).Path
+		End If
+	wscript.echo "On a choisi : " & Result
+else
+	wscript.echo "On a appuyé sur Annuler"	
+	End If
+Wscript.quit
+'--------------------------------------------------------------
+' Test de validité de l'objet retourné par BrowseForFolder
+' On ne peut pas utiliser "IsObject", qui retourne toujours "true"
+Function IsValue(obj)
+Dim tmp
+On Error Resume Next
+tmp = " " & obj
+If Err <> 0 Then IsValue = False Else IsValue = True
+On Error GoTo 0
+End Function

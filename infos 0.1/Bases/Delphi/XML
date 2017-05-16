@@ -1,0 +1,16 @@
+procedure TForm1.ButtonSaveClick(Sender: TObject);
+begin
+  XMLDocument1.Active:=True;
+  XMLDocument1.Options = [doNodeAutoCreate,doNodeAutoIndent,doAttrNull,doAutoPrefix,doNamespaceDecl];
+  XMLDocument1.AddChild('data');
+  XMLDocument1.ChildNodes['data'].AddChild('ta2').Text :='http://www.geocaching.com/seek/cache_details.aspx?wp=GCN3Q4';
+  XMLDocument1.ChildNodes['data'].AddChild('ta3').Text :='qwe';
+  XMLDocument1.SaveToFile('essaai.xml');
+end;
+
+procedure TForm1.ButtonLoadClick(Sender: TObject);
+begin;
+  XMLDocument1.LoadFromFile('essaai.xml');
+  ShowMessage(XMLDocument1.ChildNodes['data'].ChildNodes['ta2'].Text);
+  ShowMessage(XMLDocument1.ChildNodes['data'].ChildNodes['ta3'].Text);
+end;

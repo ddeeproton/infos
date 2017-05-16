@@ -1,0 +1,26 @@
+// on left click, show selected
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            try
+            {
+                MessageBox.Show(treeView1.SelectedNode.Text);
+            }
+            catch (Exception e2)
+            {
+            }
+        }
+        
+// on right click, select element
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right) treeView1.SelectedNode = e.Node;
+        }
+
+
+// clear content
+treeView1.Nodes.Clear();
+
+// add content
+TreeNode n= new TreeNode("parent text");
+n.Nodes.Add("children text");
+treeView1.Nodes.Add(n);

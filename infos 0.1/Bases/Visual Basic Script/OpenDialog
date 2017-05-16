@@ -1,0 +1,8 @@
+' OpenDialog (selectionne un fichier)
+set cdl1 = CreateObject("MSComDlg.CommonDialog")
+cdl1.Filter = "Text (*.txt)|*.txt|Test (*.tst)|*.tst|All files|*"
+cdl1.InitDir = "c:\"
+cdl1.MaxFileSize = 10000
+cdl1.showopen()
+' filename will be empty if user hits Cancel
+MsgBox cdl1.filename

@@ -1,0 +1,73 @@
+<?php
+$fichier_envoi = "envoie.txt";
+$fichier_reception = "recois.txt";
+
+error_reporting(E_ALL);
+
+set_time_limit(0);
+ob_implicit_flush();
+
+$address = '62.167.104.120';
+$port = 5001;
+//********************////////////////////////////////////////
+function envoi_au_jumeau($texte)
+{
+  global $address;
+  
+  $service_port = 5001;
+
+  /* Cree une socket TCP/IP. */
+  $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+  $result = socket_connect($socket, $address, $service_port);
+  socket_write($socket, $texte, strlen($texte));
+  socket_close($socket);
+
+}
+//********************////////////////////////////////////////
+//          ** DEBUT **
+$master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+socket_set_option($master, SOL_SOCKET,SO_REUSEADDR, 1); 
+$ret = socket_bind($master, null, $port);
+$ret = socket_listen($master, 5);
+
+$read_sockets = array($master);
+
+while (true) {
+   $changed_sockets = $read_sockets;
+   $num_changed_sockets = socket_select($changed_sockets, $write = NULL, $except = NULL, null);
+   foreach($changed_sockets as $socket) {
+
+
+               // adresse IP du client
+               @socket_getpeername($socket, &$adresseIP);
+
+       if ($socket == $master) {
+           if (($client = socket_accept($master)) < 0) {
+               echo "socket_accept() failed: reason: " . socket_strerror($msgsock) . "\n";
+               continue;
+           } else {
+               array_push($read_sockets, $client);
+           }
+       } else {
+           $bytes = @socket_recv($socket, $buffer, 2048, 0);
+           if ($bytes == 0) {
+               $index = array_search($socket, $read_sockets);
+               unset($read_sockets[$index]);
+               socket_close($socket);
+           } else {
+               $allclients = $read_sockets;
+               array_shift($allclients);    // remove master
+               //handle_client($allclients, $socket, $buffer, $bytes);
+               //envoi_au_jumeau($buffer);
+	       foreach($allclients as $client) 
+               {   
+                     @socket_getpeername($client, &$adresseIPclient);
+                     socket_write($client, "  ".$buffer);
+               }
+               
+           }
+       }       
+   }
+}
+
+?>

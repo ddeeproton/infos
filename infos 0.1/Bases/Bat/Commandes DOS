@@ -1,0 +1,38 @@
+
+KEYB    Changer le type de clavier
+DIR     Afficher la liste des dossiers et fichiers ..
+CD      Changer de répertoire
+MKDIR   Créer un répertoire
+MD      Créer un répertoire
+FDISK   Créer et afficher les partitions
+FORMAT  Formater un disque
+COPY    Copier des fichiers
+XCOPY   Copier des fichiers et des répertoires
+REN     Renommer
+EDIT    Editer un fichier texte ou batch
+TYPE                Afficher un fichier texte
+MORE                Afficher un long fichier texte
+DEL                 Effacer un fichier
+DELTREE             Effacer un répertoire
+IF EXIST            Si le fichier ou répertoire existe
+IF NOT EXIST        Si le fichier ou répertoire n'existe pas
+REM                 Ligne à commentaires
+TYPE Fichier.txt    Affiche le contenu d'un fichier text
+
+@SET DESTIN=coucou Affecte coucou à la variable DESTIN
+@ECHO %DESTIN%     Affiche le contenu de la variable DESTIN soit coucou 
+
+@ECHO Affiche tous les documents *.txt et *.doc
+@FOR %%a IN (*.TXT *.DOC) DO @ECHO %%a
+
+@ECHO Sauvegarde du disque C:
+%windir%\system32\ntbackup backup C:\ "c:\incremental.bks" /F "c:\full.bkf" /V:yes /M n /J "Complet C"
+
+@ECHO Sauvegarde de l'état du systeme
+%windir%\system32\ntbackup backup systemstate /f c:\systemstate.bkf /l:n
+
+@ECHO Connection d'un lecteur distant
+net use h: \192.168.0.2\c$ /user:DOMAINE\NomUtilisateur
+
+
+

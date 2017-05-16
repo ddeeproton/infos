@@ -1,0 +1,50 @@
+//---------------------------------------------------------------------------
+
+#pragma hdrstop
+
+//---------------------------------------------------------------------------
+
+//#pragma argsused
+//#pragma hdrstop
+//#pragma argsused
+#include <stdlib.h>
+#include <stdio.h> // accès à la librairie standard input/output
+#include <conio.h> // accès à la librairie input/output   (getch() etc..)
+//#include <ctype.h> // ToUpper() qui permet de mettre tout en majuscule
+
+const char TVoyelles[] = {'A','E','I','O','U','Y'};
+
+int main(int argc, char* argv[])
+{
+   #define MAX_TAB  56
+   char TLettres[MAX_TAB];
+   int CntVoyelles[sizeof(TVoyelles)] = {0,0,0,0,0,0};
+   int CntTotal, i, j, k;
+
+   randomize();
+   for(i=0; i<MAX_TAB;i++)
+   {
+     TLettres[i] = random('Z'-'A')+'A';
+     printf("%c\n",TLettres[i]);
+   }
+
+   printf("------------------------\n");
+   //recherche le nombre de voyelles
+   for(i=0; i<MAX_TAB;i++)
+   {
+     for(j=0; j<sizeof(TVoyelles);j++)
+     {
+        if (TLettres[i] == TVoyelles[j])
+          CntVoyelles[j]++;
+     }
+   }
+
+   // Affiche le résultat du comptage des voyelles
+   for(i=0; i<sizeof(TVoyelles);i++)
+   {
+     printf("%c %d\n", TVoyelles[i], CntVoyelles[i]);
+   }
+   getch();
+        return 0;
+}
+//---------------------------------------------------------------------------

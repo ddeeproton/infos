@@ -1,0 +1,23 @@
+// UPLOAD
+$message_uploadedfile = "";
+if(isset($_FILES['uploadedfile'])  && $config['admin_allow_edition'] == true  ) {
+	foreach($_FILES['uploadedfile']['name'] as $n => $name) {
+		if(!empty($name)) {
+			$target_path = 'DATA/gallery/'.$name;
+			if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'][$n], $target_path)) {
+				$message_uploadedfile .= "[OK copié] ";
+				header('Location: videos_photos.php'); 
+			} else {
+				$message_uploadedfile .= "[Erreur à la copie] ";
+			}
+			$message_uploadedfile .= '<i>'.$name.'</i><br>';
+		}
+	}
+}
+
+
+<form action="" method="post" enctype="multipart/form-data">
+	<b>Select images: </b>
+	<input type="file" name="uploadedfile[]" accept="image/jpeg" multiple>
+	<input type="submit" value="Envoyer les fichiers" />
+</form>

@@ -1,0 +1,28 @@
+txt := StringReplace(txt, 'find', 'replace', [rfReplaceAll, rfIgnoreCase]);
+
+
+
+// Cherche et remplace dans un texte
+Function findAndReplace(find:String; replace:string; txt:String):String;
+var
+  difference, fLen, rLen, i, compteur : integer;
+  txtAvant, txtApres : String;
+begin
+  i := 1;
+  compteur := 0;
+  fLen := length(find);
+  rLen := length(replace);
+  difference := rLen - fLen;
+  while i <> length(txt) do begin
+    if txt[i] = find[1] then
+      if copy(txt,i,length(find)) = find then begin
+        txtAvant := copy(txt, 1, i-1 );
+        txtApres := copy(txt, i+fLen, length(txt)-fLen-i+1);
+        txt := txtAvant + replace + txtApres;
+        i := i + difference;
+        inc(compteur);
+      end;
+    inc(i);
+  end;
+  result := txt;
+end;

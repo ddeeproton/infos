@@ -1,0 +1,16 @@
+if(){}else{}
+
+for(i=0;i<=20;i++){}
+
+while(i<=20){}
+
+switch(var){
+  case 0 :
+    var++;
+  break;
+  case 1 :
+    var++;
+  break;
+  default :
+    var++;
+}

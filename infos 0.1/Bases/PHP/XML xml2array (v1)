@@ -1,0 +1,85 @@
+<?php
+/*
+UTILISATION :
+=============
+$file1 = "data.xml";
+$file2 = "data2.xml";
+
+// Lecture
+$xml = filexml2array($file1);
+
+// Ecriture
+ecrire($file2, array2xml($vals));
+
+// convertion 
+$tabData = xml2array($xml);
+
+// Données
+echo "<pre>";
+print_r ($vals);
+echo "</pre>";
+
+*/
+
+
+function filexml2array($file) {
+	$fp = fopen($file, "r");
+	$xml = fread($fp, filesize($file));
+	fclose($fp);
+	return xml2array($xml);
+}
+
+
+function xml2array($xml) {
+	$xml_parser = xml_parser_create();
+	xml_parse_into_struct($xml_parser, $xml, $vals, $index);
+	xml_parser_free($xml_parser);
+	return $vals;
+}
+
+
+
+function array2xml($xmlary){
+	$o='';
+	foreach($xmlary as $tag ){
+		if($tag['tag'] == 'textarea' && !isset($tag['value'])){
+			//fake a value so it won't self close
+			$tag['value']='';
+		}
+
+		switch($tag['type']){
+			case 'complete':
+			case 'open':
+				$o.='<'.$tag['tag'];
+				//attributes
+				if(isset($tag['attributes'])){
+					foreach($tag['attributes'] as $attr=>$aval){
+						$o.=' '.$attr.'="'.$aval.'"';
+					}
+				}
+				
+				if($tag['type'] == 'complete'){
+					if(!isset($tag['value'])){
+						$o .= ' />';
+					} else {
+						$o .= '>'.$tag['value'].'</'.$tag['tag'].'>';
+					}
+				}else{ // type = open
+					$o .= '>';
+				}
+				
+			break;
+			case 'close':
+				$o .= '</'.$tag['tag'].'>';
+			break;
+			case 'cdata': // tab space and return line
+				$o .= $tag['value'];
+			break;
+		}
+	}
+	return $o;
+} 
+
+
+
+?>

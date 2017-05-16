@@ -1,0 +1,6 @@
+Show databases;
+use MyTable;
+Show tables;
+Desc MyTable; // donne la structure de la table
+Select Distinct * from MyTable;
+quit;

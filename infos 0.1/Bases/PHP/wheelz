@@ -1,0 +1,20 @@
+-[done] contacter rajouter le champs pays en obligatoire de répondre
+-[done] que le message cookie soit fixed en bottom right
+-[done] que le champ email remplace webmaster comme envoyeur
+-[done] BUG le chemin ne doit pas être visible pour le publique
+-[done] savoir depuis quel page ils ont cherché à le contacter (en particulier le titre du wheelz!!)
+-[done] rajouter le champs sujet pour l'email dans contact
+-[done] combine video et photo ensemble et fait que ça descend par l'ancre # 
+-[done] sur le menu à droite essayer que ça soit trié dans le même ordre que le menu des wheelz
+-[occasion désactivé pour le moment]pour occasion mettre un message + formulaire de contact
+-[done] à la place de "vide" dans article.php?article=2 mettre le formulaire de contact et enlever les SELECT.
+-[done] mettre partout contact et enlever les prix
+	-> contact s'active ou se désactive dans l'admin
+-[done] Bug avec les langues
+-[done] rajouter "voltage" dans les champs SELECT a filter (>67.4v, >80v)
+-[done] qu'on puisse editer sur les pages les champs de recherche (SELECT) 
+
+-Si possible faire que la gallerie puisse être classable dans un groupe et qu'on voit le groupe des photos en premier
+
+
+-Si possible centrer les SELECT

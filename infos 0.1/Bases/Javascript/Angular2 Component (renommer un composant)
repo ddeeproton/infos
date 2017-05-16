@@ -1,0 +1,2 @@
+
+import { Component as MonNomDuComposant } from '@angular/core';

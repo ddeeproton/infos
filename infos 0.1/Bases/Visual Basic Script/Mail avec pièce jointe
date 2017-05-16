@@ -1,0 +1,24 @@
+
+' VISUAL BASIC SCRIPT (VBS) script d'envoi de Mail avec pièce jointe
+
+    Const ForReading = 1, ForWriting = 2, ForAppending = 8
+    Dim fso, f
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set f = fso.OpenTextFile("Resultat.rtf", ForReading)
+    BodyText = f.ReadAll
+    f.Close
+    Set f = Nothing
+    Set fso = Nothing
+
+    Set objEmail = CreateObject("CDO.Message")
+    objEmail.From = "backup@deckpoint.com"
+    objEmail.To = "production@deckpoint.com"
+    objEmail.Subject = "Rapport des backups"
+    objEmail.Textbody = BodyText
+    objEmail.AddAttachment "file://C:\disque A.png"
+    objEmail.AddAttachment "file://C:\disque C.png"
+    objEmail.AddAttachment "file://C:\Aujourd'hui_02.10.2006.txt"
+    objEmail.AddAttachment "file://C:\Semaine_passée_25.09.2006.txt"
+    objEmail.Send
+    Set objEmail = Nothing
+  

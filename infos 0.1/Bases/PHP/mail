@@ -1,0 +1,9 @@
+<?php
+
+function mailto($to, $title,$message, $from = "", $smtp = ""){
+	if($smtp != "") ini_set("SMTP", $smtp);
+	if($from != "") ini_set("sendmail_from", $from);
+	@mail($to, $title, $message);
+}
+
+?>

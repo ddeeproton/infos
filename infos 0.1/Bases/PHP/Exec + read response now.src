@@ -1,0 +1,11 @@
+<?php
+//Regarding swbrown's comment...you need to use an output buffer if you don't want the data displayed.
+
+//For example:
+ob_start();
+passthru("<i>command</i>");
+$var = ob_get_contents();
+ob_end_clean(); //Use this instead of ob_flush()
+
+//This gets all the output from the command, and exits without sending any data to stdout.
+?>

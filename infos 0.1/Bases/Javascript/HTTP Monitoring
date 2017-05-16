@@ -1,0 +1,112 @@
+<html>
+<body>
+
+
+<h1>Proxy tester</h1>
+<h2>Légende</h2>
+<div class="tableIP">
+	<ul>
+		<li><div class="green statusColor"></div><input type="text" value="Actif" /></li>
+		<li><div class="red statusColor"></div><input type="text" value="Inactif" /></li>
+		<li><div class="orange statusColor"></div><input type="text" value="Lent" /></li>
+		<li><div class="gray statusColor"></div><input type="text" value="Pas testé" /></li>
+		<li><div class="white statusColor"></div><input type="text" value="Test en cours" /></li>
+	</ul>
+	<div class="clr"></div>
+</div>
+<div class="clr"></div>
+
+<textarea id="listIP"></textarea>
+<input type="button" id="btnRefresh" value="Tester les proxies" />
+<div class="tableIP" id="result"></div>
+<div class="clr"></div>
+
+<script type="text/javascript">
+
+	function testUrl(url, onsuccess, onerror) {
+		if(url == "") return;
+		var iframe = document.createElement("iframe");
+		iframe.style.display = "none";
+		var timer = setTimeout(function(){
+			onerror(url);
+		}, 30000);
+		var color = "green";
+		var timerColor = setTimeout(function(){
+			color = "orange";
+		}, 10000);
+		iframe.onload = function(){
+			clearTimeout(timer);
+			onsuccess(url, color);
+		};
+		iframe.src = "http://"+url;
+		document.body.appendChild(iframe);
+	}
+	
+	
+	function testUrls(listURL){
+		buildTable(listURL);
+		var listLi = document.querySelectorAll("#result ul li div");
+
+		var currentIndex = 0;
+		var timerInt = setInterval(function(){
+			var i = currentIndex;
+			listLi[i].className = "white statusColor";
+			testUrl(
+				listURL[i],
+				function (url, color){
+					listLi[i].className = color+" statusColor";
+					console.log(url + " online");
+				},
+				function (url){
+					listLi[i].className = "red statusColor";
+					console.log(url + " offline");
+				}
+			);
+			currentIndex++;
+			if(currentIndex > listURL.length-1){
+				clearInterval(timerInt);
+			}
+		}, 3000);
+	}
+	
+	function buildTable(listURL){
+		var html = "<ul>";
+		for(var i in listURL){
+			if(listURL[i] == "") continue;
+			html += '<li><div class="gray statusColor"></div><input type="text" value="'+listURL[i]+'" /></li>';
+		}
+		html += "</ul>";
+		document.getElementById("result").innerHTML = html;
+	}
+	
+	document.getElementById("btnRefresh").onclick = function() {
+		var content = document.getElementById("listIP").value;
+		testUrls(content.split("\n"));
+	};
+</script>
+
+<style>
+body{background-color:black;color:white;background-image:linear-gradient(0deg, #333, #555)}
+input{background:black;color:white;width:200px;}
+.clr, hr {clear:both;}
+
+.tableIP {margin-bottom:30px;}
+.tableIP ul {padding:0;margin:0;outline:0;}
+.tableIP ul li {list-style:none;}
+.tableIP ul li,
+.item {float:left;margin:10px;padding:10px;border:2px solid #ccc;border-radius:3px;}
+.item input {margin-left:10px;}
+
+.statusColor {float:left;border-radius:10px;width:10px;height:10px;margin-top:6px;}
+.green {background:green;}
+.red {background:red;}
+.gray {background:gray;}
+.orange {background:orange;}
+.yellow {background:yellow;}
+.white {background:white;}
+
+textarea#listIP {width:70%;height:300px;}
+</style>
+
+</body>
+</html>

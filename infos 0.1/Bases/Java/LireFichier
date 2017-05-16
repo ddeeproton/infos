@@ -1,0 +1,171 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.text.DecimalFormat;
+import javax.swing.*;
+import com.deitel.cpej4.ch16.*;
+
+public class LireFichierDirect extends JFrame {
+	private IUBanque interfaceUtilisateur;
+	private RandomAccessFile entree;
+	private JButton boutonSuivant, boutonOuvrir;
+
+	public LireFichierDirect()
+	{
+		super( "Lecture du fichier clients" );
+
+		//Créer l'instance de l'interface utilisateur réutilisable.
+		interfaceUtilisateur = new IUBanque( 4 ) ; // 4 champs texte
+		getContentPane().add( interfaceUtilisateur );
+
+		//configurer le bouton générique executerTache1 de IUBanque.
+		boutonOuvrir = interfaceUtilisateur.getBoutonExecuterTache1();
+		boutonOuvrir.setText( "Ouvrir fichier en lecture..." );
+
+		//Inscrire écouteur pour appeler ouvrirFichier sur pression
+		boutonOuvrir.addActionListener(
+
+			//Classe interne anonyme de gestion des évén. de boutonOuvrir.
+			new ActionListener() {
+
+				//Permettre à l'utilisateur de choisir le fichier à ouvrir.
+				public void actionPerformed( ActionEvent evenement )
+				{
+					ouvrirFichier();
+				}
+			}
+		);
+
+		boutonSuivant = interfaceUtilisateur.getBoutonExecuterTache2();
+		boutonSuivant.setText( "Suivant" );
+		boutonSuivant.setEnabled( false );
+
+		//inscrire écouteur pour appeler lireEnregistrement sur pression.
+		boutonSuivant.addActionListener(
+
+			//classe interne anonyme de gestion de boutonSuivant.
+			new ActionListener() {
+			
+				//lire enregistrement lors d'un clic sur boutonSuivant.
+				public void actionPerformed ( ActionEvent evenement )
+				{
+					lireEnregistrement();
+				}
+			}
+		);
+
+		//inscrire écouteur de fenêtre pourévement de fermeture.
+		addWindowListener(
+
+			//classe interne anonyme de gestion de l'évén. windowClosing.
+			new WindowAdapter() {
+
+				public void windowClosing ( Windowevent evenement )
+				{
+					fermerFichier();
+				}
+			}
+		);
+		setSize ( 300, 150 );
+		show();
+	}
+
+	//Permettre à l'utilisateur de choisir le fichier à ouvrir.
+	private void ouvrirFichier()
+	{
+		//Afficher dialogue de choix de fichier à l'utilisateur.
+		JFileChooser choixDeFichier = new JFileChooser();
+		choixDeFichier.setFileSelectionMode( JfileChooser.FILES_ONLY );
+
+		int resultat = choixDeFichier.showOpenDialog( this );
+
+		// si l'utilisateur clique sur le bouton Annuler du dialogue, alors quitter
+		if ( resultat == JFileChooser.CANCEL_OPTION )
+			return;
+
+		//Récupérer le fichier sélectionné.
+		File nomDeFichier = choixDeFichier.getSelectedFile();
+
+		//Affichier une erreur si nom de fichier non valable.
+		if ( nomDeFichier == null || nomDeFichier.getname().equals( "" ) )
+			JOptionPane.showMessageDialog( this, "Nom de fichier incorrect", "Nom de fichier incorrect", JOptionPane.ERROR_MESSAGE );
+		else
+		{
+			//Ouvrir le fichier.
+			try{
+				entree = new RandomAccessFile( nomDeFichier, "r");
+				boutonSuivant.selected ( true );
+				boutonOuvrir.setEnabled( false );
+			}
+
+			//capturer toute exception à l'ouverture du fichier.
+			catch ( IOException ioException ) {
+				JOptionPane.showMessageDialog( this, "Fichier inexistant", "Nom de fichier incorrect", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	public void lireEnregistrement()
+	{
+		DecimalFormat deuxChiffres = new DecimalFormat( "0.00" );
+		EnregistrementCompteAccesDirect enregistrement = new EnregistrementCompteAccesDirect();
+
+		//lire un enregistrement et l'afficher.
+		try {
+
+			do {
+				enregistrement.lire( entree );
+			} while ( enregistrement.getCompte() == 0 );
+			
+			String valeurs[] = {
+				String.valueOf( enregistrement.getCompte() ),
+				enregistrement.getPrenom(),
+				enregistrement.getNom(),
+				String.valueOf( enregistrement.getSolde() ) };
+			interfaceUtilisateur.setValeursChamps( valeurs );
+		}
+	
+		//Fermer le fichier lorsqu'on atteint la fin du fichier.
+		catch ( EOFException eofException ) {
+			JOptionPane.showMessageDialog( this, "Pas d'autre enregistrement", "Fin de fichier atteinte",
+							JoptionPane.INFORMATION_MESSAGE );
+			fermerFichier();
+		}
+
+		// Traiter les exceptions en cas de problème avec le fichier.
+		catch ( IOException ioException ) {
+			JOptionPane.showMessageDialog( this, "Erreur de lecture du fichier", "erreur", 
+			JOptionPane.ERROR_MESSAGE );
+
+			System.exit( 1 );
+		}
+	}
+
+	//fermer le fichier et achever l'application
+	private void fermerFichier()
+	{
+	
+		// Fermer le fichier et quitter
+		try {
+			if ( entree != null )
+				entree.close();
+			System.exit ( 0 );
+		}
+
+		// Traiter toute exception à la fermeture du fichier.
+		catch ( IOException ioException ) {
+			JOptionPane.showMessageDialog( this, "Erreur de fermeture du fichier", "Erreur", JOptionPane.ERROR_MESSAGE );
+
+			System.exit ( 1 );
+		}
+	}
+	
+	// Executer l'application.
+	public static void main( String args[] )
+	{
+		new LireFichierDirect();
+	}
+}
+
+
+		

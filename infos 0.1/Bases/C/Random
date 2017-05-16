@@ -1,0 +1,3 @@
+#include <stdlib.h>
+randomize();
+TLettres[i] = random('Z'-'A')+'A';

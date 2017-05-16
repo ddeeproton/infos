@@ -1,0 +1,61 @@
+uses Registry;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var i: Integer;
+begin
+  refreshCheckBox(CheckBox1);
+  
+  for i:=0 to ParamCount() do
+    if ParamStr(i) = '/background' then
+      Masquer1Click(nil);
+end;
+
+procedure TForm1.Masquer1Click(Sender: TObject);
+begin
+  Self.Hide;
+  ShowWindow(Application.Handle, SW_HIDE);
+  Application.ShowMainForm := false;
+end;
+
+procedure TForm1.Afficher1Click(Sender: TObject);
+begin
+  Self.Show;
+  ShowWindow(Application.Handle, SW_SHOW);
+  Application.ShowMainForm := true; 
+end;
+
+
+procedure TForm1.refreshCheckBox(Checkbox:TCheckBox);
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create;
+  Reg.RootKey := HKEY_CURRENT_USER;
+  if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion\Run', True) then
+  begin
+    Checkbox.Checked := Reg.ValueExists(ExtractFileName(Application.ExeName));
+    Reg.CloseKey;
+  end;
+  Reg.Free;
+end;
+
+
+procedure TForm1.CheckBox1Click(Sender: TObject);
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create;
+  Reg.RootKey := HKEY_CURRENT_USER;
+  try
+  if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion\Run', True) then
+  begin
+    if TCheckBox(Sender).Checked then
+      Reg.WriteString(ExtractFileName(Application.ExeName), '"'+Application.ExeName+'" /background')
+    else
+      Reg.DeleteValue(ExtractFileName(Application.ExeName));
+    Reg.CloseKey;
+  end;
+  finally
+    Reg.Free;
+  end;
+end;

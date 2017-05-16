@@ -1,0 +1,75 @@
+<?  
+// ************************************************************************ 
+// QUAKE3 , RTCW , ET MASTERSERVER QUERY 
+// ************************************************************************ 
+
+//$ip = "etmaster.idsoftware.com"; $port = 27950; $Protocol = 82;  // ET 
+//$ip = "wolf.idsoftware.com"; $port = 27950; $Protocol = 60;  // RTCW 1.41 
+$ip = "monster.idsoftware.com"; $port = 27950; $Protocol = 68; // Quake 3 
+
+
+$fp = fsockopen("udp://$ip",$port, &$errno, &$errstr, 2);   // Opens connection to server 
+socket_set_timeout($fp,2);  // Socket Timeout 
+
+if (!$fp)   
+{ echo "$errstr ($errno)<br>\n";   }  
+
+else { 
+
+  $query = "ÿÿÿÿgetservers $Protocol";  // Query sendt to server 
+  $i = fwrite($fp,$query); 
+
+
+ // Read all available data from socket 
+ do { 
+     $data = fread ($fp,8192); 
+     if (strlen($data) == 0) { 
+        break; 
+      } 
+     $contents .= $data; 
+ } while(true); 
+
+// Remove ÿÿÿÿgetserversResponse\ and EOT from data 
+$contents = str_replace("ÿÿÿÿgetserversResponse\\", "", $contents);  
+$c = str_replace("EOT", "", $contents);          
+
+   // Decode IP information from packet 
+   $count=0;  
+   $index=0;  
+   while ($index < (strlen($c)-6))   
+    {  
+      // Get Port 
+      // Port is the 5 and 6 character from start point 
+      $tempstring = substr ($c,$index+4,2);   
+      $tempint=unpack("nint",$tempstring);  
+      $port=$tempint['int']; 
+
+      // Get IP 
+      // IP is the first 4 characters from start point 
+      $tempstring = substr ($c,$index,4);    
+
+ // For some reason there is a small number of bad ip's returned by the master server 
+ // This will remove most of them by checking port length    
+ $portcheck = strlen($port); 
+ if ($portcheck > 4 and $portcheck < 6) {    
+       $myip[$count] = ord($tempstring[0]).".".ord($tempstring[1]).".".ord($tempstring[2]).".".ord($tempstring[3]);  
+       $myport[$count]=$tempint['int'];  
+       $count++; 
+ }  
+
+
+   $index += 7;   //Start point for next IP - IP(4) + PORT(2) + \(1) = 7        
+   }   
+
+// Display Serverlist 
+  echo "<HR><B><font size=4>[END - ".count($myip)." Servers Found ]</font></b><BR>";  
+  for ($count=0;$count<(count($myip));$count++) {  
+ echo "<B>$count </B>".$myip[$count].':'.$myport[$count]."<BR>";  
+    
+   } // End of display   
+
+}  // The End 
+
+
+
+?> 

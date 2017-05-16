@@ -1,0 +1,125 @@
+-la Trame: (couche Liaison)
+
+On travaille que sur deux couches: Physique et Liaison:
+
+CSMA: (Carrier Sens Multiple Access)
+Ecoute avant d'envoyer. Si occupé attente aléatoire en fonction du nrb de collisions
+
+CD: (collision detection)
+Ecoute pendant l'envoi, si envoi <> écoute alors envoi "Trame de bourrage"
+
+
+Calculs:
+
+Longueur Max sans hub:
+
+-512 bit = 64 octets (longueur de la trame)
+-10 Mbit/s (débit)
+-200'000 km/s (vitesse de propagation)
+
+66.6% (célérité - dépend de la matière) * 300'000 Km/s (vitesse lumière) = 200'000 km/s (vitesse de propagation)
+
+Longueur max = 4.2
+
+512 / 10* 10^6 = 51.2 micro seconde
+
+51.2 div 2 (pour calucler l'aller seulement)
+
+temp à dispo = 25.6 micro seconde
+
+25.6 * 10 ^-6 * 200'000 = 5.12 Km
+
+La distance max entre les deux pc est de 5.12 km donc.
+
+--------------------------------------------------------------------------------------------
+
+Longueur Max avec hub:
+
+Le hub est plus sensible et capte le siLongueur Max sans hub
+
+Temps à dispo: 
+25.6 - 2.5 = 23.1 micro secondes
+
+Distance max:
+200'000 km/s * 23.1 *10 ^ -6 s = 4.62 km 
+
+
+La distance max entre le pc à diminué en posant un hub
+La distance max entre les deux pc est de 4.62 km.
+
+--------------------------------------------------------------------------------------------
+
+Longueur Max avec deux hub:
+
+Temps à dispo: 
+25.6 - 5 = 20.6 micro secondes
+
+Distance max:
+200'000 km/s * 20.6 *10 ^ -6 s = 4.12 km 
+
+
+La distance entre le pc à diminué en posant un hub
+La distance max entre les deux pc est de 4.12 km.
+
+--------------------------------------------------------------------------------------------
+
+Longueur Max avec deux hub:
+
+La longue des brins (du cable) est de 500 m
+
+Nombre de hub 
+4 hub sur 500 m
+
+Distance max
+500 m / 200'000 km/s = 2.5 micro secondes
+
+On met un fil de 500m et un hub, puis un repete ça.
+
+Le fil et le hub =
+2.5 micro secondes (hub) + 2.5 micro secondes (fil) = 5 micro secondes (= nombre de brins)
+
+Combien de fois on repete ça sur la Distance max?
+25.6 (temps distance max) >= x * 5 
+25.6 / 5 >= x  
+5.12 >= x 
+Soit 5 hubs
+
+
+------
+
+4 hubs +1 hub = 5 brins
+
+nbr brins * distance = 5 * 500 = 2'500 m (distance max)
+---------------------------------------------------------------------------------------
+que se passe t'il lorsque le débit passe à 100 mb/s?
+
+1)  dmax sans hub
+512 / 100*10^6 = 5.12 micro s
+5.12 div 2 = 2.56 micro s
+
+2.56 * 10^-6 * 200'000 = 512 m
+
+
+
+
+2)  dmax 1 hub
+Le hub = 2.5 micro s
+temps restant 2.56 - 2.5 = 0.06 micro s
+
+Distance max 0.06*10-6[s] * 10^-6 * 200'000'000  [metres/secondes] = 12 m
+
+
+3) combien de hubs max et dmax
+Deux hubs = 5 micros
+
+temps restant 2.56 - 5 = -2.44 micro s IMPOSSIBLE (le temps à disposition est négatif)
+donc max 1 hub seulement
+
+========================================================================
+
+
+Comment peut-on augumenter la distance ?
+En augumentant la taille de la trame ( on met une trame dix fois plus grande)
+512 (64 octets) -> 5120 (640 octets)
+
+

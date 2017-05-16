@@ -1,0 +1,18 @@
+<?php
+$mystring = 'abc';
+$findme  = 'a';
+$pos = strpos($mystring, $findme);
+
+// Notez l'utilisation de ===.  Un simple == ne donnerait pas le résultat escompté
+// car la lettre 'a' est à la position 0 (la première).
+if ($pos === false) {
+   echo "La chaîne '$findme' n'a pas été trouvée dans la chaîne '$mystring'";
+} else {
+   echo "La chaîne '$findme' a été trouvée dans la chaîne '$mystring'";
+   echo " et à la position $pos";
+}
+  
+// On peut chercher le caractère, en ignorant tout avant une position
+$newstring = 'abcdef abcdef';
+$pos = strpos($newstring, 'a', 1); // $pos = 7, pas 0
+?> 

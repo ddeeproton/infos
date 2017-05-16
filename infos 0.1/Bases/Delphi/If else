@@ -1,0 +1,16 @@
+
+
+  if Premier(StrToInt(Edit1.Text)) then
+  begin
+    Memo1.lines.Add(Edit1.Text + ' est un nombre premier !!');
+    Memo1.lines.Add(Edit1.Text + ' est un nombre premier !!');
+  end
+  else
+    Memo1.lines.Add(Edit1.Text + ' n''est pas un nombre premier ! ');
+  end;
+
+  if reste = 0 then
+  begin
+    Result := false;
+    break;
+  end;

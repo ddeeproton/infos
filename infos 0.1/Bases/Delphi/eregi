@@ -1,0 +1,8 @@
+var
+    result : Boolean ;
+begin
+    Pas_deja_entre := TRUE;
+    Result := (StrScan(pchar(StringParsed), charToVerify) <> Nil) ;
+    
+    if Result then
+        Pas_deja_entre := FALSE;

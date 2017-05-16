@@ -1,0 +1,3 @@
+strncpy( tmp, ma_chaine, sizeof tmp );
+//rajoute 0 à la fin
+tmp[ sizeof tmp - 1 ] = 0;

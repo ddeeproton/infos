@@ -1,0 +1,67 @@
+uses ShellAPI;
+
+// Le premier paramètre n''accepte pas les guillemets '"', le second oui
+ExecAndWait('executable.exe', '--help', SW_SHOWNORMAL);
+
+
+function ExecAndWait(sExe, sFile: String; wShowWin: Word): Boolean;
+var h: Cardinal;
+begin
+  ShellExecute(h,'open',PChar(sExe), PChar(sFile), nil,wShowWin);
+  WaitForSingleObject(h, INFINITE);
+end;
+
+
+//============================
+// Compatible Vista & +
+//============================
+
+function ExecAndWait(sExe, sFile: String; wShowWin: Word): Boolean;
+function IsUserAnAdmin(): Boolean; external shell32;
+
+implementation
+
+
+function ExecAndWait(sExe, sFile: String; wShowWin: Word): Boolean;
+var
+  h: Cardinal;
+  operation: PChar;
+begin
+  if IsUserAnAdmin() then operation := 'open' else operation := 'runas';
+  ShellExecute(h, operation, PChar(sExe), PChar(sFile), nil,wShowWin);
+  WaitForSingleObject(h, INFINITE);
+end;
+
+
+//============================
+// OLD
+//============================
+
+LaunchAndWait('executable.exe', SW_SHOWNORMAL);
+
+
+function LaunchAndWait(sFile: String; wShowWin: Word): Boolean;
+var
+  cExe: array [0..255] of Char;
+  sExe: string;
+  pcFile: PChar;
+  StartInfo: TStartupInfo;
+  ProcessInfo: TProcessInformation;
+begin
+  Result:=True;
+  FindExecutable(PChar(ExtractFileName(sFile)), PChar(ExtractFilePath(sFile)), cExe);
+  sExe:= string(cExe);
+  if UpperCase(ExtractFileName(sExe))<>UpperCase(ExtractFileName(sFile))
+  then pcFile:=PChar(' "'+sFile+'"')
+  else pcFile:=nil;
+  ZeroMemory(@StartInfo, SizeOf(StartInfo));
+  with StartInfo do begin
+    cb:=SizeOf(StartInfo);
+    dwFlags:=STARTF_USESHOWWINDOW;
+    wShowWindow:=wShowWin;
+  end;
+  if CreateProcess(PChar(sExe), pcFile, nil, nil, True, 0, nil, nil, StartInfo, ProcessInfo)
+  then WaitForSingleObject(ProcessInfo.hProcess, INFINITE)
+  else Result:=False;
+end;  
+

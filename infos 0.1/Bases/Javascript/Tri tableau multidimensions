@@ -1,0 +1,40 @@
+<script language="JavaScript" type="text/javascript"><!--
+
+var tabDIVs = new Array();
+
+
+function elementDIV(objDiv, PosY) {
+	this.objDiv = objDiv;
+	this.PosY = PosY;
+}
+
+
+function sortByPosY(a, b) {
+	var x = a.FirstName.toLowerCase();
+	var y = b.FirstName.toLowerCase();
+	return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+}
+
+
+
+tabDIVs[tabDIVs.length++] = new elementDIV(obj, obj.style.top);
+
+
+
+
+
+tabDIVs.sort(sortByPosY);
+
+
+
+
+
+
+for (var i=0; i<tabDIVs.length; i++) {
+	v += tabDIVs[i].PosY + " " + tabDIVs[i].objDiv + "\n";
+}
+
+
+
+// -->
+</script>

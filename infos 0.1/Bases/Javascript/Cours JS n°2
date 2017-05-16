@@ -1,0 +1,197 @@
+
+// Pour le thème CSS qu'utilise le prog
+http://materializecss.com/
+
+
+un cellule morte possédant exactement trois voisines vivantes devient vivante (elle nait)
+
+Une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt
+
+
+Si aucune voisine, elle meurt
+si deux voisine, elle reste mais n'apparaît pas
+
+
+
+Object.keys("indiquer_le_nom_dune_ methode_ou_propriete_dune_classe")
+
+
+Envoie ça au prof ^^
+
+https://www.destroyallsoftware.com/talks/wat
+
+leo.jpod@gmail.com
+
+
+
+Class MaClasse{
+	constructor (){
+
+	}
+
+	mafonction() {
+
+	}
+
+}
+
+
+console.log(`Salut ${this.name}!`);
+
+
+//======================
+
+Vendredi 22.07.2016
+
+
+try{
+	
+}catch(e){
+	
+} finally {
+	
+}
+
+//jetter une erreur
+throw "Message d'erreur";
+//ou
+throw new Error('My message');
+
+
+//====
+
+// i prend l'index du tableau ou d'un objet
+for(let i in myarray){}
+
+// i prend la valeur du tableau (pas d'objet)
+for(let i of myarray){}
+
+
+//=======
+
+// Faire un list (de php) en version Javascript:
+
+let obj = {nom:'fred', age: '18'};
+let {nom, age} = obj;
+
+console.log(nom);
+console.log(age);
+
+
+//======
+
+
+"JS Doc" pour documenter le code
+
+===========
+
+Lundi 25 juillet 2016
+
+// cherche si la valeur d'un tableau existe
+array.includes() 
+
+// cherche si l'index d'un tableau existe
+array.indexOf()
+
+
+pickRandomColor
+Mastermind.pickMystry
+Mastermin.submit()
+Combination.compareTo(otherCbn)
+
+-rajouter des commentaires
+En faire un flowchart sur papier
+
+Lire le programme et, tester, que manque t'il?
+
+
+//===============
+
+Mardi 26 juillet 2016 
+
+Life game
+Pouvoir changer la taille du tableau et définir ce qui sera actif ou désactivé au lancement
+
+innerText-> textContent
+pas de innerText mais à la complace utiliser: textContent
+
+
+
+Exercice sur mastermind
+remplacer les getAttribute et setAttribute par dataSet
+ 
+ Exercice sur Life Game
+ Essayer d'utiliser un document.createDocumentFragment() à la place du innerHTML
+ Créer une fonction makeBoardElement(size) et l'intégrer puis tester.
+ Ne pas oublier de regler le width et height des éléments
+ 
+ 
+ 
+ [les fonctions ARROW]
+ les fonction arrow, permettent d'avoir le this du parent et non le this de l'appellant à l'objet instantié.
+ 
+ array.find((item) => {
+	return this.mavar;
+ });
+ 
+ Autre exemple:
+ elem.onclick = (evt) => {}
+ elem.addEventListerner("onmouseclick", (evt) => {});
+ 
+ 
+ Exercice sur le life game
+ -Placer un listener sur l'input qui donne la taille du grid
+ -A chaque que la valeur de cet input est changer, regenerer le grid.
+ -Placwer un listerner sur les cells pour qu'un click sur l'une l'active ou la désactive
+ -Empecher tout changement si l'animation est en cours
+ 
+ 
+//==================
+
+Mercredi 27 juillet 2016
+
+// Pour voir les callstack d'un code JS
+http://latentflip.com/loupe/
+
+
+Exercice
+Game of Life, on va mettre une boucle à la place du compteur de tour, et un bouton pour mettre en marche ou arreter l'animation
+faire qu'on puisse dessiner les cellules avec une espèce de drag à la souris.
+
+Exemple de Javascript
+http://www.thewildernessdowntown.com
+https://www.chromeexperiments.com/
+
+WebGL pour faire de la 3D en web
+
+
+// créer une popup et la bouger
+let w = window.open("", "_blank", "menubar=0");
+w.resizeTo(100,200);
+
+window.moveTo()
+window.moveBy()
+
+
+// bind click event
+document.getElementById().onclick = (evt) => {
+
+};
+
+
+// DEVOIR
+// a chaque tick mettre à jour combien de cases actives, afficher aussi combien sont désactivés et combien sont activés.
+
+Mastermind
+rajouter la possibilité de choisir le nombre de couleurs à deviner
+
+
+
+
+... spread
+
+... rest
+
+You don't know JS ED6 Beyond
+
+https://github.com/getify/You-Dont-Know-JS/blob/master/es6%20&%20beyond/ch2.md

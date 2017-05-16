@@ -1,0 +1,24 @@
+// défault
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// added 
+using System.Diagnostics;
+
+
+namespace process
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("PID\tNAME");
+            Console.WriteLine("====================");
+            Process[] processlist = Process.GetProcesses();            
+            foreach(Process p in processlist){
+                Console.WriteLine("{0}\t{1}", p.Id, p.ProcessName + ".exe");
+            }
+        }
+    }
+}

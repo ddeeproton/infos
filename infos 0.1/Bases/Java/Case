@@ -1,0 +1,15 @@
+        switch(variable)
+        {
+            case 'valeur1':
+                action1;
+            break;
+            case 'valeur2':
+                action2;
+            break;
+            case 'valeur3':'valeur4':
+                action3;
+            break;
+            default:
+                action4;
+            break;
+        }

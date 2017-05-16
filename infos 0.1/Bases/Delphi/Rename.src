@@ -1,0 +1,39 @@
+    MoveFileEx(pchar(Form1.GetCurrentDir+'\Temp\'+SearchFile.Name+'.tmp'),
+                     pchar(Unit1.DataDir+'\'+SearchFile.Name),
+                     MOVEFILE_REPLACE_EXISTING);
+
+
+var
+  myFile : TextFile;
+  text   : string;
+
+begin
+  // Try to open the Test.txt file for writing to
+  AssignFile(myFile, 'Test.txt');
+  ReWrite(myFile);
+
+  // Write a couple of well known words to this file
+  WriteLn(myFile, 'Hello');
+  WriteLn(myFile, 'World');
+
+  // Close the file
+  CloseFile(myFile);
+
+  // Try to rename the file - ensure that no such file exists first!
+  DeleteFile('NewName.txt');
+  RenameFile(myFile, 'NewName.txt');
+
+  // Now read the file
+  AssignFile(myFile, 'NewName.txt');
+  ReSet(myFile);
+
+  // Display the file contents
+  while not Eof(myFile) do
+  begin
+    ReadLn(myFile, text);
+    ShowMessage(text);
+  end;
+
+  // Close the file for the last time
+  CloseFile(myFile);
+end;

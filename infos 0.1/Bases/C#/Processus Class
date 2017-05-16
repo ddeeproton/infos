@@ -1,0 +1,80 @@
+// added 
+using System.Diagnostics;
+
+namespace process
+{
+
+    class processus
+    {
+        //public string error = "";
+        public static Hashtable get()
+        {
+
+            Hashtable res = new Hashtable();
+            Process currentProcess = Process.GetCurrentProcess();
+            Process[] processlist = Process.GetProcesses();
+            foreach (Process p in processlist)
+            {
+                if (p.ProcessName != currentProcess.ProcessName)
+                {
+                    res.Add(p.Id.ToString(), p.ProcessName + ".exe");
+                }
+            }
+            return res;
+        }
+
+        public static void kill(string pName)
+        {
+            try
+            {
+                Process[] processlist = Process.GetProcessesByName(pName);
+                if (processlist.Length == 0)
+                {
+                    //this.error = "Process with an Name of " + pName + " is not running";
+                    return;
+                }
+                foreach (Process p in processlist)
+                {
+                    p.Kill();
+                }
+            }
+            catch (ArgumentException e)
+            {
+                //error = e.Message;
+            }
+        }
+
+        public static void kill(int i)
+        {
+            try
+            {
+                Process p = Process.GetProcessById(i);
+                p.Kill();
+            }
+            catch (ArgumentException e)
+            {
+                //error = e.Message;
+            }
+        }
+
+        public static void kill_id(string id)
+        {
+            int i = 0;
+            if (int.TryParse(id, out i))
+            {
+                try
+                {
+                    Process p = Process.GetProcessById(i);
+                    Console.WriteLine("Kill {0}", p.ProcessName + ".exe");
+                    p.Kill();
+                }
+                catch (ArgumentException e)
+                {
+                    //error = e.Message;
+                }
+            }
+        }
+
+    }
+
+}

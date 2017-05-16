@@ -1,0 +1,18 @@
+Pour définir une structure, on panache généralement l'utilisation des instructions typedef et struct.
+La structure permet de regrouper des champs hétérogènes à l'intérieur d'une même variable.
+Prenons l'exemple d'une structure personne regroupant son nom, son prénom et son âge : 
+
+déclaration :
+      typedef struct
+      {
+             char nom[20];
+             char prenom[20];
+             unsigned int age;
+      } Personne; 
+
+utilisation :
+
+   Personne personne1;
+   strcpy(personne1.nom, "Dupont");
+   strcpy(personne1.prenom, "Jean");
+   personne1.age = 20;

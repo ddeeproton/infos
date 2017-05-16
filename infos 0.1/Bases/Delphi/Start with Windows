@@ -1,0 +1,42 @@
+uses Registry;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  refreshCheckBox(CheckBox1);
+end;
+
+
+procedure TForm1.refreshCheckBox(Checkbox:TCheckBox);
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create;
+  Reg.RootKey := HKEY_CURRENT_USER;
+  if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion\Run', True) then
+  begin
+    Checkbox.Checked := Reg.ValueExists(ExtractFileName(Application.ExeName));
+    Reg.CloseKey;
+  end;
+  Reg.Free;
+end;
+
+
+procedure TForm1.CheckBox1Click(Sender: TObject);
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create;
+  Reg.RootKey := HKEY_CURRENT_USER;
+  try
+  if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion\Run', True) then
+  begin
+    if TCheckBox(Sender).Checked then
+      Reg.WriteString(ExtractFileName(Application.ExeName), Application.ExeName)
+    else
+      Reg.DeleteValue(ExtractFileName(Application.ExeName));
+    Reg.CloseKey;
+  end;
+  finally
+    Reg.Free;
+  end;
+end;

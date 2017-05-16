@@ -1,0 +1,14 @@
+  setcurrentdirectory(pchar(extractfiledir(application.exename)));
+
+function GetCurrentDir(): string; 
+const 
+  SIZE: cardinal = 1024; 
+var 
+  path: string; 
+  l: DWORD; 
+begin 
+  SetLength(path, SIZE); 
+  l := GetCurrentDirectory(length(path), pchar(path)); 
+  SetLength(path, l); 
+  result := path; 
+end; 

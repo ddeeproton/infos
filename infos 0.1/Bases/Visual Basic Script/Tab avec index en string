@@ -1,0 +1,26 @@
+'Tableaux dont l'index est en string
+
+        Dim ObjCol As New Microsoft.VisualBasic.Collection
+        Call ObjCol.Add(25, "ITEM25")
+        result = ObjCol("ITEM25")
+
+
+
+'-------------------------------------------
+
+        Dim ObjDiv, ValDiv As New Microsoft.VisualBasic.Collection
+        ValDiv.Clear()
+        ObjDiv.Clear()
+        ' Insère les infos des éléments Div dans ValDiv
+        Call ValDiv.Add("divInfo", "IDDIV")
+        Call ValDiv.Add("0", "POSY")
+        Call ValDiv.Add("true", "VISIBLE")
+        Call ValDiv.Add("http://", "RSS")
+        Call ValDiv.Add("false", "REDUIT")
+        Call ValDiv.Add("108", "HEIGHT")
+        ' Insère le tableau ValDiv dans ObjDiv
+        Call ObjDiv.Add(ValDiv, ValDiv("IDDIV"))
+
+        For Each valueDiv As Microsoft.VisualBasic.Collection In ObjDiv
+            'a = value(1, IDDIV)
+        Next valueDiv

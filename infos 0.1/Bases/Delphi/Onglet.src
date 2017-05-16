@@ -1,0 +1,16 @@
+
+procedure TForm1.OnFormCreate(Sender: TObject);
+// creer un nouvel onglet
+// et mettre un webrowser
+var
+TabSheet: TTabSheet;
+WebBrowser: TWebBrowser;
+begin
+TabSheet := TTabSheet.Create(PageControl1);
+TabSheet.PageControl := PageControl1;
+WebBrowser := TWebbrowser.Create(TabSheet);
+TWinControl(WebBrowser).Parent := TabSheet;
+WebBrowser.Align := alClient;
+//ppDisp := WebBrowser.DefaultInterface;
+
+end;

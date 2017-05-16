@@ -1,0 +1,7 @@
+'Timer (Thread)
+iTimerID = window.setInterval("Looping",100)
+
+'Ceci appelle la fonction 
+Sub Looping
+ '...
+End Sub

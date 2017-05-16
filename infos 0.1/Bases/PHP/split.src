@@ -1,0 +1,24 @@
+
+  $parametres = array();
+  $parametres = split("=", "a=1");
+
+  foreach($parametres as $index => $value )
+  {
+    print $index.$value;
+  }
+
+// ***EXPLODE **** //
+<?php
+// Exemple 1
+$pizza  = "pièce1 pièce2 pièce3 pièce4 pièce5 pièce6";
+$pieces = explode(" ", $pizza);
+echo $pieces[0]; // pièce1
+echo $pieces[1]; // pièce2
+
+// Exemple 2
+$data = "foo:*:1023:1000::/home/foo:/bin/sh";
+list($user, $pass, $uid, $gid, $gecos, $home, $shell) = explode(":", $data);
+echo $user; // foo
+echo $pass; // *
+
+?> 

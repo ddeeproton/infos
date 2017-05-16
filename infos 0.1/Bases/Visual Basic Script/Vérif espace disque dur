@@ -1,0 +1,82 @@
+' Argument : Espace libre necessaire en pourcent
+Function CheckDriveSpace( PercentLimit )
+  Dim fso, DriveList, Drive, Report, Alert
+
+  vbReturn = Chr(13) & Chr(10)
+   
+  Alert = False
+  Report = ""
+  
+  Set fso = CreateObject("Scripting.FileSystemObject")
+	
+	' On recupere la collection de disques logiques
+	Set DriveList = fso.Drives
+	For Each Drive in DriveList
+	
+		
+		' Construction du rapport
+		If Drive.DriveType = 2 and Drive.IsReady Then
+			' En dessous de la tolerance ?
+			if 100* Drive.FreeSpace/Drive.TotalSize < PercentLimit then
+				Alert = True
+			end if
+
+		  Report = Report & Drive.DriveLetter & " : " & vbReturn _
+		  	& "  Taille       : " & FormatNumber(Drive.TotalSize/1024/1024, 0) & " Mo" & vbReturn _
+				& "  Espace libre : " & FormatNumber(Drive.FreeSpace/1024/1024, 0) & " Mo" & vbReturn _
+			 	& "  soit " & FormatNumber(100* Drive.FreeSpace/Drive.TotalSize,2) & " % de libre." & vbReturn & vbReturn
+		End If
+	Next
+	if Alert then
+	  CheckDriveSpace = Report
+	else
+		CheckDriveSpace = ""
+	end if
+     
+end function
+
+function GetComputerName
+	 Set WshNetwork = WScript.CreateObject("WScript.Network")
+	 GetComputerName = WshNetwork.ComputerName
+end function
+
+
+sub SendMail( sFrom, sTo, sSubject, sBody )
+	On Error Resume Next
+	
+	' Create instance of SMTPMail object 
+	Set Jmail = CreateObject("JMail.SMTPMail")
+	
+	' My SMTP Server Address (uses default Port=25)
+	Jmail.ServerAddress = "smtp.deckpoint.ch"
+	
+	' My Name and Mail Address 
+	Jmail.Sender = sFrom
+	Jmail.ReplyTo = sFrom
+	
+	' Recipient Address and Name
+	Jmail.AddRecipient sTo
+
+	' Compose message 
+	Jmail.Subject = sSubject
+	Jmail.Priority = 1
+	Jmail.Body = sBody
+	
+	' Send the mail
+	Jmail.Execute
+	
+	' Test for errors 
+	If Err <> 0 Then
+		WScript.Echo "Error : " & Err.Description
+	End If
+	
+	' Dispose object 
+	Set Jmail = Nothing
+
+end sub
+Report = ""
+Report = "" & CheckDriveSpace(20)
+
+Wscript.Echo Report
+
+if Report <> "" then SendMail "NT@deckpoint.com","nt@deckpoint.com", "Problème espace disque sur " & GetComputerName, Report

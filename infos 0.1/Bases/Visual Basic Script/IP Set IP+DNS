@@ -1,0 +1,20 @@
+Dim strIPAddress
+Dim strSubnetMask
+Dim strGateway
+Dim intGatewayMetric
+Dim strDns1
+Dim strDns2
+
+strIPAddress = "10.10.10.50"
+strSubnetMask = "255.255.255.0"
+strGateway = "10.10.10.1"
+intGatewayMetric = 1
+strDns1 = "10.10.10.9"
+strDns2 = "10.10.10.10"
+
+Set objShell = WScript.CreateObject("Wscript.Shell")
+objShell.Run "netsh interface ip set address name=""Local Area Connection"" static " & strIPAddress & " " & strSubnetMask & " " & strGateway & " " & intGatewayMetric, 0, True
+objShell.Run "netsh interface ip set dns name=""Local Area Connection"" static "& strDns1, 0, True
+objShell.Run "netsh interface ip add dns name=""Local Area Connection"" addr="& strDns2, 0, True
+Set objShell = Nothing
+WScript.Quit

@@ -1,0 +1,10 @@
+function resized() {
+	$(".left").height($(window).height()-25);
+	$("textarea.txt_content").height($(window).height()-$(".buttonsForm").height()-$(".loginForm").height()-65);
+}
+$(document).ready(function() {
+	resized();
+	$(window).resize(function() {
+		resized()
+	});
+});

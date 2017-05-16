@@ -1,0 +1,16 @@
+<?php
+
+// direct download
+header("Content-disposition: attachment; filename=huge_document.pdf");
+header("Content-type: application/pdf");
+readfile("huge_document.pdf");
+
+
+// Image
+$file = '../image.jpg';
+header('Content-Type: image/jpeg');
+header('Content-Length: '.filesize($file));
+readfile($file);
+
+
+?> 

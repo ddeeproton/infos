@@ -1,0 +1,174 @@
+'On Error Resume Next
+ 
+getNetInfo()
+ 
+sub getNetInfo() 
+	Const HKEY_LOCAL_MACHINE = &H80000002
+	strComputer = "."
+	strKeyPath1 = "SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+	strKeyPath2 = "SYSTEM\CurrentControlSet\Services\NetBT\Parameters"
+	strHostEntry = "Hostname"
+	strDomainEntry = "Domain"
+	strNodeEntry = "DhcpNodeType"
+	strRoutingEntry = "IPEnableRouter"
+	 
+	Set objReg = GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & _
+	 strComputer & "\root\default:StdRegProv")
+	objReg.GetStringValue HKEY_LOCAL_MACHINE,strKeyPath1,strHostEntry,strHostname
+	objReg.GetStringValue HKEY_LOCAL_MACHINE,strKeyPath1,strDomainEntry,strDomain
+	objReg.GetDWORDValue HKEY_LOCAL_MACHINE,strKeyPath2,strNodeEntry,dwNodeType
+	objReg.GetDWORDValue HKEY_LOCAL_MACHINE,strKeyPath1,strRoutingEntry,dwIPRouting
+	 
+	Select Case dwNodeType
+		Case 4 strNodeType = "Mixed"
+		Case 8 strNodeType = "Hybrid"
+		Case Else strNodeType = dwNodeType
+	End Select
+	If dwIPRouting = 0 Then
+		strIPRouting = "No"
+	ElseIf dwIPRouting = 1 Then
+		strIPRouting = "Yes"
+	Else
+		strIPRouting = "?"
+	End If
+	 
+	strComputer = "."
+	Set objWMIService = GetObject("winmgmts:" _
+	 & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+	 
+	Set colFirstNicConfig = objWMIService.ExecQuery _
+	 ("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = True")
+	For Each objFirstNicConfig In colFirstNicConfig
+		strDnsWins = objFirstNicConfig.DNSEnabledForWINSResolution
+	Next
+	If strDnsWins = False Then
+		strWinsProxy = "No"
+	ElseIf strDnsWins = True Then
+		strWinsProxy = "Yes"
+	Else
+		strWinsProxy = "?"
+	End If
+	 
+	' Display global settings.
+
+	res = "Windows IP Configuration" & VbCrLf _
+	& "        Host Name . . . . . . . . . . . . : " & strHostname & vbCrlf _
+	& "        Primary DNS Suffix  . . . . . . . : " & strDomain & vbCrlf _
+	& "        Node Type . . . . . . . . . . . . : " & strNodeType & vbCrlf _
+	& "        IP Routing Enabled. . . . . . . . : " & strIPRouting & vbCrlf _
+	& "        WINS Proxy Enabled. . . . . . . . : " & strWinsProxy & vbCrlf _
+	& "        DNS Suffix Search List. . . . . . : " & strDomain & vbCrlf 
+	
+	Set colNicConfigs = objWMIService.ExecQuery("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = True")
+	sngOsVer = GetOsVer(objWMIService)
+	 
+	' Display per-adapter settings.
+	 
+	For Each objNicConfig In colNicConfigs
+		intIndex = objNicConfig.Index
+		'WScript.Echo intIndex
+		Set objNic = objWMIService.Get("Win32_NetworkAdapter.DeviceID=" & intIndex)
+	 
+		strAdapterType = objNic.AdapterType
+		If IsEmpty(strAdapterType) Or IsNull(strAdapterType) Or _
+		 (strAdapterType = "") Then
+			strAdapterType = "Network"
+		End If
+	 
+		If sngOsVer > 5 Then
+			strNetConn = objNic.NetConnectionID
+		Else
+			strNetConn = intIndex
+		End If
+	 
+		res = "" _
+		& "        Adapter Type. . . . . . . . . . . : " & strAdapterType & vbCrlf _
+		& "        Connextion name . . . . . . . . . : " & strNetConn & vbCrlf _
+		& "        Connection-specific DNS Suffix  . : " & objNicConfig.DNSDomain & vbCrlf _
+		& "        Description . . . . . . . . . . . : " & objNicConfig.Description & vbCrlf _
+		& "        Physical Address. . . . . . . . . : " & objNicConfig.MACAddress & vbCrlf _
+		& "        DHCP Enabled. . . . . . . . . . . : " & objNicConfig.DHCPEnabled & vbCrlf
+		'WScript.Echo res
+	 
+		strIPAddresses = ""
+		If Not IsNull(objNicConfig.IPAddress) Then
+			For Each strIPAddress In objNicConfig.IPAddress
+				strIPAddresses = strIPAddresses & strIPAddress & " "
+			Next
+		End If
+		res = res & "        IP Address. . . . . . . . . . . . : " & strIPAddresses & vbCrlf
+
+		strIPSubnets = ""
+		If Not IsNull(objNicConfig.IPSubnet) Then
+			For Each strIPSubnet In objNicConfig.IPSubnet
+				strIPSubnets = strIPSubnets & strIPSubnet & " "
+			Next
+		End If
+		res = res & "        Subnet Mask . . . . . . . . . . . : " & strIPSubnets & vbCrlf
+
+		strDefaultIPGateways = ""
+		If Not IsNull(objNicConfig.DefaultIPGateway) Then
+			For Each strDefaultIPGateway In objNicConfig.DefaultIPGateway
+				strDefaultIPGateways = strDefaultIPGateways & strDefaultIPGateway & " "
+			Next
+		End If
+		res = res & "        Default Gateway . . . . . . . . . : " & strDefaultIPGateways  & vbCrlf _
+		& "        DHCP Server . . . . . . . . . . . : " & objNicConfig.DHCPServer & vbCrlf 
+
+		strDNSServerSearchOrder = ""
+		If Not IsNull(objNicConfig.DNSServerSearchOrder) Then
+			For Each strDNSServer In objNicConfig.DNSServerSearchOrder
+				if strDNSServerSearchOrder <> "" then strDNSServerSearchOrder = strDNSServerSearchOrder & ","
+				strDNSServerSearchOrder = strDNSServerSearchOrder & strDNSServer
+			Next
+		End If
+		res = res & "        DNS Servers . . . . . . . . . . . :" & strDNSServerSearchOrder & vbCrlf 
+
+		If Not IsNull(objNicConfig.WINSPrimaryServer) Then
+			res = res & "        Primary WINS Server . . . . . . . : " & objNicConfig.WINSPrimaryServer & vbCrlf
+		End If
+
+		If Not IsNull(objNicConfig.WINSSecondaryServer) Then
+			res = res & "        Secondary WINS Server . . . . . . : " & objNicConfig.WINSSecondaryServer & vbCrlf
+		End If
+
+		If objNicConfig.DHCPEnabled Then
+			dtmRawLeaseObtainedDate = objNicConfig.DHCPLeaseObtained
+			strFormattedLeaseObtainedDate = WMIDateToString(dtmRawLeaseObtainedDate)
+			res = res & "        Lease Obtained. . . . . . . . . . : " & strFormattedLeaseObtainedDate & vbCrlf
+			dtmRawLeaseExpiresDate = objNicConfig.DHCPLeaseExpires
+			strFormattedLeaseExpiresDate = WMIDateToString(dtmRawLeaseExpiresDate)
+			res = res & "        Lease Expires . . . . . . . . . . : " & strFormattedLeaseExpiresDate & vbCrlf
+		End If
+		WScript.Echo res
+	Next
+	 
+	 
+	 
+
+	'******************************************************************************
+	' Function: WMIDateStringToDate(dtmDate)
+	' Converts WMI date to string.
+	'******************************************************************************
+end sub
+ 
+Function WMIDateToString(dtmDate)
+		WMIDateToString = CDate(Mid(dtmDate, 5, 2) & "/" & _
+											Mid(dtmDate, 7, 2) & "/" & _
+											Left(dtmDate, 4) & " " & _
+											Mid(dtmDate, 9, 2) & ":" & _
+											Mid(dtmDate, 11, 2) & ":" & _
+											Mid(dtmDate, 13, 2))
+End Function
+ 
+'******************************************************************************
+' Function: GetOsVer
+' Gets the operating system version number.
+'******************************************************************************
+ 
+Function GetOsVer(objWMIService)
+  Set colOperatingSystems = objWMIService.ExecQuery("Select * from Win32_OperatingSystem")
+  For Each objOperatingSystem In colOperatingSystems
+    GetOSVer = CSng(Left(objOperatingSystem.Version, 3))
+  Next
+End Function

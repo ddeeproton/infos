@@ -1,0 +1,71 @@
+using System;
+using System.Threading;
+using System.Net.Sockets;
+using System.Text;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //TcpListener serverSocket = new TcpListener(IPAddress.Parse(IPaddr), Int32.Parse(port));
+            TcpListener serverSocket = new TcpListener(8888);
+            serverSocket.Start();
+            Console.WriteLine("Server Started");
+
+            TcpClient clientSocket;
+            int idConnexion = 0;
+            while (true)
+            {
+                clientSocket = serverSocket.AcceptTcpClient();
+                Thread clientSocket_thread = new Thread(new ThreadStart(() =>
+                {
+                    idConnexion++;
+                    Console.WriteLine("Connexion Client[" + idConnexion.ToString() + "]");
+
+                    TcpClient _clientSocket = clientSocket;
+                    string _idConnexion = idConnexion.ToString();
+
+                    int requestCount = 0;
+                    while (true)
+                    {
+                        requestCount++;
+                        NetworkStream networkStream = _clientSocket.GetStream();
+
+                        // READ
+                        int BufferSize = clientSocket.ReceiveBufferSize;
+                        byte[] bytesFrom = new byte[BufferSize];
+                        int numberOfBytesRead;
+                        try
+                        {
+                            numberOfBytesRead = networkStream.Read(bytesFrom, 0, BufferSize);
+                        }
+                        catch (Exception ex)
+                        {
+                            //Console.WriteLine(ex.ToString());
+                            Console.WriteLine("Déconnexion Client[" + _idConnexion + "]");
+                            break;
+                        }
+                        string dataFromClient = Encoding.ASCII.GetString(bytesFrom, 0, numberOfBytesRead);
+                        Console.WriteLine("Client[" + _idConnexion + "]:" + dataFromClient);
+
+                        // WRITE
+                        string serverResponse = "Server response to Client[" + _idConnexion + "] " + requestCount.ToString();
+                        Byte[] sendBytes = Encoding.ASCII.GetBytes(serverResponse);
+                        networkStream.Write(sendBytes, 0, sendBytes.Length);
+                        networkStream.Flush();
+                        Console.WriteLine(serverResponse);
+                    }
+                }));
+                clientSocket_thread.Start();
+            }
+
+            clientSocket.Close();
+            serverSocket.Stop();
+            Console.WriteLine("exit");
+            Console.ReadLine();
+        }
+    }
+
+}

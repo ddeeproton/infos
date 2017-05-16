@@ -1,0 +1,10 @@
+Copier une table dans une autre 
+CREATE TABLE truc AS SELECT * FROM machin 
+
+insert into Y   
+select * from X 
+
+INSERT INTO table1 VALUES(SELECT * FROM table1) 
+
+Copier dans une table avec plus de champs
+INSERT INTO table_arch SELECT '', '2010-02-10', table1.* FROM table1

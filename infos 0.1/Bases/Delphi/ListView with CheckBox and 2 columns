@@ -1,0 +1,174 @@
+
+
+procedure TForm1.FormCreate(Sender: TObject);
+var HauteurMinimum, HauteurMaximum: integer;
+begin
+  // Affecte le dossier de l'executable comme répertoire par défaut
+  SetCurrentDirectory(PChar(ExtractFileDir(Application.Exename)));
+  // On créer la première colone dans ListView1
+  AjouterUneColone(ListView1.Columns.Add,
+                   'Proxy',
+                   ListView1.Width div 2 + 30);
+  // On créer la seconde colone dans ListView1
+  AjouterUneColone(ListView1.Columns.Add,
+                   'Status',
+                   ListView1.Width div 2 - 50);
+  // On charge la liste des proxy dans ListView1
+  ChargerProxies;
+  // On coche la case du proxy actuel
+  RafraichirProxies();
+end;
+
+
+// Met une croix au proxy actuel et enlève la croix aux autres
+procedure TForm1.RafraichirProxies();
+var
+  CurrProxy : String;
+  ProxyActive: boolean;
+   i: integer;
+begin
+  // Si une sauvegarde des proxy existe
+  if FileExists(FICHIERPROXY) then
+  begin
+    // Récupère si le proxy est actif dans Internet Explorer
+    ProxyActive := LireIntegerDansRegistre(INTERNETSETTINGSREGPATH, 'ProxyEnable') = 1;
+    // On recupere l'adresse du proxy
+    CurrProxy := LireStringDansRegistre(INTERNETSETTINGSREGPATH, 'ProxyServer');
+    // Pour chaques adresses de la liste des proxy
+    for i := 0 to ListView1.items.count - 1 do
+    begin
+      // On coche la case du proxy actuel (si actif) et decoche les autres
+      ListView1.Items.Item[i].Checked := (ListView1.Items.Item[i].Caption = CurrProxy) and ProxyActive;
+    end;
+  end;
+  Application.ProcessMessages;
+end;
+
+
+
+
+// Charge les proxies dans le listView
+procedure TForm1.ChargerProxies();
+var
+  Fichier        : textfile;
+  texte          : string;
+begin
+  if not FileExists(FICHIERPROXY) then exit;
+  ListView1.Items.Clear;
+  assignFile(Fichier, FICHIERPROXY);
+  reset(Fichier); // ouvre en lecture
+  while not eof(Fichier) do
+  begin
+    readln(Fichier, texte);
+    // On ajoute le proxy en fin de liste
+    EditerLigne(ListView1.Items.Add,       // Item (ou ligne) du listView
+                ListView1.Items.Count,     // Numéro de ligne
+                INCONNU,                   // Numéro de l'image
+                texte,                     // Adresse du proxy
+                StatusProxy[INCONNU]);     // Texte du status
+
+  end;
+  closefile(Fichier);
+end;
+
+
+// Sauvegarde les proxies du listView
+procedure TForm1.SauvegarderProxies();
+var
+  i: Integer;
+  Fp : textfile;
+begin
+  assignFile(Fp, FICHIERPROXY);
+  reWrite(Fp);
+  for i := 0 to ListView1.items.count - 1 do
+  begin
+    Writeln(Fp, ListView1.Items.Item[i].Caption);
+  end;
+  closefile(Fp);
+end;
+
+
+// Ajoute une colone dans le listView
+procedure TForm1.AjouterUneColone(NewColumn: TListColumn; Titre:string; Largeur:integer);
+begin
+  // Titre de la colone
+  NewColumn.Caption := Titre;
+  // Largeur de la colone
+  NewColumn.Width   := Largeur;
+end;
+
+
+// Edite (ou ajoute) une ligne dans le listView
+procedure TForm1.EditerLigne(ListItem: TListItem; Ligne:integer; ImageNum:integer = -1;
+  Colone1: string = ''; Colone2: string = '');
+begin
+  // Met dans le listView l'adresse IP si on en indique une
+  if Colone1 <> '' then
+    Listitem.Caption    := Colone1;
+  // Met dans le listView le status si on l'indique
+  if Colone2 <> '' then
+  begin
+    // Si la ligne vient à l'instant d'être créer
+    // (donc que la deuxième colone n'a pas encore une valeure)
+    if ListView1.Items.Item[Ligne].SubItems.Count = 0 then
+      // On ajoute le status dans la deuxième colone
+      ListView1.Items.Item[Ligne].SubItems.Add(Colone2)
+    else // Si la ligne a déjà été crée
+      // On édite le status de la deuxième colone
+      ListView1.Items.Item[Ligne].SubItems.Strings[0] := Colone2;
+  end;
+  // Si on a indiqué un numéro d'image
+  if ImageNum > -1 then
+    // On change d'image
+    ListItem.ImageIndex := ImageNum;
+end;
+
+
+// Coche la ligne selectionnee si on double clique dessus
+procedure TForm1.ListView1DblClick(Sender: TObject);
+var i: integer;
+Begin
+  // Si aucune ligne selectionnee, on sort de la procedure
+  if ListView1.SelCount = 0 then exit;
+  // Recupere la ligne selectionnee
+  i := ListView1.Selected.Index;
+  ShowMessage(ListView1.Items.Item[i].Caption);
+end;
+
+
+// Quand on coche ou decoche une case dans la liste des proxy
+// On active ou désactive le proxy dans la base de registre
+procedure TForm1.ListView1Click(Sender: TObject);
+var
+  ListItem:TListItem;
+  CurPos:TPoint;
+begin
+  // Si on clique dans la case à cocher, on séléctionne la ligne
+  // Donc on récupère la position de la souris sur l'écran
+  GetcursorPos(CurPos);
+  // on indique sa position en fonction du ListView
+  CurPos:=ListView1.ScreenToClient(CurPos);
+  // On récupère la ligne du listView où se trouve la souris
+  ListItem:=ListView1.GetItemAt(CurPos.x,CurPos.y);
+  // Si on récupère bien une ligne et pas un espace blanc
+  if Assigned(ListItem) then
+  begin
+    // Si on se trouve bien dans la case à cocher
+    if (CurPos.x >= 5) and (CurPos.x <= 20) then
+      if ListItem.Checked then
+      begin
+        // On definit le proxy dans le registre
+        EcrireStringDansRegistre(INTERNETSETTINGSREGPATH, 'ProxyServer', ListItem.Caption);
+        // On active le proxy dans le registre
+        EcrireIntegerDansRegistre(INTERNETSETTINGSREGPATH, 'ProxyEnable', 1);
+      end
+      // Si on a décoche la case
+      else begin
+        // On désactive le proxy dans le registre
+        EcrireIntegerDansRegistre(INTERNETSETTINGSREGPATH, 'ProxyEnable', 0);
+      end;
+    end;
+  // On rafraîchit la liste des proxy
+  RafraichirProxies();
+end;
+

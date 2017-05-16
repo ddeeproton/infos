@@ -1,0 +1,12 @@
+// Calcule le nombre de jours que sépare une date à aujourd'hui
+function DifferenceEntreDeuxDates(D:string):integer;
+var
+  S: TSystemTime;
+  date1,
+  date2 :TDateTime;
+begin
+  GetLocalTime(S);
+  date1:= EncodeDate(S.wYear,S.wMonth,S.wDay);
+  date2:= EncodeDate(StrToInt(D[1]+D[2]+D[3]+D[4]),StrToInt(D[5]+D[6]),StrToInt(D[7]+D[8])); //Date 2000/06/15
+  result :=trunc(date1-date2);
+end;

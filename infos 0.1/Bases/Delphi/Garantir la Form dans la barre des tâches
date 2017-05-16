@@ -1,0 +1,14 @@
+
+procedure CreateParams(var Params: TCreateParams); override;
+
+// ...
+
+
+// Procedure qui garanti que la fenêtre aura son propre
+// carré dans la barre des taches.
+// cette procedure s'auto-execute toute seule.
+procedure TForm1.CreateParams(var Params: TCreateParams);
+begin
+  inherited CreateParams(Params);
+  Params.ExStyle := Params.ExStyle or WS_Ex_AppWindow;
+end;

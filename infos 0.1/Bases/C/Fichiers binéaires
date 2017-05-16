@@ -1,0 +1,60 @@
+//---------------------------------------------------------------------------
+#pragma hdrstop
+#pragma argsused
+//---------------------------------------------------------------------------
+#include <stdio.h>
+#include <conio.h>
+
+typedef struct
+{
+  char ChaineCaractere[100];
+  float NbrAvirgule;
+  int NbrEntier;
+
+}NomStructure;
+
+
+
+void main(void)
+{
+
+   NomStructure VariableNomStructure;  // un type comme integer
+   FILE *PointeurSurFichier;    // declaration d un pointeur sur unn fichier
+
+// ASTUCE pour savoir si un fichier existe!
+//   PointeurSurFichier = fopen(\"monfichier.txt\",\"r\");   // on ouvre le fichier en lecture
+//   if(PointeurSurFichier == NULL) // fichier n\'existe pas
+
+
+   // ECRITURE
+   PointeurSurFichier = fopen(\"monfichier.txt\",\"w\");
+   scanf(\"%s\",  &VariableNomStructure.ChaineCaractere);
+   fflush(stdin);
+   scanf(\"%f\",  &VariableNomStructure.NbrAvirgule);
+   fflush(stdin);
+   scanf(\"%d\",  &VariableNomStructure.NbrEntier);
+   fwrite(&VariableNomStructure,sizeof(NomStructure), 1, PointeurSurFichier); // écriture
+   fclose(PointeurSurFichier);
+
+
+   // LECTURE
+   PointeurSurFichier = fopen(\"monfichier.txt\",\"r\");
+   fread(&VariableNomStructure,sizeof(NomStructure), 1, PointeurSurFichier); // lecture
+   fclose(PointeurSurFichier);
+   //Affichage
+   printf(\"%s\",  VariableNomStructure.ChaineCaractere);
+   printf(\"%f\",  VariableNomStructure.NbrAvirgule);
+   printf(\"%d\",  VariableNomStructure.NbrEntier);
+   //Pause pour voir le resultat à l\'écran
+   fflush(stdin);
+   getch();
+}
+
+// aquisition d un seul caractère
+
+char SaisiCaractereClavier()
+{
+  return getch();
+}
+
+

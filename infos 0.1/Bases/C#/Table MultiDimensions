@@ -1,0 +1,13 @@
+Dictionary<object, Hashtable> Services = new Dictionary<object, Hashtable>();
+Services.Add("array1", new Hashtable());
+Services["array1"]["qwe"] = "123";
+Services["array1"]["22"] = 223;
+
+foreach (string com in Services.Keys)
+{
+    MessageBox.Show(com);
+    foreach (string p in Services[com].Keys)
+    {
+        MessageBox.Show(p);
+    }
+}

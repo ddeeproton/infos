@@ -1,0 +1,39 @@
+#pragma hdrstop
+#pragma argsused
+//Librairie pour les strings
+#include <string.h>
+
+typedef struct
+{
+  float variableF;
+  int VariableI;
+  char VariableT[10];
+
+} TRecord;
+
+
+void main(int argc, char* argv[])
+{
+  // Tableau de record
+  TRecord TabRecord[3];
+ int i;
+  // Record simple
+  TRecord Record;
+  Record.variableF = 0.1;
+  Record.VariableI = 1;
+  strcpy(Record.VariableT, \"salut\");
+
+
+  for( i = 0; i < 3; i++)
+  {
+    TabRecord[i].variableF = 0.1;
+    TabRecord[i].VariableI = 1;
+    strcpy(TabRecord[i].VariableT, \"salut\");
+  }
+
+  for( i = 0; i < 3; i++)
+  {
+    printf(\"%f\\n%d\\n%s\\n\", TabRecord[i].variableF, TabRecord[i].VariableI, TabRecord[i].VariableT);
+  }
+  getch();
+}

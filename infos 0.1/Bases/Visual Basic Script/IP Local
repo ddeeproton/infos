@@ -1,0 +1,60 @@
+'On Error Resume Next
+ 
+
+sub MesCartesReseau 
+  Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\cimv2")
+  Set colNics = objWMIService.ExecQuery("SELECT * FROM Win32_NetworkAdapter")
+  For Each objNic In colNics
+    If objNic.NetConnectionStatus <> "" then    
+      nstatus = "Unkown"
+      If objNic.NetConnectionStatus = 0 then nstatus = "Disabled"
+      If objNic.NetConnectionStatus = 2 then nstatus = "Connected"
+      If objNic.NetConnectionStatus = 7 then nstatus = "Disconnected"
+      WScript.Echo ""_
+        & vbCrlf  _
+        &  "Net Connection ID: " & objNic.NetConnectionID & vbCrlf  _
+        &  "Status: " & nstatus & vbCrlf _
+        & vbCrlf  _
+        &  "Net Connection Status: " & objNic.NetConnectionStatus & vbCrlf _
+        &  "Product Name: " & objNic.ProductName & vbCrlf _
+        &  "Network Adapter (Device ID): " & objNic.DeviceID & vbCrlf _
+        &  "Index: " & objNic.Index & vbCrlf _
+        &  "MAC Address: " & objNic.MACAddress & vbCrlf _
+        &  "Adapter Type: " & objNic.AdapterType & vbCrlf _
+        &  "Adapter Type Id: " & objNic.AdapterTypeID & vbCrlf _
+        &  "Description: " & objNic.Description & vbCrlf _
+        &  "Manufacturer: " & objNic.Manufacturer & vbCrlf _
+        &  "Name: " & objNic.Name & vbCrlf _
+        &  "PNP Device ID: " & objNic.PNPDeviceID & vbCrlf _
+        &  "Service Name: " & objNic.ServiceName  & vbCrlf _
+        &  "Permanent Address: " & objNic.PermanentAddress & vbCrlf _
+        &  "AutoSense: " & objNic.AutoSense & vbCrlf _
+        &  "Maximum Number Controlled: " & objNic.MaxNumberControlled & vbCrlf _
+        &  "Speed: " & objNic.Speed & vbCrlf _
+        &  "Maximum Speed: " & objNic.MaxSpeed 
+    End If
+  Next
+end sub
+
+'Retourne toutes les adresses IP locale de la machine qui execute ce script
+function MesAdressesIPLocale
+  strComputer = "."
+  'Set objWMIService = GetObject("winmgmts:\" & strComputer & "\root\cimv2")
+  Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")    
+  Set IPConfigSet = objWMIService.ExecQuery("Select IPAddress from Win32_NetworkAdapterConfiguration ")
+  result = "" 
+  For Each IPConfig in IPConfigSet
+    If Not IsNull(IPConfig.IPAddress) Then 
+      For i=LBound(IPConfig.IPAddress) to UBound(IPConfig.IPAddress)
+        if len(result) > 0 then result = result & vbCrlf
+        result = result & IPConfig.IPAddress(i)
+      Next
+    End If
+  Next
+  MesAdressesIPLocale = result
+end function
+
+MesCartesReseau()
+
+ WScript.Echo  MesAdressesIPLocale
+

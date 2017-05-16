@@ -1,0 +1,27 @@
+'------------------------------------------------------
+'Description: Kill un processus au démarrage de windows
+'______________________________________________________
+'
+'Configuration:
+'--------------
+   const ProcessusATuer = "OCSInventory.exe"
+   const TempsPauseEntreChaquesVerifs = 200
+   const NbrMaximumVerifications = 2000
+'------------------------------------------------------
+
+
+
+  strComputer = "."
+  Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+  Set colProcessList = objWMIService.ExecQuery("Select * from Win32_Process Where Name = '" & ProcessusATuer & "'")
+  dim i
+  i = 0
+  do while i <= NbrMaximumVerifications     'Pour infinit mettre: do while 1
+    i = i + 1
+    For Each objProcess in colProcessList
+       objProcess.Terminate()
+       WScript.Echo "Processus " & objProcess.Name & " killé!"
+       wscript.quit
+    Next
+    wscript.sleep TempsPauseEntreChaquesVerifs
+  loop

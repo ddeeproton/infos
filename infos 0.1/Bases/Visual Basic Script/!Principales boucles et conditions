@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <script language="VBScript" type="text/vbscript"> 
+    <!--
+      Sub validation
+        Dim i, nombre, choix, doc, j
+        i = 1
+        Set doc = Document.forms("formulaire")
+        choix = doc.valeur.Value
+        If choix >= 1 And choix <= 4 Then
+          Do While i <= 10
+            For j = 1 To 5
+              Select Case choix
+                Case 1
+                  MsgBox "Vous sortez de la boucle For" & chr(13) & "i = " & i & " et j = " & j
+                  Exit For
+                Case 2
+                  MsgBox "Vous sortez de la boucle Do Loop"
+                  Exit Do
+                Case 3
+                  MsgBox "Vous sortez de la procédure"
+                  Exit Sub
+                Case 4
+                  MsgBox "i = " & i & " et j = " & j
+              End Select
+            Next
+            i = i + 1
+          Loop
+        Else
+          MsgBox "Veuillez entrer une valeur numérique " & "entre 1 et 4 !" & chr(13) & "Merci !"
+        End If
+      End Sub
+    -->
+    </script>
+  </head>
+  <body>
+    <p>Veuillez une des valeurs suivante :</p>
+    <ol>
+      <li>pour sortir de la boucle For...Next</li>
+      <li>pour sortir de la boucle Do...Loop</li>
+      <li>pour sortir de la procédure Sub</li>
+      <li>pour accomplir les tours de boucles.</li>
+    </ol>
+    <form id="formulaire"
+             action="exit.asp"
+             onsubmit="validation(); return false;"
+             language="jscript">
+      <input name="valeur" type="text" size="3">
+      <input name="Valider" type="submit" value="Valider">
+    </form>
+  </body>
+</html>

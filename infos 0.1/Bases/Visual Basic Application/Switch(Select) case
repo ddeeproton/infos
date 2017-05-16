@@ -1,0 +1,12 @@
+            Dim MenuGroup As Integer = 1
+
+            Select Case MenuGroup
+                Case 1
+                    MsgBox("1")
+                Case 2, 3, 4
+                    MsgBox("2")
+                Case 5
+                    MsgBox("3")
+                Case Else
+                    MsgBox("Defaut")
+            End Select

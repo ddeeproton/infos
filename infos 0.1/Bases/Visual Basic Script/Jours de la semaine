@@ -1,0 +1,9 @@
+Dim NomJours(7)
+NomJours(1) = "Dimanche"
+NomJours(2) = "Lundi"
+NomJours(3) = "Mardi"
+NomJours(4) = "Mercredi"
+NomJours(5) = "Jeudi"
+NomJours(6) = "Vendredi"
+NomJours(7) = "Samedi"
+msgbox  NomJours(WeekDay(now))

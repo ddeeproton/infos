@@ -1,0 +1,18 @@
+uses StrUtils;
+ 
+AnsiContainsStr	Returns true if a string contains a substring
+AnsiContainsText Returns true if a string contains a substring, case insensitive
+AnsiEndsStr Returns true if a string ends with a substring
+AnsiIndexStr Compares a string with a list of strings - returns match index
+AnsiLeftStr Extracts characters from the left of a string
+AnsiMatchStr Returns true if a string exactly matches one of a list of strings
+AnsiMidStr Returns a substring from the middle characters of a string
+AnsiPos Find the position of one string in another
+AnsiReplaceStr Replaces a part of one string with another
+AnsiReverseString Reverses the sequence of letters in a string
+AnsiRightStr Extracts characters from the right of a string
+AnsiStartsStr Returns true if a string starts with a substring
+DupeString Creates a string containing copies of a substring
+StuffString Replaces a part of one string with another
+
+http://www.delphibasics.co.uk/ByUnit.asp?Unit=StrUtils

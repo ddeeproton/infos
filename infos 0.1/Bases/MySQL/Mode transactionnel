@@ -1,0 +1,27 @@
+http://www.manuelphp.com/mysql/innodb-transaction-model.php
+
+Le mode transactionnel sert à tester avant de mettre en prod. Il fait des modifs dans une mémoire temporaire.
+
+Ce mode permet de faire du pas à pas.
+
+Pour être en mode transactionnel il faut executer cette ligne
+
+SET AUTOCOMMIT=0
+
+Moteur: Innodb
+
+Débuter la transaction
+START TRANSACTION;
+
+Pour valider les requêtes
+COMMIT;
+
+Pour annuler les requêtes
+ROLLBACK;
+
+
+Exemple:
+START TRANSACTION;
+UPDATE matable SET colone1=0 
+WHERE colone2=2;
+COMMIT;

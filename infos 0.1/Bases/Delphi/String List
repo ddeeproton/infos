@@ -1,0 +1,20 @@
+var  Favlist: TStringList;
+begin
+  FavList:=TStringList.Create;
+
+  //On ajoute  à la fin
+  FavList.Add(St);
+
+  //On ajoute au début
+  FavList.Insert(0,Filename);
+
+  // Lire tout
+  for i:=0 to Favlist.Count do begin
+    txt := Favlist.Strings[i];
+
+  //Si Filename existe
+  if FavList.IndexOf(Filename)<>-1 then
+
+  //Si il y a des blancs, on les supprime dans le stringlist
+  while FavList.IndexOf('') <> -1 do
+    Favlist.Delete(FavList.IndexOf(''));

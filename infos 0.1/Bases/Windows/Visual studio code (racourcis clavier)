@@ -1,0 +1,9 @@
+// Placez vos combinaisons de touches dans ce fichier pour remplacer les valeurs par défaut
+[
+    { "key": "ctrl+d",        "command": "editor.action.copyLinesDownAction",
+                                     "when": "editorTextFocus && !editorReadonly" },
+    { "key": "ctrl+shift+down",              "command": "editor.action.moveLinesDownAction",
+                                     "when": "editorTextFocus && !editorReadonly" },
+    { "key": "ctrl+shift+up",                "command": "editor.action.moveLinesUpAction",
+                                     "when": "editorTextFocus && !editorReadonly" }
+]

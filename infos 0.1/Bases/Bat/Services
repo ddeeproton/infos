@@ -1,0 +1,3 @@
+@rem script qui relance le service firewall
+@sc config SharedAccess start= auto > parfeuTjrOn.output.txt
+@sc start SharedAccess > parfeuTjrOn.output.txt

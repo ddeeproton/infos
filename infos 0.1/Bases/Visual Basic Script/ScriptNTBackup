@@ -1,0 +1,229 @@
+
+
+
+
+' ====================== CONSTANTES (NE PAS MODIFIER) ======================
+
+' **NE PAS MODIFIER**  Constantes de l'index du tableau "BackupList"
+  Const ISAUVEGARDEQUOI = 1
+  Const ILECTEURDISTANT = 2
+  Const ISAVDESTINATION = 3
+  Const NBRCOLONNES = 3
+
+' ======================= Configuration du site web ========================
+
+' Adresse pour la connection du lecteur distant sur le dossier 
+' du site web de surveillance des sauvegardes.
+  LecteurWeb = "\\10.1.0.11\c$"
+
+
+' Chemin pour arriver dans le dossier du site de surveillance à travers le lecteur réseau ditant
+' La lettre du lecteur "i:\..." ne doit pas correspondre à un lecteur disque locale déjà utilisé.
+  DossierWeb = "i:\BACKUP\RapportBackups\EasyPHP1-7\www\ProjetBackupPropre\StatusBackups"     
+
+' ======================= Configuration des sauvegardes ========================
+
+' BackupList est un tableau à trois dimensions
+' BackupList(Nombre de sauvegardes - 1, Type d'info de la sauvegarde)
+  ReDim BackupList(1, NBRCOLONNES)
+
+
+' Configuration de la sauvegarde n°1
+' On sauvegarde quoi
+  BackupList(0, ISAUVEGARDEQUOI) = "SYSTEMSTATE"
+' Adresse du lecteur réseau de destination  
+  BackupList(0, ILECTEURDISTANT) = "\10.1.0.50\e$"
+' Chemin de destination de la sauvegarde à travers le lecteur réseau
+  BackupList(0, ISAVDESTINATION) = "k:\BACKUP_SYSTEM"&computerName&"\systemstate.bkf"
+
+
+' Configuration de la sauvegarde n°2
+' On sauvegarde quoi
+  BackupList(1, ISAUVEGARDEQUOI) = "C:"
+' Adresse du lecteur réseau de destination  
+  BackupList(1, ILECTEURDISTANT) = "\10.1.0.11\e$"
+' Chemin de destination de la sauvegarde à travers le lecteur réseau
+  BackupList(1, ISAVDESTINATION) = "k:\BACKUP_SYSTEM"&computerName&"\full-C.bkf"
+
+
+ 
+' ============================= Début du programme **NE PLUS RIEN MODIFIER A PARTIR D'ICI** ============================
+
+' Tue les processus de NTBackup bloqués de la veille (si erreure survenue).
+' Le bloquage se produit quand les disques de destination sont pleins.
+  call tuerLesProcessus("NTBACKUP.EXE")
+
+
+' ============================= LANCEMENT DES SAUVEGARDES =====================
+
+
+  For i = 0 To UBound(BackupList)
+       call lancerSauvegardeNTBackup(BackupList(i, ISAUVEGARDEQUOI), BackupList(i, ISAVDESTINATION), BackupList(i, ILECTEURDISTANT))   
+  Next 
+
+
+' ============================= FIN DES SAUVEGARDES ============================
+
+' Déconnecte le lecteur au serveur Web
+  call deconnecterLeLecteur(left(DossierWeb,1))
+
+
+' ============================= Fin du programme ===============================
+
+' Tue les processus de wscript.exe bloqués de la veille.
+' 
+  call tuerLesProcessus("NTBACKUP.EXE")
+
+
+
+' ==================== Les Fonctions (ne plus modifier) ========================
+
+
+
+'Informe le site web de surveillance de l'évenement
+  sub renseignerServeurWeb(Dossier_Web, Lecteur_Web, SauvegardeQuoi, statusSauvegarde, Destination)
+    Dim fichier, contenu
+    ' On vérifie si le lecteur distant est connecté
+    if not dossierExiste(left(Dossier_Web,1)) then
+      ' Si le lecteur réseau n'est pas connecté, alors on le connecte
+      call connecterLeLecteur(left(Dossier_Web,1), Lecteur_Web)
+    end if
+    contenu = Date & ";" & _ 
+              FormatDateTime(Time(),4) & ":00;" & _ 
+              WeekDay(now) & ";" & _
+              computerName & ";" & _
+              SauvegardeQuoi & ";" & _
+              Destination & ";" & _
+              statusSauvegarde & ";" & _
+              TailleFichier(Destination) & ";" & _
+              AdressesIPLocale & ";"
+    call ecrireALaFinFichier(Dossier_Web & "\" & computerName, contenu)
+
+  end sub
+
+
+'Lance le processus de sauvegarde NTBackup et renseigne le site web de l'avancement
+  sub lancerSauvegardeNTBackup(SauvegardeQuoi, Destination, LecteurSauvegarde)
+    ' On renseigne le site web que le backup a démarré
+    call renseignerServeurWeb(DossierWeb, LecteurWeb, SauvegardeQuoi, "STARTED", Destination)
+    ' On connecte le lecteur réseau au serveur de sauvegarde
+    call connecterLeLecteur(Left(Destination,1), LecteurSauvegarde) 
+    ' On lance les backups
+    executerEtAttendre("ntbackup backup "& SauvegardeQuoi &" /f " & chr(34) & Destination & chr(34) & " /M n  /l:n")
+    'On renseigne le site web que le backup est terminé
+    call renseignerServeurWeb(DossierWeb, LecteurWeb, SauvegardeQuoi, "DONE", Destination) 
+    call deconnecterLeLecteur(Left(Destination,1))
+  end sub
+
+
+'Retourne la taille d'un fichier à partir de son chemin
+  function TailleFichier(Fichier)
+    'Si une erreur survient, on continue
+    On Error Resume Next
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    Set objFile = objFSO.GetFile(Fichier)
+    TailleFichier = objFile.Size
+    set objFSO = nothing
+    set objFile = nothing
+  end function
+
+
+
+'Vérifie si le chemin du dossier existe
+  function dossierExiste( LettreDisque )
+    set fs = CreateObject("Scripting.FileSystemObject")
+    dossierExiste = fs.FolderExists(LettreDisque)
+    set fs = nothing
+  end function
+
+
+'Retourne le nom de l'ordinateur
+  function computerName
+    Set WshNetwork = WScript.CreateObject("WScript.Network")
+    computerName = WshNetwork.ComputerName
+    set WshNetwork = nothing
+  end function
+
+
+'Execute un executable et attend la fin de son execution
+  sub executerEtAttendre(Programme)
+    Set WshShell = WScript.CreateObject("WScript.Shell")
+    WshShell.run Programme, 1, true
+    set WshShell = nothing
+  end sub
+
+
+'Ecrit à la fin d'un fichier
+  sub ecrireALaFinFichier(fichier, contenu)
+    'Si une erreur survient, on continue
+    On Error Resume Next
+    Dim fso, fileWriter
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    if fso.FileExists(fichier) Then
+      Set fileWriter= fso.OpenTextFile(fichier, 8)
+    else
+      Set fileWriter = fso.CreateTextFile(fichier,true)
+    end if
+    fileWriter.WriteLine(contenu)
+    fileWriter.Close
+    Set fileWriter = Nothing
+    Set fso = Nothing
+  end sub
+
+
+'Déconnecte un lecteur réseau distant
+  sub deconnecterLeLecteur(LettreLecteur)
+    executerEtAttendre("net use /delete " & LettreLecteur & ":")
+  end sub
+
+
+'Connecte un lecteur réseau distant "i:", "\192.168.0.1\c$"
+  sub connecterLeLecteur(LettreLocale, AdresseDistante)
+    if dossierExiste(LettreLocale) then
+      deconnecterLeLecteur(LettreLocale)
+      ' On laisse deux secondes le temps de déconnecter avant de continuer
+      WScript.sleep 2000
+    end if
+    call executerEtAttendre("net use " & LettreLocale & ": " & AdresseDistante )
+    ' On attend deux secondes le temps de connecter le lecteur avant de continuer
+    WScript.sleep 2000
+  end sub
+
+
+'Tue les executables ayant le nom indiqué en paramètre
+  sub tuerLesProcessus(nomProcessus)
+    'Si une erreur survient, on continue
+    On Error Resume Next
+    strComputer = "."
+    Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!" & strComputer & "\root\cimv2")
+    Set colProcessList = objWMIService.ExecQuery("Select * from Win32_Process Where Name = '" & nomProcessus & "'")
+    For Each objProcess in colProcessList
+      objProcess.Terminate()
+    Next
+    Set objWMIService = Nothing
+    Set colProcessList = Nothing
+  end sub
+
+
+'Retourne toutes les adresses IP locale de la machine qui execute ce script
+  function AdressesIPLocale
+    'Si une erreur survient, on continue
+    On Error Resume Next
+    strComputer = "."
+    Set objWMIService = GetObject("winmgmts:" & strComputer & "\root\cimv2")
+    Set IPConfigSet = objWMIService.ExecQuery("Select IPAddress from Win32_NetworkAdapterConfiguration ")
+    result = "" 
+    For Each IPConfig in IPConfigSet
+      If Not IsNull(IPConfig.IPAddress) Then 
+        For i=LBound(IPConfig.IPAddress) to UBound(IPConfig.IPAddress)
+          'Place un tiret entre les adresses IP
+          if len(result) > 0 then result = result & "-"
+          'Place l'adresse IP à la fin de la chaine contenu dans result   
+          result = result & IPConfig.IPAddress(i)
+        Next
+      End If
+    Next
+    AdressesIPLocale = result
+  end function
+
+

@@ -1,0 +1,19 @@
+// First method
+Dim result()
+redim result(3)
+result(0) = "A"
+result(1) = "B"
+result(2) = "C"
+
+
+// Second method
+Dim result
+result = null
+result = Array("A", "B", "C")
+
+
+// Read array
+For Each r In result
+
+Next
+

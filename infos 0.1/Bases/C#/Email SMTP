@@ -1,0 +1,29 @@
+using System.Net.Mail;
+
+private bool sendMail(string mailTitle, string mailBody)
+{
+    SmtpClient client = new SmtpClient("smtp.mail.com", 587);
+    client.UseDefaultCredentials = false; 
+    client.EnableSsl = true;  
+    client.DeliveryMethod = SmtpDeliveryMethod.Network;
+    client.Credentials = new System.Net.NetworkCredential("my@mail.com", "password");
+    MailAddress from = new MailAddress("my@mail.com", "my name", System.Text.Encoding.UTF8);
+    MailAddress to = new MailAddress("my@mail.com");
+    MailMessage message = new MailMessage(from, to);
+    message.Body = mailBody;
+    message.Body += Environment.NewLine;
+    message.BodyEncoding = System.Text.Encoding.UTF8;
+    message.Subject = mailTitle;
+    message.SubjectEncoding = System.Text.Encoding.UTF8;
+
+    try
+    {
+        client.Send(message);
+        message.Dispose();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        return false;
+    }
+}

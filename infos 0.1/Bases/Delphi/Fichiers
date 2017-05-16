@@ -1,0 +1,7 @@
+
+Path := ExtractFilePath(ParamStr(0)); 
+ProgramName := ExtractFileName(ParamStr(0)); 
+ExtPart := ExtractFileExt(FileName);
+
+// Extension sans le point devant
+memo1.Lines.Add(copy(ExtractFileExt('aaaa\aaaa.jpgj'), 2, length(ExtractFileExt('aaaa\aaaa.jpgj'))));

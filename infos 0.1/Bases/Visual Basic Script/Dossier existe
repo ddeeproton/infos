@@ -1,0 +1,20 @@
+  'fonctionne
+  Function DossierExiste( LettreDisque )
+    set fs = CreateObject("Scripting.FileSystemObject")
+    DossierExiste = fs.FolderExists(LettreDisque)
+  end function
+
+
+
+
+ ' Test si dossier existe (ne fonctionne pas avec la lettre d'un disque dur
+  function folderexist(folderspec) Teste si un dossier existe bien 
+    On Error Resume Next  
+    dim msg  
+    if (fso.GetFolderExists(folderspec)) then Si le dossier existe 
+      msg = 0  
+    else  
+      msg = 1  
+    end if  
+    fileexist = msg retourne msg comme valeur 
+  end function 

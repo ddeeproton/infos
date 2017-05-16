@@ -1,0 +1,2 @@
+  // Affecte le dossier de l'executable comme répertoire par défaut
+  SetCurrentDirectory(PChar(ExtractFileDir(Application.Exename)));

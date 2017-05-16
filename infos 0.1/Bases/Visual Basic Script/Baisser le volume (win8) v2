@@ -1,0 +1,42 @@
+'Script pour dormir. 
+'Mettre de la musique et lancer ce script qui va baisser petit à petit le volume
+
+set WshShell = WScript.CreateObject("WScript.Shell")
+   WshShell.Run "SndVol.exe"
+   WScript.Sleep 1000
+   WshShell.AppActivate "Mélangeur de volume"
+   WScript.Sleep 1000
+   WshShell.SendKeys "+{TAB}"
+   WScript.Sleep 1000
+   WshShell.SendKeys "+{TAB}"
+   WScript.Sleep 1000
+   WshShell.SendKeys "{DOWN}"
+   WScript.Sleep 2000
+   
+   'Configuration:
+'--------------
+   const ProcessusATuer = "SndVol.exe"
+   const TempsPauseEntreChaquesVerifs = 200
+   const NbrMaximumVerifications = 1
+'------------------------------------------------------
+
+
+
+  strComputer = "."
+  Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+  Set colProcessList = objWMIService.ExecQuery("Select * from Win32_Process Where Name = '" & ProcessusATuer & "'")
+  dim i
+  i = 1
+  do while i <= NbrMaximumVerifications     'Pour infinit mettre: do while 1
+    i = i + 1
+    For Each objProcess in colProcessList
+       objProcess.Terminate()
+       'WScript.Echo "Processus " & objProcess.Name & " killé!"
+       'wscript.quit
+    Next
+    wscript.sleep TempsPauseEntreChaquesVerifs
+  loop
+   
+   WScript.Sleep 120000
+   
+   

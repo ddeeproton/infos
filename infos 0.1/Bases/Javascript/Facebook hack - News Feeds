@@ -1,0 +1,92 @@
+  // A utiliser avec une extension navigateur du type "Custom Style Script" 
+function setCookie(key, value) {
+	var expires = new Date();
+	expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+}
+
+function getCookie(key) {
+	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+	return keyValue ? keyValue[2] : null;
+}
+
+
+
+
+
+var domain = window.location.host;
+if(domain.match('facebook.com')) {
+
+	var doFilter = function() {
+	  clearTimeout(getCookie("filterHandleTimer"));
+	  var filterHandleTimer = setTimeout(function(){
+		// Filtre les mots qu'on ne veut pas voir dans le fil d'actualite
+
+		var blacklist = new Array(
+		  "esclave",
+		  "électoraux",
+		  " élections",
+		  "Front National",
+		  "Marine le pen",
+		  "emmanuel macron",
+		  "président",
+		  "candidat",
+		  "Socialiste",
+		  "Comuniste",
+		  "extrême droite",
+		  "extrême gauche",
+		  "militant",
+		  "démocrati",
+		  "juif",
+		  "islam",
+		  "terrorisme",
+		  "guerre",
+		  "massacre",
+		  "meurtre",
+		  "satan",
+		  "suicide",
+		  "connard",
+		  "connasse",
+		  "Rotschild",
+		  "Bilderberg",
+		  "Pédophile",
+		  "Megapolis",
+		  // Ces deux mots masquent les actualites negatives qu'une personne n'a pas aime
+		  //"\"Triste",
+		  //"\"Grrr",
+		  // Masque la publicite
+		  "=\"_m8d",
+		  "=\"_m8c",
+		  ">Sponsorisé",
+		  ">Sponsored"
+		);
+
+		console.info("Check news feed");
+		var x = document.getElementsByClassName("_4ikz");
+		var min = x.length - 20;
+		if(min < 0 ) min = 0;
+		for(var i=min; i<x.length; i++){
+		  var node = x[i];
+		  if(node.style.display != 'none') {
+			for(var k=0; k<blacklist.length; k++){
+			  if(node.innerHTML.toLowerCase().match(blacklist[k].toLowerCase())) {
+				//node.style.display = 'none';
+				node.innerHTML = "Article removed because: "+ blacklist[k];
+				node.classList.remove("_4ikz");
+				node.classList.add("mbm");
+				node.classList.add("_4-u8");
+				console.info("Article removed because: "+ blacklist[k]);
+				break;
+			  }
+			}
+		  }
+		}
+
+	  },1000);
+
+	  //setCookie("countArticles", document.getElementsByClassName("_4ikz").length);
+	  setCookie("filterHandleTimer", filterHandleTimer);
+	}
+	window.onscroll = doFilter;
+	doFilter();
+}

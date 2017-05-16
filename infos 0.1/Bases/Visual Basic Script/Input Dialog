@@ -1,0 +1,3 @@
+
+' Avoir un input Dialog
+result = InputBox("Message dialog","Titre",Born, 100, 100)

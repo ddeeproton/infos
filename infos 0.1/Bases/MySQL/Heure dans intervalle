@@ -1,0 +1,6 @@
+// Regarde si l'heure se trouve dans une intervalle de -1h et +1h par rapport à maintenant
+
+
+SELECT * 
+FROM  `programme` 
+WHERE `heure` > ADDDATE(NOW(), INTERVAL -1 HOUR ) AND  `heure` < ADDDATE(NOW(), INTERVAL 1 HOUR );

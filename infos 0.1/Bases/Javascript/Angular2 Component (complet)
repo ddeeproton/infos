@@ -1,0 +1,100 @@
+
+import { Component } from '@angular/core';
+
+import { MyProducts }    from './myproducts';
+import { OnInit, OnChanges, SimpleChanges, AfterViewInit }    from '@angular/core';
+
+
+@Component({
+    selector: 'nat-app',
+    //styles: ['body{color:green;}'],
+    //styleUrls: ['styles.css'],
+    encapsulation: ViewEncapsulation.none, // pour ne pas hériter les CSS 
+    template: `
+        <form (submit)="onSubmit()"   #heroForm="ngForm" >
+            <h1>Angular2: Let's do it!</h1>
+            <h2>This is from our first component <i>nat-app</i></h2>
+
+            <h1>bind Click</h1>
+            <input type="text" #inputName (click)="inputName.value='Yo'" />
+            <input type="text" #inputOther  (click)="clickName()" />
+
+            <h1>ngFor</h1>
+            <ul>
+                <li *ngFor="let d of data">
+                    {{d}}
+                </li>
+            </ul>
+
+            <div class="form-group">
+                <label for="power">Hero Power</label>
+                <select class="form-control" id="power" required>
+                    <option *ngFor="let p of data" [value]="p">{{p}}</option>
+                </select>
+            </div>
+
+            <h1>Data binding</h1>
+            <img [src]="uneVarJS" [style.width.px]="20" [style.display]="inline" /> 
+            <img src={{uneVarJS}} />
+            <img src="http://{{uneVarJS}}" />
+            <hr>
+
+            <h1>Two-Way binding</h1>
+            <input type="text" [(ngModel)]="uneVarJS"  [ngModelOptions]="{standalone: true}"  />
+            {{uneVarJS | uppercase }}
+            <hr>
+
+            <h1>ngIf</h1>
+            <div *ngIf="isDisplay">
+                isDisplay = true;
+            </div>
+            <div *ngIf="isDisplay === false">
+                isDisplay = false;
+            </div>
+
+            <hr>
+
+            <h1>onkeyup</h1>
+            <input (keyup)="onKey($event)">
+            {{aValue}}
+
+            <button type="submit" class="btn btn-default" [disabled]="false">Submit</button>
+        </form>
+    `
+})
+export class AppComponent implements OnInit, OnChanges, AfterViewInit {
+    uneVarJS: string;
+    valid: boolean;
+    isDisplay: boolean;
+    data: any[];
+    aValue: string;
+
+    constructor() {
+        this.uneVarJS = '';
+        this.aValue = '';
+        this.valid = true;
+        this.isDisplay = false;
+        this.data = ['test', 'fssf', 'grth'];
+    }
+
+    public clickName(): void {
+        let prod = new MyProducts(1, 'prod1');
+        alert('click! ' + prod.id);
+    }
+    onKey(event: KeyboardEvent) {
+        this.aValue = (<HTMLInputElement>event.target).value;
+    }
+    onSubmit(e: any): boolean {
+        e.preventDefault();
+        e.stopPropagation();
+        alert('submit!');
+        return false;
+    }
+
+    ngOnInit() {
+    }
+    ngOnChanges(changes: SimpleChanges) {
+    }
+    ngAfterViewInit() {
+    }
+}

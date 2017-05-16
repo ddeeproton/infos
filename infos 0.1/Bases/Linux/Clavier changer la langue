@@ -1,0 +1,10 @@
+Le clavier suisse romand en mode console
+
+C'est loadkeys qui se charge de changer la configuration du clavier. Ce programme fait partie des console-tools et se trouve sur toute bonne distribution linux dans /usr/bin/loadkeys. Il vient avec une liste de fichiers de description de claviers, généralement placée dans /usr/lib/kbd/keymaps/. C'est le fichier /usr/lib/kbd/keymaps/i386/qwertz/fr_CH-latin1.kmap.gz qui nous intéresse. Il suffit de faire un petit :
+
+/usr/bin/loadkeys /usr/lib/kbd/keymaps/i386/qwertz/fr_CH-latin1.kmap.gz
+et on est tout bon. Les distributions modernes le font automatiquement. Par exemple, pour la RedHat, les fichiers concernés sont /etc/sysconfig/keyboard et /etc/rc.d/init.d/keytable.
+
+Il y a aussi une table sg-latin1 pour permettre à ceux qui tapent de temps en temps dans la langue de Goethe sur clavier suisse allemand de changer de clavier en deux coups d'alias bien pensés.
+
+Le choix d'un clavier intervient - pour des raisons évidentes - très tôt dans la procédure d'installation des distributions Linux, ensuite de quoi ce choix est répercuté dans les fichiers de démarrage du système. Il est donc important de faire dès le départ le bon choix, et de bien comprendre le fonctionnement de sa distribution si l'on veut changer par la suite, notamment pour éviter que des modifications ne se voient écrasées au prochain démarrage.

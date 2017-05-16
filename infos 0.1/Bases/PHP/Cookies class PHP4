@@ -1,0 +1,50 @@
+<?php
+
+class cookies{ 
+
+// -----------------------------------------------------------------------------
+//  Fonction: Créer un cookie
+//    @paramètres:
+//      $name : Nom du cookie
+//      $value : Valeure du cookie
+//      $expire : Date d'expiration du cookie
+//    @retourne:  rien
+//------------------------------------------------------------------------------
+  function create($name, $value, $expire = "") {
+        if(empty($expire)) $expire = time()+(60*60*24*365); // Valable une année par défaut
+        setcookie($name, $value, $expire); 
+  }	
+
+
+/* -----------------------------------------------------------------------------
+//  Fonction: Lire un cookie
+//    @paramètres:
+//      $varname : Nom de la variable cookie
+//    @retourne:  Valeur du cookie
+//------------------------------------------------------------------------------ */
+  function read($varname) {
+        return (isset($_COOKIE[$varname])) ?  $_COOKIE[$varname] : "";
+  }	
+ 
+/* -----------------------------------------------------------------------------
+//  Fonction: Vérifie si les cookies sont activés
+// Attention la session est killée 
+//    @paramètres:
+//      $varname : Nom de la variable cookie
+//    @retourne:  True si les cookies sont activés dans le navigateur
+//------------------------------------------------------------------------------ */
+	function check_cookie_enabled() {
+		@session_start();
+		$a = session_id();
+		session_destroy();
+
+		session_start();
+		$b = session_id();
+		session_destroy();
+
+		return $a == $b;
+	}
+
+} 
+
+?>

@@ -1,0 +1,20 @@
+interface
+
+uses Windows, SysUtils, Messages,
+  // Pour FProcessEntry32
+  Tlhelp32,
+  // Pour ShellExecute
+  // Pour FindExecutable
+  ShellAPI;
+
+function IsUserAnAdmin(): Boolean; external shell32;
+function IsAdmin(): Boolean;
+
+implementation
+
+
+function IsAdmin(): Boolean;
+begin
+  result := IsUserAnAdmin();
+end;
+

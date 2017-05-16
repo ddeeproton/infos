@@ -1,0 +1,506 @@
+<div id="divMeteo"  style=" top:222; left:550; position:absolute;" onMouseDown="boutonPresse(this)">
+    Mon contenu déplaçable
+</div>
+
+
+<script type="text/javascript" language="JavaScript">
+
+// ************************************************************
+// ====================== Initialisation ====================== 
+
+    var mouse = new mouseEventTab(); 
+    var tabOpacityPopUpMenu = new Array();   
+    var tabDIVs = new Array();
+    var elementPressed = null;
+	var animationEnExecution = false;
+	var animationPopUpMenuEnExecution = false;
+    var isAnimationPopUpMenuRunning = false;      
+    var animationVitesseProcesseur = 1;
+    var objPopUpMenu = null;
+    var tAnimation = null;
+    var tAnimPopUp = null;
+    var iOpacity = 0;
+    var stepOpcatity = 0;
+
+// ***********************************************************
+// ====================== Configuration ====================== 
+
+    // Tableau des éléments DIV = new elementDIVTab(Object ID, Height of object)
+    tabDIVs[tabDIVs.length++] = new elementDIVTab("divInfo", 108); 
+    tabDIVs[tabDIVs.length++] = new elementDIVTab("divRoaming", 141);
+    tabDIVs[tabDIVs.length++] = new elementDIVTab("divMeteo", 135);
+    tabDIVs[tabDIVs.length++] = new elementDIVTab("divRSS", 254);    
+
+    var ralentissement = 4;     // Effet de ralentissement
+    var vitesseMin = 6;
+    var vitesseMax = 300;        // Vitesse maximum de l'objet
+    var leftPositionFix = 550;  // Position horizontal pour tous les éléments
+    var StartPosY = 110;        // Position verticale de départ des éléments
+    var tempsAccordePourAnim = 500;    
+        
+// ***********************************************************************        
+// ====================== Compatibilité navigateurs ======================
+       
+    // Detecte le navigateur actuel
+    var detect = navigator.userAgent.toLowerCase();
+    var msie = detect.indexOf("msie 5.5") != -1 || detect.indexOf("msie 6") != -1 || detect.indexOf("msie 7") != -1;
+    var opera = detect.indexOf("opera") != -1;
+    var safari = detect.indexOf("safari") != -1;
+
+    // Désactive l'animation pour les navigateurs incompatibles
+    var msieUltraVieuxOuTropRecent = detect.indexOf("msie") != -1 && !msie;
+    var desactiverAnimation = msieUltraVieuxOuTropRecent || safari;
+    
+    if(!desactiverAnimation) {
+        if (opera) document.captureEvents(Event.MOUSEUP);
+        document.onmousemove = deplacementSouris; 
+        document.onmouseup = onMouseUpEvent;
+        document.body.onload = onPageLoad;
+        document.onclick = hidePopUpMenu;
+         
+        // Pour firefox opera
+        if(!msie) {
+            document.addEventListener("mousemove","deplacementSouris",true);        
+          //  document.addEventListener("mouseup","onMouseUpEvent",true);             
+        }
+    }
+
+// ********************************************************
+// ====================== évènements ====================== 
+
+
+
+    // fonction appellé lors du chargement de la page
+    function onPageLoad()
+    {
+	    // Charge la position des éléments depuis le Cookie
+	    var pos = null;
+	    for(var i=0;i<tabDIVs.length; i++) {
+		    var obj = document.getElementById(tabDIVs[i].objID);
+		    if(obj) {
+			    pos = LireCookie(tabDIVs[i].objID+"PosY");
+			    if(pos) obj.style.top = pos;		
+			    obj.style.left = leftPositionFix+"px"; 			    
+		    }
+	    }
+	    hidePopUpMenu();
+        triePositionsElements();
+        if(!animationEnExecution) animation();  
+    }
+    
+
+
+    // Change l'apparence des boutons lors du passage de la souris
+    function onMouseOverImg(objID) 
+    {
+       document.getElementById("tdLeft"+objID).style.backgroundImage="url(<%=ImgDir%>/btn_left_over.png)";
+       document.getElementById("tdCenter"+objID).style.backgroundImage="url(<%=ImgDir%>/btn_center_over.png)";
+       document.getElementById("tdRight"+objID).style.backgroundImage="url(<%=ImgDir%>/btn_right_over.png)";
+    }
+
+    // Restaure l'apparence des boutons lorsque la souris quitte la zone du bouton
+    function onMouseOutImg(objID) 
+    {
+       document.getElementById("tdLeft"+objID).style.backgroundImage="url(<%=ImgDir%>/btn_left.png)";
+       document.getElementById("tdCenter"+objID).style.backgroundImage="url(<%=ImgDir%>/btn_center.png)";
+       document.getElementById("tdRight"+objID).style.backgroundImage="url(<%=ImgDir%>/btn_right.png)";
+    }
+
+    // On clique sur un objet
+    function ElementDivPress(objPress) 
+    { 
+        if(!desactiverAnimation) {
+	        if(objPress) {
+                // Mémorise l'élément sélectionné
+                elementPressed = objPress;
+                // Met au premier plan l'élément DIV
+                mettreAuPremierPlan();	    
+                // Différence entre la souris et l'élément pressé
+                origine_x = mouse.PosX - getValueInteger(obj.style.left); 
+                origine_y = mouse.PosY - getValueInteger(objPress.style.top);
+                // On sélectionne uniquement que si on a cliqué dans le haut de l'élément
+                //if(origine_y > 49) onMouseUpEvent();
+                SetTransparent();
+                // Désélectionne le texte sélectionné
+                clearSelection();	
+	        }
+	    }  else onMouseUpEvent();
+    } 
+
+    // On relache le bouton de la souris
+    function onMouseUpEvent() 
+    { 
+        for (var i=0; i<tabDIVs.length; i++) {   
+            var obj = document.getElementById(tabDIVs[i].objID);
+            if(obj && elementPressed){
+                if(obj === elementPressed && getValueInteger(elementPressed.style.top) === tabDIVs[i].posY || getValueInteger(elementPressed.style.left) === leftPositionFix ) {
+                    clearTransp(obj);
+                    hideSquare();
+                    break;
+                }
+            }          
+        }
+        elementPressed = null; 
+        triePositionsElements();
+        if(!animationEnExecution) animation();       
+    } 
+
+    function TimeNow() 
+    {
+        var result = new Date;
+        return result.getTime();         
+    }
+
+    // La souris bouge sur la page web
+    function deplacementSouris(e)
+    {
+        //window.alert(TimeNow());
+        mouse.PosX = (msie) ? event.x + document.body.scrollLeft : e.pageX;
+        mouse.PosY = (msie) ? event.y + document.body.scrollTop : e.pageY;	    
+		mouse.Click =  (msie) ? (event.button === 1) : (e.which  == 1);
+		if(mouse.Click) {
+            if (elementPressed) {    
+                if(!isAnimationPopUpMenuRunning) triePositionsElements();                      
+                if(objPopUpMenu && getValueInteger(objPopUpMenu.style.top) > 0) hidePopUpMenu();
+                elementPressed.style.left = limites(mouse.PosX - origine_x, -50, 820);	
+                elementPressed.style.top = limites(mouse.PosY - origine_y, -50, 750);
+                var tDepSouris = TimeNow();      
+                if ((TimeNow()-tDepSouris) > 30) clearTransp(elementPressed); // Si PC trop lent, enlève la transparence
+                triePositionsElements();
+                if(!animationEnExecution) animation();                
+	        } else if(!isAnimationPopUpMenuRunning) onMouseUpEvent();
+	    } else if(!isAnimationPopUpMenuRunning) onMouseUpEvent();
+    } 
+
+// ****************************************************************
+// ====================== Animation fenêtres ====================== 
+
+    // Infos pour les éléments Div
+    function elementDIVTab(ObjID, Height) 
+    {
+        this.objID = ObjID; // ID de l'élément <DIV>
+        this.height = Height; // Hauteur de l'élément
+        this.tempsDispo = null;
+        this.posY = getValueInteger(document.getElementById(ObjID).style.top); // Position verticale
+        this.posX = getValueInteger(document.getElementById(ObjID).style.left); // Position horizontal
+    }
+
+    // Déplace les éléments
+    function animation() 
+    {
+        animationEnExecution = true;
+        objetsArrivesADest = true;
+        for (iObj=0; iObj<tabDIVs.length; iObj++) {   
+            moveObject();     
+        }
+        clearSelection(); 
+        tAnimation = TimeNow();     
+        if(objetsArrivesADest) {
+            SauvegardePositionElementsDansCookie();
+            animationEnExecution = false;	        
+        }
+        else window.setTimeout("animation()",1);           
+    }
+
+    function moveObject()
+    {
+        obj = document.getElementById(tabDIVs[iObj].objID);
+        if(obj && (obj != elementPressed)) { 
+            // Si l'élément n'est pas arrivé à destination
+            if( getValueInteger(obj.style.top) != tabDIVs[iObj].posY || getValueInteger(obj.style.left) != leftPositionFix ) {
+                obj.style.top = positionSuivante(getValueInteger(obj.style.top), tabDIVs[iObj].posY);
+                obj.style.left = positionSuivante(getValueInteger(obj.style.left), tabDIVs[iObj].posX);
+                objetsArrivesADest = false; // Indique qu'on doit faire encore une boucle
+            }// Si l'élément est arrivé à destination est qu'il est transparent                            
+            else if(obj.style.opacity != "1" && obj.style.filter != "alpha(opacity=100)") 
+            {
+                clearTransp(obj); 
+                hideSquare();  
+                tabDIVs[iObj].tempsDispo = null;
+            }                        
+        }    
+        
+    }
+
+    function positionSuivante(posActuelle, destination)
+    {
+        var direction = ((posActuelle < destination) ? 1 : -1 );
+        var distancePosArrivee = distanceRestante(posActuelle, destination);    
+        if(tabDIVs[iObj].tempsDispo === null) tabDIVs[iObj].tempsDispo = TimeNow() + tempsAccordePourAnim;
+        var tDispo =  tabDIVs[iObj].tempsDispo-TimeNow();
+        if(tDispo<0.001) tDispo = 0.001;
+        var vitesse = (distancePosArrivee/(tDispo*0.01))/ralentissement ;
+        if(vitesse<vitesseMin) vitesse = vitesseMin;
+        if( vitesse > vitesseMax) vitesse = vitesseMax;
+         if(vitesse>distancePosArrivee) vitesse = distancePosArrivee;
+        vitesse = vitesse * direction; 
+        var nextPos = posActuelle + vitesse;      
+        
+        if( distancePosArrivee < 3 ) {
+            nextPos = destination;
+        }
+        return Math.round(nextPos)+"px";
+    }
+
+    function distanceRestante(depart, arrivee) 
+    {
+        return Math.abs(depart - arrivee);    
+    }
+
+    function definieTempsDispo()
+    {
+        if(!tabDIVs[iObj].tempsDispo) {
+            tabDIVs[iObj].tempsDispo = distanceRestante(getValueInteger(obj.style.top), tabDIVs[iObj].posY) + distanceRestante(getValueInteger(obj.style.left), tabDIVs[iObj].posX) / 0.2;    
+        }
+    }
+
+    // Retourne une valeure comprise entre une valeure min et max
+    function limites(val, minVal, maxVal) 
+    {    
+        if( val < minVal) return minVal;
+        else if( val > maxVal) return maxVal;
+        else return val;
+    }
+
+    // Enlève le texte "px" à la fin
+    function getValueInteger(value)
+    {
+        return Math.abs(value.substring(0,value.length-2))
+    }
+
+    // Triage des éléments DIV en fonction de leur position
+    function triePositionsElements()
+    {   
+        getPositionsY();
+        tabDIVs.sort(sortByPosY);
+        setPositionsY();            
+    }
+
+    // Structure des données de la souris
+    function mouseEventTab() 
+    {
+        this.Click = false; // Status du clique
+        this.PosX = 0; // Position horizontal
+        this.PosY = 0; // Position verticale
+    }
+
+
+
+    // Récupère la position verticale des éléments
+    function getPositionsY() 
+    {
+        for (var i=0; i<tabDIVs.length; i++) {
+            var obj = document.getElementById(tabDIVs[i].objID)
+            if(obj) {
+                tabDIVs[i].posY = getValueInteger(obj.style.top) + (tabDIVs[i].height / 2);
+            }
+        }
+    }
+    
+  
+    // Triage de tableau à plusieurs dimensions en fonction de posY
+    function sortByPosY(a, b) 
+    {
+	    var x = a.posY;
+	    var y = b.posY;
+	    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    }
+
+    // Affecte les positions de destination aux éléments et affiche un carré en pointillé pour l'élément en Drag
+    function setPositionsY() 
+    {
+        var thisPosY = StartPosY; // hauteur de départ
+        for (var i=0; i<tabDIVs.length; i++) {
+            obj = document.getElementById(tabDIVs[i].objID)
+            if(obj) {
+                // Affiche un rectangle en pointillés à l'emplacement de destination pour l'objet séléectionné
+                if(obj == elementPressed) dispSquare(leftPositionFix+"px", (thisPosY-1)+"px", tabDIVs[i].height+1, 412);
+                else if(tabDIVs[i].posY != thisPosY) tabDIVs[i].tempsDispo =TimeNow()+tempsAccordePourAnim;                
+                tabDIVs[i].posY = thisPosY; 
+                tabDIVs[i].posX = leftPositionFix; 
+                thisPosY += tabDIVs[i].height;
+                thisPosY += 5; // Espacement verticale entre les éléments
+            }
+        }    
+    }
+
+
+    // Rend transparent l'élément sélectionné
+    function SetTransparent()
+    {
+	    elementPressed.style.filter = "alpha(opacity=55);"; // IE
+	    elementPressed.style.opacity = ".55"; // Firefox
+    }
+
+    // Supprime la transparance
+    function clearTransp(obj) {
+        obj.style.filter = "alpha(opacity=100)"; // IE
+        obj.style.opacity = "1";	// Firefox         
+    }
+
+    // Réduit un élément DIV
+    function masquerElement(id, id2) 
+    {
+        document.getElementById(id2).innerHTML = "";
+ 	    for(var i=0;i<tabDIVs.length; i++) {
+ 	        if( tabDIVs[i].objID === id ) {
+ 	            tabDIVs[i].height = 34;
+ 	        }
+	    }      
+        triePositionsElements();
+        if(!animationEnExecution) animation(); 	             
+    }
+
+    
+    // Désélectionne le texte sélectionné (IE, FF et Opera)
+    function clearSelection() 
+    {
+	    if(document.selection && document.selection.empty) document.selection.empty();
+	    else if(window.getSelection) {
+		    var sel=window.getSelection();
+		    if(sel && sel.removeAllRanges) sel.removeAllRanges();
+	    }
+    }
+
+    // Met au premier plan l'élément DIV
+    function mettreAuPremierPlan()
+    {
+        var decallage = 5; // Laisse la place pour les autres objets en arrière plan
+	    // Pour chaques éléments DIV
+	    for(var i=0;i<tabDIVs.length; i++) {
+		    var obj = document.getElementById(tabDIVs[i].objID);
+		    if(obj) {
+    		    // Donne la valeure la plus haute pour le premier élément
+			    if(obj === elementPressed) obj.style.zIndex  = tabDIVs.length + decallage;
+                // Donne un numéro unique pour les autres éléments				    
+			    else obj.style.zIndex  = i + decallage;    
+		    }
+	    }    
+    }
+
+    // Affiche un carré/rectangle en pointillé
+    function dispSquare(X, Y, H, W)
+    {
+		if(document.getElementById("spanSquareArea") && document.getElementById("divSquareArea")) {	
+	        // Si changement de données
+	        if(document.getElementById("spanSquareArea").innerHTML === "" || document.getElementById("divSquareArea").style.top != Y)
+	        {
+	            document.getElementById("divSquareArea").style.top = Y;
+	            document.getElementById("divSquareArea").style.left = X;
+	            document.getElementById("divSquareArea").style.zIndex  = 0;
+	            document.getElementById("spanSquareArea").innerHTML = "<img src=<%=ImgDir%>/square.gif height=" + H + " width=" + W + ">";
+	        }
+		}
+    }
+
+	// Cache le carré/rectangle en pointillés
+    function hideSquare()
+    {
+		if(document.getElementById("spanSquareArea") && document.getElementById("divSquareArea")) {
+	        document.getElementById("spanSquareArea").innerHTML = "";    
+	        document.getElementById("divSquareArea").style.top = -1;
+	        document.getElementById("divSquareArea").style.left = -1;        
+		}
+    }
+
+    function setElementHidden(id) {
+        document.getElementById(id).style.visibility = "hidden";
+    }
+
+
+
+// *******************************************************
+// ====================== PopupMenu ====================== 
+    
+    function prepareAnimationPopUpMenu(id) 
+    {
+        tAnimPopUp = TimeNow();
+        elementPressed = null;
+        if(objPopUpMenu) hidePopUpMenu();
+        objPopUpMenu = document.getElementById(id);
+        if(objPopUpMenu) {     
+            
+            var PosY = getValueInteger(objPopUpMenu.style.top);
+            var PosX = getValueInteger(objPopUpMenu.style.left);
+            if(PosY != mouse.PosY || PosX != mouse.PosX) {
+                objPopUpMenu.style.top = mouse.PosY;
+                objPopUpMenu.style.left = mouse.PosX;
+            }     
+            objPopUpMenu.style.zIndex = 1000;
+            objPopUpMenu.style.opacity = 0;
+            iOpacity = 0;
+            objPopUpMenu.style.filter = "alpha(opacity=0)";   
+            stepOpcatity = 0;            
+            fin = null;
+            isAnimationPopUpMenuRunning = true; 
+            
+            animationPopUpMenu();
+        }  
+    }
+
+ 
+    // Déplace les éléments
+    function animationPopUpMenu() 
+    {
+        if(objPopUpMenu) { 
+            if(tAnimPopUp) iOpacity = (TimeNow()-tAnimPopUp)/250 ;
+            if(iOpacity>1) iOpacity = 1;
+            objPopUpMenu.style.opacity = iOpacity;
+            objPopUpMenu.style.filter = "alpha(opacity=" + (iOpacity * 100) + ")";
+            if(iOpacity < 1) window.setTimeout("animationPopUpMenu()",1) 
+            else isAnimationPopUpMenuRunning = false;
+        }
+    }
+
+    // Cache le PopupMenu
+    function hidePopUpMenu() 
+    {
+        if(objPopUpMenu) {
+            objPopUpMenu.style.top = -300;
+            objPopUpMenu.style.left = -300;        
+        }
+    }
+
+
+// ====================== Cookies ====================== 
+
+    // Sauvegarde dans Cookie
+    function EcrireCookie(sName, sValue) 
+    {
+        var today = new Date(), expires = new Date();
+        expires.setTime(today.getTime() + (365*24*60*60*1000));
+        document.cookie = sName + "=" + sValue + ";expires=" + expires.toGMTString();
+    }
+
+    // Charge depuis Cookie
+    function LireCookie(nom)
+    {
+	    var arg=nom+"=";
+	    var alen=arg.length;
+	    var clen=document.cookie.length;
+	    var i=0;
+	    while (i<clen) {	
+		    var j=i+alen;
+		    if (document.cookie.substring(i, j)==arg) {
+	            var endstr=document.cookie.indexOf (";", j);
+	            if (endstr==-1) endstr=document.cookie.length;
+	            return unescape(document.cookie.substring(j, endstr)); 		    
+		    }
+		    i=document.cookie.indexOf(" ",i)+1;
+		    if (i==0) break;
+	    }
+	    return null; 
+    }
+
+    // Sauvegarde la position des éléments
+    function SauvegardePositionElementsDansCookie()
+    {
+        for (var i=0; i<tabDIVs.length; i++) {   
+            var obj = document.getElementById(tabDIVs[i].objID);
+            EcrireCookie(tabDIVs[i].objID+"PosY", obj.style.top);
+        }    
+    }
+
+</script> 
+
+

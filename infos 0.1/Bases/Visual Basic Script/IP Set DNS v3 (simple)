@@ -1,0 +1,53 @@
+'Example: 
+' Set IP DNS
+'   wscript.exe this.vbs 127.0.0.1 192.168.0.1
+'
+' Automatic DNS 
+'   wscript.exe this.vbs 
+
+setDNS(ArgumentsToArray())
+
+function ArgumentsToArray()
+  Dim i, res()
+  i = 0
+  redim res(WScript.Arguments.Count-1)
+  For Each arg in WScript.Arguments
+    arg = Replace(arg," ","")
+    if arg <> "" and arg <> "uac" Then
+      res(i) = arg
+      i = i + 1
+    End If
+  Next
+  if i = 0 then 
+    ArgumentsToArray = Array()
+  else
+    ArgumentsToArray = res
+  end if
+End function
+
+function setDNS(listIP)
+    Dim res,objNetCard,arrDNSServers,objWMIService,colNetCards
+    res = False
+    Call GetAdminPrivilege()
+    Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\cimv2")
+    Set colNetCards = objWMIService.ExecQuery("Select * From Win32_NetworkAdapterConfiguration Where IPEnabled = True")
+    For Each objNetCard in colNetCards
+      objNetCard.SetDNSServerSearchOrder(listIP)
+      If Err = 0 Then res = True
+    Next
+    setDNS = res
+End function
+
+sub GetAdminPrivilege()
+  Dim WMI, OS, Value, Shell
+  do while WScript.Arguments.Count = 0 and WScript.Version >= 5.7
+    Set WMI = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\cimv2")
+    Set OS = WMI.ExecQuery("SELECT *FROM Win32_OperatingSystem")
+    For Each Value in OS
+      if left(Value.Version, 3) < 6.0 then exit do
+    Next
+    Set Shell = CreateObject("Shell.Application")
+    Shell.ShellExecute "wscript.exe", """" & WScript.ScriptFullName & """ uac", "", "runas"
+    WScript.Quit
+  loop
+end sub

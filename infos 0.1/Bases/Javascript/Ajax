@@ -1,0 +1,35 @@
+
+class Ajax{
+	constructor(){
+		this.tab = new Array();
+	}
+	get(url, onloadend){
+		let index = this.tab.length;
+		this.tab[index] = new XMLHttpRequest();
+		if(onloadend instanceof Function) {
+			this.tab[index].onloadend  = onloadend;
+		}
+		this.tab[index].open("GET", url,  true); 
+		this.tab[index].send(null); 
+		return this;
+	}
+	post(url){
+	   this.xhr.open("POST", url,  true); 
+	   this.xhr.send(null); 
+	   return this;
+	}
+}
+
+
+function _(id){
+	let elem = document.querySelectorAll(id);
+	if(elem.length == 1) return elem[0];
+	return elem;
+}
+
+
+_("#btnAjax").onclick = (evt) => {
+	ajax.get("http://jsonplaceholder.typicode.com/users", (evt)=> {
+		console.log(evt.target.responseText);
+	});
+};

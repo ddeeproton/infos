@@ -1,0 +1,10 @@
+FileStream file = new FileStream(fileName, FileMode.Open);
+SHA512 sha512program = new SHA512CryptoServiceProvider();
+byte[] retVal = sha512program.ComputeHash(file);
+file.Close();
+
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < retVal.Length; i++)
+{
+sb.Append(retVal[i].ToString("x2"));
+}

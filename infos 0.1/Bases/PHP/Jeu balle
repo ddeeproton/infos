@@ -1,0 +1,122 @@
+<html>
+	<head>
+		<title>Jeu</title>
+	</head>
+	<style>
+		body {margin:0;padding:0;background-color:#000;color:#fff;overflow:hidden;}
+		.balle {position:absolute;top:1px;left:10px;width:10px;height:10px;border-radius:100px;background-color:#fff;}
+	</style>
+<body>
+	<div class="balles">
+
+	
+	</div>
+	
+	<div class="acceleration"></div>
+	<div class="force"></div>
+	<script src="jquery.js"></script>
+	<script type="text/javascript">
+		var balles = [];
+		function addBalle(x,y){
+			$(".balles").append('<div class="balle balle'+balles.length+'"></div>');
+			balles.push({
+				directionY:1,
+				directionX:1,
+				accelerationY:0,
+				accelerationX:0,
+				topBalle:x,
+				leftBalle:y
+			});
+		}
+	
+		var mousePos = {pageX: 500,pageY: 500};
+
+		function modifieAcceleration_mouseNewton2(){
+			for(var i in balles) {
+				var b = balles[i];
+
+				var distanceY = Math.abs(b.topBalle - mousePos.pageY);
+				var distanceX = Math.abs(b.leftBalle - mousePos.pageX);
+				if(distanceX<1) distanceX = 1;
+				if(distanceY<1) distanceY = 1;
+
+				var masseSouris = 1;
+				var masseBalle = 1000;
+				var pi = 2;
+				
+				var forceX = pi * ((masseBalle * masseSouris)/Math.pow(distanceX,2));
+				var forceY = pi * ((masseBalle * masseSouris)/Math.pow(distanceY,2));
+				var max = 1;
+				if(forceY>max) forceY = max;
+				if(forceX>max) forceX = max;
+				if(forceY<-max) forceY = -max;
+				if(forceX<-max) forceX = -max;
+				
+				//$(".acceleration").html("forceX:"+forceX+"<br>forceY:"+forceY+"<br>topBalle:"+b.topBalle+"<br>leftBalle:"+b.leftBalle+"<br>distanceY:"+distanceY+"<br>distanceX:"+distanceX);
+
+				if(b.topBalle > mousePos.pageY){
+					b.directionY = -1;
+				}
+				if(b.topBalle < mousePos.pageY){
+					b.directionY = 1;
+				}
+				if(b.leftBalle > mousePos.pageX){
+					b.directionX = -1;
+				}
+				if(b.leftBalle < mousePos.pageX){
+					b.directionX = 1;
+				}
+				
+				
+				b.accelerationY = b.accelerationY + (forceY * b.directionY); 
+				b.accelerationX = b.accelerationX + (forceX * b.directionX); 
+				var maxForce = 10;
+				if(b.accelerationY<-maxForce) b.accelerationY = -maxForce;
+				if(b.accelerationY>maxForce) b.accelerationY = maxForce;
+				if(b.accelerationX<-maxForce) b.accelerationX = -maxForce;
+				if(b.accelerationX>maxForce) b.accelerationX = maxForce;
+				
+				b.topBalle = +b.topBalle + b.accelerationY;
+				b.leftBalle = +b.leftBalle + b.accelerationX;
+				
+				var t = b.topBalle - 5;
+				var l = b.leftBalle - 5;
+				$(".balle"+i).css("top",t+"px");
+				$(".balle"+i).css("left",l+"px");
+			}
+		}
+		
+
+
+		function mouseMove(){
+			$( document ).on( "mousemove", function( event ) {
+				mousePos = event;
+			  //$( "#log" ).text( "pageX: " + event.pageX + ", pageY: " + event.pageY );
+			});
+		}
+		
+		function timer2(){
+			modifieAcceleration_mouseNewton2();
+			setTimeout("timer2()",1);
+		}
+		
+		
+		
+		$(document).ready(function(){
+			var stars = 30;
+			var max = 1000;
+			var min = 1;
+			//randomLeft = Math.abs(randomLeft);
+			//randomRight = Math.abs(randomRight);
+			for(var i = 0; i < stars; i++){
+				var randomLeft = Math.random() * (max - min) + min;
+				var randomRight = Math.random() * (max - min) + min;
+				addBalle(randomLeft, randomRight);
+			}
+			mouseMove();
+			timer2();
+		});
+		
+	</script>
+	</body>
+</html>

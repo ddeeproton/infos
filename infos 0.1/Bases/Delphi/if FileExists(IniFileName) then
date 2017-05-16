@@ -1,0 +1,7 @@
+// mettre dans use:
+uses Sysutils;
+
+
+if FileExists('fichier.txt') then
+  // Le fichier existe
+end;

@@ -1,0 +1,11 @@
+// Pour envoyer un E-Mail avec un fichier comme body
+cat monBody.txt | mail destination@mail.com
+
+// Pour créer un fichier
+echo "" > monFichier.txt
+
+// Pour éditer un fichier text
+vim monFichier.txt
+
+// Pour voir la date actuelle
+date

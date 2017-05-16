@@ -1,0 +1,114 @@
+// Ouvrir une page et récuperer sont contenu avec Javascript
+// Annorexia
+function submitForm()
+{ 
+    var xhr; 
+    try {  xhr = new ActiveXObject('Msxml2.XMLHTTP');   }
+    catch (e) 
+    {
+        try {   xhr = new ActiveXObject('Microsoft.XMLHTTP');    }
+        catch (e2) 
+        {
+          try {  xhr = new XMLHttpRequest();     }
+          catch (e3) {  xhr = false;   }
+        }
+     }
+
+    xhr.onreadystatechange  = function()
+    { 
+    	//readyState == 0 unsent, 1opened, 2, headers recieved , 3loading, 4 done
+         if(xhr.readyState  == 4)
+         {
+              if(xhr.status  == 200) // if no error
+                 document.getElementById("test").innerHTML =  xhr.responseText; 
+              else // if error
+                 document.getElementById("test").innerHTML= xhr.status;
+         }
+    }; 
+
+   xhr.open( "GET", "search.php",  true); 
+   xhr.send(null); 
+} 
+
+// ===============================================================
+
+// Franck
+			function loadXMLDoc(url) 
+			{
+				req = false;
+				// branch for native XMLHttpRequest object
+				if(window.XMLHttpRequest) 
+				{
+    				try 
+    				{
+						req = new XMLHttpRequest();
+					}
+					catch(e) 
+					{
+						req = false;
+				}
+				// branch for IE/Windows ActiveX version
+				} else if(window.ActiveXObject) 
+					{
+       					try 
+       					{
+        					req = new ActiveXObject("Msxml2.XMLHTTP");
+      					} 
+      					catch(e) 
+      					{
+        					try 
+        					{
+          						req = new ActiveXObject("Microsoft.XMLHTTP");
+        					}
+        					catch(e) 
+        					{
+          						req = false;
+        					}
+					}
+				}
+				if(req) 
+				{
+					document.FormVoipCreate.SelNumeros.options.length = 0;
+					req.onreadystatechange = state_Change;
+					req.open("GET", url, true);
+					req.send("");
+				}
+				else
+				{
+					//alert("Your browser do not support XMLHTTP");
+				}
+			}
+			
+
+			function state_Change()
+			{
+				// if xmlhttp shows "loaded"
+				if (req.readyState==4)
+				{
+				// if "OK"
+				if (req.status==200)
+					{
+						var TabNum=req.responseText.split(";");
+						var i=0,SelectedIndex=0;
+						for (i=0;i<TabNum.length-1;i++)
+						{
+							if (Suffixe == TabNum[i])
+							{
+								SelectedIndex = i
+							}
+							document.FormVoipCreate.SelNumeros.options[document.FormVoipCreate.SelNumeros.options.length]=new Option(TabNum[i],TabNum[i]);
+						}
+						if (SelectedIndex !=0)
+						{
+							document.FormVoipCreate.SelNumeros.selectedIndex = SelectedIndex
+						}
+							
+						Suffixe = ''
+					}
+				else
+					{
+						alert("Problem retrieving data : " + req.status)
+					}
+				}
+			}
+			

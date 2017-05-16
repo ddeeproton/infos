@@ -1,0 +1,98 @@
+<html>
+<TITLE>Loading REQ77</TITLE>
+<HTA:APPLICATION
+  WindowsState = "normal"
+/>
+<script type="text/vbscript">
+
+Dim i, iTimerID
+Dim YourArray(50)
+Sub window_OnLOad
+  i = 0
+'  iTimerID = window.setInterval("Looping",100)
+End Sub
+
+Sub Looping
+  If i <= UBound(YourArray) Then
+    Junk.InnerText = "Proccessing " & Cstr(i+1)
+    'Code for whatever you're doing with the array here
+    i = i + 1
+  Else
+    window.clearInterval(iTimerID)
+  End If
+End Sub
+
+
+Sub OnCheckAjouterDossier
+ Submit.disabled = not CheckFolder.Checked
+end Sub
+
+Sub BoutonAjouterDossier
+BIF_returnonlyfsdirs   = &H0001
+BIF_dontgobelowdomain  = &H0002
+BIF_editbox            = &H0010
+BIF_validate           = &H0020
+BIF_browseforcomputer  = &H1000
+
+Dim shell, item
+Set shell = CreateObject("Shell.Application")
+
+flag=BIF_returnonlyfsdirs 
+titre="Test de sélection de dossier"
+Set Item = shell.BrowseForFolder(0,titre,flag, dirinit)
+If isvalue(Item) Then
+    if Junk.InnerHTML = "" then
+	Junk.InnerHTML = "<br/><b>Dossiers à sauvegarder</b><br/>"
+	end if
+	
+' Test si on a sélectionné la racine d'une partition 
+    Result=Item.Title
+	If InStr(1,Result,":")=0 Then
+	  
+	  Result=Item.ParentFolder.ParseName(Item.Title).Path
+	  if IsValue(Result)=False then 
+	    Result=Item.Title
+	  end if
+	End If
+	   Junk.InnerHTML = Junk.InnerHTML &  "  <input name=Submit type=submit onClick=BoutonAjouterDossier value=Supprimer> " & Result & "<br>"
+	'MsgBox "On a choisi : " & Result
+	
+else
+	Junk.InnerText = Junk.InnerText & "On a appuyé sur Annuler"	
+	End If
+    'Wscript.quit
+End Sub
+
+'--------------------------------------------------------------
+' Test de validité de l'objet retourné par BrowseForFolder
+' On ne peut pas utiliser "IsObject", qui retourne toujours "true"
+Function IsValue(obj)
+Dim tmp
+On Error Resume Next
+tmp = " " & obj
+If Err <> 0 Then IsValue = False Else IsValue = True
+On Error GoTo 0
+End Function
+
+
+
+
+</script></HEAD>
+
+
+<body>
+
+  <br/>
+  Adresse IP de la machine de backup:  <br/>
+  <input name="IPbackupServer" type="text" size="40"><br/><br/>
+  <b>Que voulez-vous sauvegarder?</b><br/>
+  <input name="CheckSystemstate" type="checkbox" checked> Sauvegarder l'état du système (system state) <br/>
+  <input name="CheckRegistry" type="checkbox" checked> Sauvegarder la base de registre <br/>
+  <input name="CheckFolder" type="checkbox" onClick="OnCheckAjouterDossier" value="" checked> Sauvegarder des dossiers spcécifiques 
+<input name='Submit' type='submit' onClick=BoutonAjouterDossier value='Ajouter un dossier'><br/>
+<span id="Junk"></span>
+  <br/> 
+
+  
+</body></body>
+</html>

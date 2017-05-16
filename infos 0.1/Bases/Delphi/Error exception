@@ -1,0 +1,64 @@
+// Pour ne plus avoir d''erreur lors du débugage
+http://edn.embarcadero.com/article/32015
+
+Aller dans Tools, Debugger Option, onglet "Langage exception", décocher la case "Stop on delphi exception"
+
+
+try
+//...
+except
+  On E : EOSError do exit;
+end;
+  
+      
+try
+  reWrite(Fp); 
+  Write(Fp, txt);
+  closefile(Fp);
+except
+  on E: EInOutError do exit;
+end;
+  
+      
+
+ Exception             Base class
+ EAbort                Abort without dialog
+ EAbstractError        Abstract method error
+ AssertionFailed       Assert call failed
+ EBitsError            Boolean array error
+ ECommonCalendarError  Calendar calc error
+   EDateTimeError      DateTime calc error
+   EMonthCalError      Month calc error
+   EConversionError    Raised by Convert
+ EConvertError         Object convert error
+ EDatabaseError        Database error
+ EExternal             Hardware/Windows error
+   EAccessViolation    Access violation
+   EControlC           User abort occured
+   EExternalException  Other Internal error
+ EIntError             Integer calc error
+   EDivByZero          Integer Divide by zero
+   EIntOverflow        Integer overflow
+   ERangeError         Out of value range
+ EMathError            Floating point error
+   EInvalidArgument    Bad argument value
+   EInvalidOp          Inappropriate operation
+   EOverflow           Value too large
+   EUnderflow          Value too small
+   EZeroDivide         Floating Divide by zero
+ EStackOverflow        Severe Delphi problem
+ EHeapException        Dynamic memory problem
+   EInvalidPointer     Bad memory pointer
+   EOutOfMemory        Cannot allocate memory
+ EInOutError           IO error
+ EInvalidCast          Object casting error
+ EInvalidOperation     Bad component op
+ EMenuError            Menu item error
+ EOSError              Operating system error
+ EParserError          Parsing error
+ EPrinter              Printer error
+ EPropertyError        Class property error#
+ EPropReadOnly         Invalid property access
+ EPropWriteOnly        Invalid property access
+ EThread               Thread error
+ EVariantError         Variant problem

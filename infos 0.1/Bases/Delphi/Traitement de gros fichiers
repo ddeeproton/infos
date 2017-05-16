@@ -1,0 +1,42 @@
+// Lecture lettre par lettre
+procedure TForm1.Button1Click(Sender: TObject);
+  var
+  FileStream1: TFileStream;
+  MyString: String;
+begin
+FileStream1 := TFileStream.Create('essai.txt',fmOpenRead or fmShareDenyWrite);
+try
+  if FileStream1.Size = 0 then Exit;
+  SetLength(MyString, FileStream1.Size);
+  FileStream1.ReadBuffer(MyString[1], FileStream1.Size-1);
+  FileStream1.ReadBuffer(MyString[1], 1);
+finally
+  FileStream1.Free;;
+end;
+ShowMessage(MyString);
+end;
+//******
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  MyString: String;
+  FileStream2: TFileStream;
+begin
+  MyString := 'this is a string with several words '+
+              'in it to be in a file';
+
+  if @Mystring[1] = PChar(MyString) then
+    Showmessage('Is the Same Memory Address');
+
+  FileStream2 := TFileStream.Create('essai.txt',
+                 fmCreate or fmOpenWrite or fmShareDenyWrite);
+  try
+    FileStream2.WriteBuffer(PChar(MyString)^, Length(MyString)-1);
+    FileStream2.WriteBuffer(PChar(MyString)^, 1);
+    FileStream2.WriteBuffer(PChar(MyString)^, 1);
+  finally
+    FileStream2.Free;
+  end;
+end;
+
+
+

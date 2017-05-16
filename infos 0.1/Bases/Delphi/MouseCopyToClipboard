@@ -1,0 +1,7 @@
+uses Clipbrd;
+
+procedure CopyToClipboard(txt:string);
+begin
+  Clipboard.Clear; // Supprime des bugs
+  Clipboard.AsText:='MonTexte';
+end;

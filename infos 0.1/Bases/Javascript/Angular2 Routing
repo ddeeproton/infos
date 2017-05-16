@@ -1,0 +1,78 @@
+// LE ROUTING
+
+//Si router n'est pas installé
+npm install --save @angular/router
+
+// Dans systemjs.config.js
+    map: {
+		...
+      '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
+      '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
+		...
+	},
+
+// Dans index.html, ajouter:
+<base href="/">
+	
+// Dans app.module.ts
+import { RouterModule } from '@angular/router';
+import { HttpModule } from '@angular/http';
+
+@NgModule({
+  imports: [
+    ...
+    HttpModule,
+    RouterModule.forRoot([ // Noter que c'est forRoot (pour la navigation principale)
+      { path: '', redirectTo: 'Welcome', pathMatch: 'full'}, // Redirection
+      { path: 'products', component: ProductListComponent }, // http://.../products
+      { path: 'welcome', component: WelcomeComponent },
+      { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+      { path: '**', redirectTo: 'welcome', pathMatch: 'full' }
+    ]),
+    //], useHash = true),
+    ...
+  ],
+  ...
+})
+
+//Dans product.module.ts
+import { RouterModule} from '@angular/router';
+@NgModule({
+  imports: [
+    ...
+    HttpModule,
+    RouterModule.forChild([ // forChild pour le sous menu
+      { path: 'products', component: ProductListComponent },
+      { path: 'product/:id', // le:id veut dire que c'est un paramètre (variable)
+        canActivate: [ ProductDetailGuard],
+        component: ProductDetailComponent
+      }
+    ]),
+    ...
+  ],
+  ...
+})
+
+// Dans app.components.ts
+import { Component } from '@angular/core';
+@Component({
+    selector: 'nat-app',
+    template: `
+    <div>
+        <nav class='navbar navbar-default'>
+            <div class='container-fluid'>
+                <a class='navbar-brand'>{{pageTitle}}</a>
+                <ul class='nav navbar-nav'>
+                    <li><a [routerLink]="['/welcome']">Home</a></li>
+                    <li><a [routerLink]="['/products']">Product List</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class='container'>
+            <router-outlet></router-outlet>
+        </div>
+     </div>
+     `
+})
+
+

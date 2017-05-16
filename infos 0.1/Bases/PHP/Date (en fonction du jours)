@@ -1,0 +1,21 @@
+$joursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi');
+foreach( $joursem as $jours)
+{ 
+  print $jours ." ". DateDernierJours($jours). "<br>";
+}
+
+
+
+// affichage de la date du dernier jours passé
+function DateDernierJours($jours)
+{
+  $joursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi');
+
+  for($i=0;$i<=6;$i++)
+  {
+    $timeStampJoursPrecedant = time() - ($i*24*60*60);
+    if($jours == $joursem[date("w", $timeStampJoursPrecedant)])
+      //return strftime("%m-%d-%Y %H:%M:%S", $timeStampJoursPrecedant);
+      return strftime("%m-%d-%Y", $timeStampJoursPrecedant);
+  }
+}

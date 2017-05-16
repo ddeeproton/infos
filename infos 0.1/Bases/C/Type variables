@@ -1,0 +1,11 @@
+ int - integer: a whole number. 
+ float - floating point value: ie a number with a fractional part. 
+ double - a double-precision floating point value. 
+ char - a single character. 
+ void - valueless special purpose type 
+
+// LES STRINGS
+char a[] = "hello"; 
+
+
+

@@ -1,0 +1,1 @@
+sudo mount -t smbfs -o username=Administrateur,password=xxx //192.168.xx.xx/C$ /mnt/DisqueC/

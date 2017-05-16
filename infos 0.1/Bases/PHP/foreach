@@ -1,0 +1,10 @@
+foreach(array("a") as $a) {
+
+}
+
+//==========================
+
+
+$elements = array('a', 'b', 'c');
+
+echo "<ul><li>" . implode("</li><li>", $elements) . "</li></ul>";

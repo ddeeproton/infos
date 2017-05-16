@@ -1,0 +1,22 @@
+Public Function ChooseFile()  
+  On Error Resume Next  
+  Dim Q2, sRet  
+  Q2 = chr(34)  
+  ChooseFile = ""  
+  Set IE = CreateObject("InternetExplorer.Application")  
+  IE.visible = False  
+  IE.Navigate("about:blank")  
+  Do Until IE.ReadyState = 4  
+  Loop  
+    IE.Document.Write "<HTML><BODY><INPUT ID=" & Q2 & "Fil" & Q2 & "Type=" & Q2 & "file" & Q2 & "></BODY></HTML>"  
+    With IE.Document.all.Fil  
+   .focus  
+   .click  
+    sRet = .value  
+  End With  
+  IE.Quit  
+  Set IE = Nothing  
+  ChooseFile = sRet    
+End Function  
+
+ChooseFile()

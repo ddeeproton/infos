@@ -1,0 +1,63 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+type
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Memo1: TMemo;
+    procedure Button1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;// Le formulaire principal
+
+const Attributs = 2;                    // Des dossiers inspectés
+
+implementation
+
+{$R *.DFM}
+
+procedure TForm1.Button1Click(Sender: TObject);
+
+var FichierTrouve : String;              // Nom complet du fichier trouvé
+    Resultat  : integer;        // Si = 0 : On a trouvé un fichier correspondant
+    SearchRec     : TSearchRec; // Répertorie les caract. du fichier en cours
+                                // (ex: Nom)
+    Dossier_RR:string;
+    Filtre:string;
+    Attributs ,i: Integer;
+
+begin
+i:=0;
+Filtre := '*.*';
+Dossier_RR := 'C:';
+
+Attributs := faDirectory + faHidden + faSysFile+ faVolumeID + faArchive ;
+
+  Resultat := FindFirst(Dossier_RR+'\'+filtre,Attributs,SearchRec);
+  while Resultat = 0 do
+    begin
+      Application.ProcessMessages; // rend la main à windows
+      //if ((SearchRec.Attr and faDirectory) <= 0) then
+        // On a trouvé un Fichier (et non un dossier)
+       // begin
+          FichierTrouve := Dossier_RR+'\'+SearchRec.Name;
+          Memo1.Lines.Add(FichierTrouve);
+       // end;
+            Inc(i);
+      Resultat := FindNext(SearchRec);
+    end;
+  FindClose(SearchRec);// libération de la mémoire
+  Memo1.Lines.Add(inttostr(i)+' fichiés trouvés');
+end;
+
+end.

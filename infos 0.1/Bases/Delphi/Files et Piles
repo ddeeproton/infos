@@ -1,0 +1,212 @@
+// nécessite 4 boutons et 1 mémo
+
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+type
+  TfmPrinc = class(TForm)
+    mePile: TMemo;
+    btEmpile: TButton;
+    btDepile: TButton;
+    btVidePile: TButton;
+    Button1: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure btEmpileClick(Sender: TObject);
+    procedure btDepileClick(Sender: TObject);
+    procedure btVidePileClick(Sender: TObject);
+    procedure btEmpileALaFinClick(Sender: TObject);
+  private
+    { Déclarations privées }
+  public
+    { Déclarations publiques }
+  end;
+
+const
+  TAILLE_MAX_PILE = 300;
+
+type
+  PPileElem = ^TPileElem;
+  TPileElem = record
+    Elem: string;
+    Suiv: PPileElem;
+  end;
+
+
+
+var
+  fmPrinc: TfmPrinc;
+  Pile: PPileElem;
+implementation
+
+{$R *.DFM}
+
+
+
+function PLVide(Pile: PPileElem): Boolean;
+begin
+  {équivaut à
+  if Pile = nil then result := True else result := False;}
+  result := Pile = nil;
+end;
+{
+function PTPleine(Pile: TPileElem): Boolean;
+begin
+  result := Pile.Sommet = TAILLE_MAX_PILE;
+end;
+}
+
+function PLEmpiler(Pile: PPileElem; S: string): PPileElem;
+var
+  temp: PPileElem;
+begin
+  new(temp);
+  temp^.Elem := S;
+  temp^.Suiv := Pile;
+  result := temp;
+end;
+
+
+
+
+
+function PLSommet(Pile: PPileElem): string;
+begin
+  if Pile <> nil then
+    Result := Pile^.Elem
+  else
+    Result := ''; // erreur !!!
+end;
+
+
+
+
+procedure TfmPrinc.FormCreate(Sender: TObject);
+begin
+  Pile := nil;
+end;
+
+procedure TfmPrinc.FormDestroy(Sender: TObject);
+begin
+    while Pile <> nil do
+      if Pile <> nil then
+      begin
+        Pile := Pile^.Suiv;
+      end
+      else
+        Pile := nil;
+end;
+
+procedure PLAffiche(Pile: PPileElem; Sortie: TStrings);
+var
+  temp: PPileElem;
+begin
+  temp := Pile;
+  Sortie.Clear;
+  while temp <> nil do
+  begin
+    Sortie.Add(temp^.Elem);
+    temp := temp^.Suiv;
+  end;
+end;
+
+procedure MajInterface;
+var
+  vide: boolean;
+begin
+  PLAffiche(Pile, fmPrinc.mePile.Lines);
+  vide := PLVide(Pile);
+  fmPrinc.btDepile.Enabled := not vide;
+  fmPrinc.btVidePile.Enabled := not vide;
+end;
+
+function PLDepiler(Pile: PPileElem): PPileElem;
+begin
+  if Pile <> nil then
+  begin
+    Result := Pile^.Suiv;
+    Dispose(Pile);
+  end
+  else
+    Result := nil;
+end;
+
+procedure TfmPrinc.btEmpileClick(Sender: TObject);
+var
+  S: String;
+  temp: PPileElem;
+begin
+  if InputQuery('Empilement d''une chaîne', 'Saisissez une chaîne à empiler', S) then
+  begin
+
+    new(temp);
+    temp^.Elem := S;
+    temp^.Suiv := Pile;
+    Pile := temp;
+
+    MajInterface;
+  end;
+end;
+
+procedure TfmPrinc.btDepileClick(Sender: TObject);
+begin
+  Pile := PLDepiler(Pile);
+  MajInterface;
+end;
+
+procedure TfmPrinc.btVidePileClick(Sender: TObject);
+begin
+  while not PLVide(Pile) do
+    Pile := PLDepiler(Pile);
+  MajInterface;
+end;
+
+function FLEnfiler(F: PPileElem; Nom: string): PPileElem;
+var
+  f_par,
+  temp: PPileElem;
+begin
+  new(temp);
+  temp^.Elem := Nom;
+  // attention, fixer Suiv à nil sinon impossible de
+  // détecter la fin de file la prochaine fois !
+  temp^.Suiv := nil;
+
+  if F = nil then
+    result := temp
+  else
+    begin
+      // initialisation du parcours
+      f_par := F;
+      // on cherche le dernier maillon
+      while f_par^.Suiv <> nil do
+        // passage au maillon suivant
+        f_par := f_par^.Suiv;
+      // accrochage de temp en fin de liste.
+      f_par^.Suiv := temp;
+
+      result := F;
+    end;
+end;
+
+
+procedure TfmPrinc.btEmpileALaFinClick(Sender: TObject);
+var
+  S: String;
+begin
+  if InputQuery('Empilement d''une chaîne', 'Saisissez une chaîne à empiler', S) then
+  begin
+
+    Pile := FLEnfiler(Pile, S);
+    MajInterface;
+  end;
+
+end;
+
+end.
+ 

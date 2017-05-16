@@ -1,0 +1,127 @@
+Conversion de valeurs
+ 
+CBool Retourne une expression convertie en Variant de sous-type Boolean. 
+CByte Retourne une expression convertie en Variant de sous-type Byte. 
+CCur Retourne une expression convertie en Variant de sous-type Currency. 
+CDate Retourne une expression convertie en Variant de sous-type Date. 
+CDbl Retourne une expression convertie en Variant de sous-type Double. 
+CInt Retourne une expression convertie en Variant de sous-type Integer. 
+CLng Retourne une expression convertie en Variant de sous-type Long. 
+CSng Retourne une expression convertie en Variant de sous-type Single. 
+CStr Retourne une expression convertie en Variant de sous-type String. 
+FormatCurrency Retourne une expression formatée sous forme de valeur de type Currency utilisant le symbole monétaire défini dans le Panneau de configuration du système. 
+FormatDateTime Retourne une expression formatée sous forme de date ou d'heure. 
+FormatNumber Retourne une expression formatée sous forme de nombre. 
+FormatPercent Retourne une expression formatée sous forme de pourcentage (multiplié par 100) avec un caractère de fin %.  
+Traitement de chaînes
+ 
+Asc Retourne le code de caractère ANSI correspondant à la première lettre d'une chaîne. 
+Chr Retourne le caractère associé au code de caractère ANSI spécifié. 
+Hex Retourne une chaîne représentant la valeur hexadécimale d'un nombre. 
+InStr Retourne la position de la première occurrence d'une chaîne à l'intérieur d'une autre. 
+InStrRev Retourne la position d'une occurrence d'une chaîne dans une autre, à partir de la fin de la chaîne. 
+Join Retourne une chaîne créée par la jonction de plusieurs sous-chaînes contenues dans un tableau. 
+LCase Retourne une chaîne convertie en minuscules. 
+Left Retourne un nombre spécifié de caractères à partir de la gauche d'une chaîne. 
+Len Retourne le nombre de caractères contenus dans une chaîne, ou le nombre d'octets requis pour stocker une variable. 
+LTrim Retourne une copie d'une chaîne sans espaces à gauche. 
+Mid Retourne un nombre spécifié de caractères d'une chaîne. 
+Oct Retourne une chaîne représentant la valeur octale d'un nombre. 
+Replace Retourne une chaîne dans laquelle une sous-chaîne donnée a été remplacée par une autre sous-chaîne le nombre de fois spécifié. 
+Right Retourne un nombre spécifié de caractères à partir de la droite d'une chaîne. 
+RTrim Retourne une copie d'une chaîne sans espaces à droite. 
+Space Retourne une chaîne composée d'un nombre spécifié d'espaces. 
+StrComp Retourne une valeur indiquant le résultat d'une comparaison de chaîne. 
+String Retourne une chaîne constituée d'un caractère répété sur la longueur spécifiée. 
+StrReverse Retourne une chaîne contenant des caractères dont l'ordre a été inversé par rapport à une chaîne donnée. 
+Trim Retourne une copie d'une chaîne sans espaces ni à gauche ni à droite. 
+UCase Retourne une chaîne convertie en majuscules. 
+Date et heure
+ 
+Date Retourne la date système courante. 
+DateAdd Retourne une date à laquelle un intervalle spécifique a été ajouté. 
+DateDiff Retourne le nombre d'intervalles entre deux dates. 
+DatePart Retourne la partie spécifiée d'une date donnée. 
+DateSerial Retourne un Variant de sous-type Date pour une année, un mois et un jour spécifiés. 
+DateValue Retourne un Variant de sous-type Date. 
+Day Retourne un nombre entier compris entre 1 et 31 inclus, représentant le jour du mois. 
+Hour Retourne un nombre entier compris entre 0 et 23 inclus, représentant l'heure du jour. 
+Minute Retourne un nombre entier compris entre 0 et 59 inclus, représentant la minute de l'heure. 
+Month Retourne un nombre entier compris entre 1 et 12 inclus, représentant le mois de l'année. 
+MonthName Retourne une chaîne indiquant le mois spécifié. 
+Now Retourne la date et l'heure en cours en fonction de leur paramétrage dans le système de votre ordinateur. 
+Second Retourne un nombre entier compris entre 0 et 59 inclus, représentant la seconde de la minute. 
+Time Retourne un Variant de sous-type Date indiquant l'heure système en cours. 
+Timer Retourne le nombre de secondes qui se sont écoulées depuis 00:00 (minuit). 
+TimeSerial Retourne un Variant de sous-type Date contenant l'heure correspondant à des éléments spécifiques d'heure, de minute et de seconde. 
+TimeValue Retourne un Variant de sous-type Date contenant l'heure. 
+Weekday Retourne un nombre entier représentant le jour de la semaine. 
+WeekdayName Retourne une chaîne indiquant le jour de la semaine spécifié. 
+Year Retourne un nombre entier représentant l'année. 
+Mathématiques
+ 
+Abs Retourne la valeur absolue d'un nombre. 
+Atn Retourne l'arc tangente d'un nombre. 
+Cos Retourne le cosinus d'un angle. 
+Exp Retourne e (la base des logarithmes népériens) élevé à une puissance. 
+Eval Évalue une expression et Retourne le résultat. 
+Fix Retourne la partie entière d'un nombre. 
+Int Retourne la partie entière d'un nombre. 
+Log Retourne le logarithme népérien d'un nombre. 
+RGB Retourne un nombre entier représentant une valeur de couleur RVB. 
+Rnd Retourne un nombre aléatoire. 
+Round Retourne un nombre arrondi à un nombre spécifié de positions décimales. 
+Sgn Retourne un entier indiquant le signe d'un nombre. 
+Sin Retourne le sinus d'un angle. 
+Sqr Retourne la racine carrée d'un nombre. 
+Tan Retourne la tangente d'un angle. 
+Tableaux
+ 
+Array Retourne une variable de type Variant contenant un tableau. 
+Filter Retourne un tableau commençant par zéro contenant un sous-ensemble d'un tableau de chaîne basé sur des critères de filtre spécifiés. 
+LBound Retourne le plus petit indice disponible pour la dimension indiquée d'un tableau. 
+UBound Retourne le plus grand indice disponible pour la dimension indiquée d'un tableau. 
+Split Retourne un tableau à une dimension commençant par zéro contenant le nombre spécifié de sous-chaînes. 
+Objets
+ 
+CreateObject Crée et Retourne une référence à un objet Automation. 
+GetObject Retourne une référence à l'objet Automation d'un fichier. 
+GetRef Retourne une référence à une procédure éventuellement liée à un événement. 
+Tests
+ 
+IsArray Retourne une valeur booléenne indiquant si la variable est un tableau. 
+IsDate Retourne une valeur booléenne indiquant si une expression peut être convertie en date. 
+IsEmpty Retourne une valeur booléenne indiquant si une variable a été initialisée. 
+IsNull Retourne une valeur booléenne indiquant si une expression contient des données valides ou non (Null). 
+IsNumeric Retourne une valeur booléenne indiquant si une expression peut être évaluée sous la forme d'un nombre. 
+IsObject Retourne une valeur booléenne indiquant si une expression fait référence à un objet Automation valide. 
+Dialogues
+ 
+InputBox Affiche une invite dans une boîte de dialogue, attend que l'utilisateur entre du texte ou choisisse un bouton et Retourne le contenu de la zone de texte. 
+MsgBox Affiche un message dans une boîte de dialogue, attend que l'utilisateur clique sur un bouton et Retourne une valeur indiquant le bouton choisi par l'utilisateur. 
+Informations
+ 
+GetLocale Renvoie la valeur d'ID des paramètres régionaux en cours. 
+ScriptEngine Retourne une chaîne représentant le langage de script utilisé. 
+ScriptEngineBuildVersion Retourne le numéro de compilation du moteur de script employé. 
+ScriptEngineMajorVersion Retourne le numéro de version principal du moteur de script employé. 
+ScriptEngineMinorVersion Retourne le numéro de version secondaire du moteur de script employé. 
+SetLocale Définit les paramètres régionaux globaux et renvoie les paramètres régionaux précédents. 
+TypeName Retourne une chaîne qui fournit des informations de sous-type Variant sur une variable. 
+VarType Retourne une valeur indiquant le sous-type d'une variable. 
+Divers
+ 
+LoadPicture Retourne un objet image. Disponible seulement sur les plates-formes 32 bits. 
+  
+  
+modifié le 26/03/2005 
+favoris 
+langue 
+Accueil 
+Windows 
+Multiboot 
+VBScript 
+Divers techniques 
+Non au TCE 
+Philosophie 
+Humour 

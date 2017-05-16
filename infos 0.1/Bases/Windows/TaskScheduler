@@ -1,0 +1,7 @@
+nom d'ordinateur à partir d'adresse IP
+NBTSTAT -A 192.168.0.2
+
+liste TaskScheduled d'une machine distante
+schtasks.exe /Query /FO LIST /V /S \nomMachine
+
+http://snakefoot.fateback.com/tweak/winnt/files/schtasks.zip

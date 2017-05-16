@@ -1,0 +1,4 @@
+@echo Connection avec Lethean
+@if not exist o: @net use o: \10.1.0.71\cifs-tokra /user:bckdpn Jiacn20j20f /persistent:no
+@echo Connection avec Nechani
+@if not exist p: @net use p: \10.1.0.11\c$ /user:DECKPOINT\backup Jiacn20j20f /persistent:no
