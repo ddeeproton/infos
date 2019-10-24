@@ -1,0 +1,240 @@
+============================================================
+================== LES LECTURES ============================
+============================================================
+
+// Recherche avec filtre
+CléParcours est une chaîne = HFiltre(FieldsData, "IDclient='" + sIDClient + "' ET Groupe='"+sVisualisationGroupe+"'")
+
+HLitPremier(FieldsData,CléParcours)
+SI PAS HTrouve() ALORS RETOUR
+TANTQUE PAS HEnDehors(FieldsData) 
+	//IF FieldsData.IDclient = sIDClient ...
+	//and FieldsData.Groupe = sVisualisationGroupe THEN
+		IF ListeCherche(LISTE_Dates, FieldsData.Date, Vrai, 1) = -1 ET SansEspace(FieldsData.Date) <> "" THEN // On supprime les doublons
+			ListeAjoute(LISTE_Dates, DateVersChaîne(FieldsData.Date,"JJ.MM.AAAA HH:mm:SS") + gLien(FieldsData.Date)) 		
+		END
+	//END
+	HLitSuivant(FieldsData, CléParcours)
+FIN
+
+// ====================================================
+
+HLitRecherchePremier(FieldsStructure,FieldsStructure.nomGroupe, sVisualisationGroupe)
+SI PAS HTrouve() ALORS RENVOYER Faux
+TANTQUE PAS HEnDehors(FieldsStructure) 
+	// ...
+	HLitSuivant(FieldsStructure, FieldsStructure.nomGroupe)
+FIN
+
+// ====================================================
+
+// Les requêtes
+
+REQ_LastFieldData.ParamCellule = "Mon parametre"
+SI PAS HExécuteRequête(REQ_LastFieldData,hRequêteDéfaut) ALORS		
+	Info("Aucune donnée pour la cellule ["+sVisualisationCellule+"]")
+	RENVOYER Faux
+FIN
+SI HNbEnr(REQ_LastFieldData) < 1 ALORS
+	RENVOYER ""
+FIN
+RENVOYER REQ_LastFieldData.Valeur
+
+// =====================================================
+REQ_AffichageComboQuest140.ParamIDclient= 123
+SI HExécuteRequête(REQ_AffichageComboQuest140,hRequêteDéfaut)	ALORS		
+	POUR TOUT REQ_AffichageComboQuest140 
+
+	FIN
+FIN
+// =====================================================
+
+Pour WinDev
+// Préciser le dossier où se trouvera la base de donnée 
+//HChangeRep("*",BD_Destination)
+HChangeRep(BaseDeDonnee,Destination)
+
+// =====================================================
+
+// Affichage avec des pages
+PROCÉDURE AfficheUtilisateurs(start, display sont des entiers)
+ZR_Patients.SupprimeTout()
+nMaxAffiche est un entier = display
+i,j,k est un entier
+HLitPremier(DonnéesPatientsNouvelleBase)
+nCount est un entier = HNbEnr(DonnéesPatientsNouvelleBase)
+IF start < 0 THEN start = 0
+
+ListeSupprimeTout(COMBO_Page)
+CountPages est un entier = nCount / display
+FOR k = 0 TO CountPages
+	ListeAjoute(COMBO_Page, k)
+END
+IF start > 0 THEN ListeSelectPlus(COMBO_Page,start) 	
+
+i = start
+HAvance(DonnéesPatientsNouvelleBase, i)
+SI PAS HTrouve() ALORS RETOUR
+TANTQUE PAS HEnDehors(DonnéesPatientsNouvelleBase) 
+	IF j >= nMaxAffiche THEN RETOUR
+	IF i >= nCount THEN RETOUR
+	ZR_Patients.Ajoute()
+	j = ZR_Patients..Occurrence
+	ZR_Patients[j].SAI_Modify_IDclient = DonnéesPatientsNouvelleBase.IDclient
+	ZR_Patients[j].SAI_Modify_Login = DonnéesPatientsNouvelleBase.Login
+	ZR_Patients[j].SAI_Modify_Email = DonnéesPatientsNouvelleBase.Email
+	ZR_Patients[j].SAI_Modify_Pass = DonnéesPatientsNouvelleBase.MotDePasse
+	ZR_Patients[j].SAI_Modify_Rang = DonnéesPatientsNouvelleBase.Rang
+	HLitSuivant(DonnéesPatientsNouvelleBase)
+	i++
+	
+FIN
+
+============================================================
+========= VERIFICATION AVANT D'AJOUTER =====================
+============================================================
+
+
+
+SI sIDClient = "" ALORS
+	Info("IDClient ne peut pas être vide.")
+	RENVOYER Faux
+FIN
+// Check si la cellule existe encore dans la structure
+HLitRecherchePremier(FieldsStructure,FieldsStructure.Cellule, sCellule)
+SI PAS HTrouve() ALORS
+	Info("La cellule n'existe pas (ou plus) dans la structure.")
+	RENVOYER Faux
+FIN
+// Check si date existe pas déjà et propose de remplacer
+bDateExist est un booléen = False
+HLitRecherchePremier(FieldsData,FieldsData.Date, sDate)
+SI HTrouve() ALORS 
+	TANTQUE PAS HEnDehors(FieldsData) 
+		SI FieldsData.Cellule = sCellule ...
+		ET FieldsData.Date = sDate  ...
+		ET FieldsData.IDclient = sIDClient ALORS
+			bDateExist = Vrai
+			BREAK
+		FIN
+		HLitSuivant(FieldsData, FieldsData.Date)
+	FIN
+FIN
+// Add new data
+HRAZ(FieldsData)
+FieldsData.Type = FieldsStructure.Type
+FieldsData.Cellule = sCellule
+FieldsData.Date = sDate
+FieldsData.Formule = FieldsStructure.Formule
+FieldsData.Groupe = FieldsStructure.nomGroupe
+FieldsData.Valeur = sValeur
+FieldsData.IDclient = sIDClient
+
+SI bDateExist ALORS
+	SI OuiNon("La date existe déjà pour cette cellule. Remplacer la valeur?") ALORS
+		SI PAS HModifie(FieldsData) ALORS
+			Erreur(HErreurInfo)
+			RENVOYER Faux
+		FIN
+	FIN
+SINON
+	SI PAS HAjoute(FieldsData) ALORS
+		Erreur(HErreurInfo)
+		RENVOYER Faux
+	FIN
+FIN
+
+
+
+=============================================================
+========= VERIFICATION AVANT DE MODIFIER ====================
+=============================================================
+
+
+
+SI sIDClient = "" ALORS
+	Info("IDClient ne peut pas être vide.")
+	RENVOYER Faux
+FIN
+SI sCellule = "" ALORS
+	Info("La cellule ne peut pas être vide.")
+	RENVOYER Faux
+FIN
+// Check si la cellule existe encore dans la structure
+HLitRecherchePremier(FieldsStructure,FieldsStructure.Cellule, sCellule)
+SI PAS HTrouve() ALORS
+	Info("La cellule n'existe pas (ou plus) dans la structure.")
+	RENVOYER Faux
+FIN
+// Check si date existe 
+bDateExist est un booléen = False
+HLitRecherchePremier(FieldsData,FieldsData.Date, sDate)
+SI HTrouve() ALORS 
+	TANTQUE PAS HEnDehors(FieldsData) 
+		SI FieldsData.Cellule = sCellule ...
+		ET FieldsData.Date = sDate  ...
+		ET FieldsData.IDclient = sIDClient ALORS
+			bDateExist = Vrai
+			BREAK
+		FIN
+		HLitSuivant(FieldsData, FieldsData.Date)
+	FIN
+FIN
+
+SI PAS bDateExist ALORS
+	Info("La donnée n'existe pas (ou plus) dans la base. Modification annulé.")
+	RENVOYER Faux
+FIN
+
+// Modify data
+FieldsData.Type = FieldsStructure.Type
+FieldsData.Cellule = sCellule
+FieldsData.Date = sDate
+FieldsData.Formule = FieldsStructure.Formule
+FieldsData.Groupe = FieldsStructure.nomGroupe
+FieldsData.Valeur = sValeur
+FieldsData.IDclient = sIDClient
+
+
+SI PAS HModifie(FieldsData) ALORS
+	Erreur(HErreurInfo)
+	RENVOYER Faux
+FIN
+
+
+=============================================================
+========= VERIFICATION AVANT D'EFFACER ======================
+=============================================================
+
+
+
+
+SI sCellule = "" ALORS
+	Info("Le combo champ ne peut pas être vide.")
+	RENVOYER Faux
+FIN
+
+// Check si date existe 
+bDateExist est un booléen = False
+HLitRecherchePremier(FieldsData,FieldsData.Date, sDate)
+SI HTrouve() ALORS 
+	TANTQUE PAS HEnDehors(FieldsData) 
+		SI FieldsData.Cellule = sCellule ...
+			ET FieldsData.Date = sDate ALORS
+			bDateExist = Vrai
+			BREAK
+		FIN
+		HLitSuivant(FieldsData, FieldsData.Date)
+	FIN
+FIN
+
+SI PAS bDateExist ALORS
+	Info("La donnée n'existe pas (ou plus) dans la base. Suppression annulée.")
+	RENVOYER Faux
+FIN
+
+SI PAS HSupprime() ALORS
+	Erreur(HErreurInfo)
+	RENVOYER Faux
+FIN
+RENVOYER Vrai

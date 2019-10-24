@@ -1,0 +1,8 @@
+
+	ord et char
+	Charact(41) et Asc("a")
+	exemple
+	sFormule = Remplace(sFormule, Charact(41), "")
+	Info(Asc(Right(sFormule,1)))
+	
+	

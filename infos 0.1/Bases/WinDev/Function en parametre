@@ -1,0 +1,9 @@
+PROCÉDURE PRIVÉE GLOBALE ChercheFichierEtExecuteAction(nIDMeasurement est un entier sur 8 octets, Action est Procédure) : chaîne ANSI
+
+SI HLitRecherche(MonFichierMappé, MaCléUniqueMappée, nIDMeasurement, hIdentique)  ALORS
+	// Réussite de la recherche, exécute l'action.
+	RENVOYER Action()
+SINON
+	// Retourne un code HTTP 4xx : la source du problème est coté consommateur.
+	RENVOYER RenvoieErreurHF(404)
+FIN

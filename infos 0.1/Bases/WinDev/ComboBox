@@ -1,0 +1,28 @@
+nWpos est entier = ListeSelect(COMBO_Date)
+SI nWpos = -1 ET HNbEnr(REQ_AffichageComboQuest140) > 0 ALORS
+	ListeSelectPlus(COMBO_Date,2) 	
+FIN
+
+
+
+// =====================
+
+ListeSupprimeTout(COMBO_DonneeDate)
+ListeAjoute(COMBO_DonneeDate,"Ajouter une date")
+
+ListeAjoute(COMBO_DonneeDate, DateVersChaîne(FieldsData.Date,"JJ.MM.AAAA HH:mm:SS") + gLien(FieldsData.Date)) 
+
+// ====================
+
+// Ajoute si pas déjà ajouté
+
+IF ListeCherche(COMBO_DonneeDate, FieldsData.Date, Vrai, 2) = -1 THEN // On supprime les doublons
+	ListeAjoute(COMBO_DonneeDate, DateVersChaîne(FieldsData.Date,"JJ.MM.AAAA HH:mm:SS") + gLien(FieldsData.Date)) 		
+END
+
+// ====================
+
+// Sélectionne la valeur
+
+nIndex est un entier = ListeCherche(COMBO_TypeDonnee, FieldsStructure.Type, Vrai, 1) 
+SI nIndex > -1 ALORS ListeSelectPlus(COMBO_TypeDonnee, nIndex)

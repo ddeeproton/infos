@@ -1,0 +1,8 @@
+RC
+
+Replace("content", Caract(10), RC) + RC
+
+
+
+POUR TOUTE CHAÎNE UneLigne DE Fichier_Contenu SEPAREE PAR RC
+

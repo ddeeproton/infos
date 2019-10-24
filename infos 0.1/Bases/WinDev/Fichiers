@@ -1,0 +1,5 @@
+// Vérifier si les fichiers source existent
+SI PAS fFichierExiste(ComplèteRep(BD_Source)+"abo_contrat.xlsx") ALORS
+	Info("Le fichier: "+"abo_contrat.xlsx"+" n'existe pas")
+	RETOUR
+FIN

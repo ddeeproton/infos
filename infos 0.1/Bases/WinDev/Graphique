@@ -1,0 +1,45 @@
+sIDClient est une chaîne = ProcéduresServeur.gclLoginManager.Client_Recherché_Id()
+nStep est un entier = 1
+nValeurX est un entier = -nStep
+sValeur, sDateMachine est une chaîne 
+clExcel est un CServerExcel
+sDateFr est une chaîne
+
+// Check erreur
+SI sIDClient = "" ALORS
+	Info("Aucun patient sélectionné")
+	RETOUR
+FIN
+
+// Création du graphe
+grCrée(graphique, grAire)
+// - type de la série
+grTypeSérie(graphique, 1, grAire)
+// Lisser la courbe
+grLissage(graphique, Vrai)
+// Couleurs
+grCouleur(graphique, grCouleurLégendeFond, Blanc)
+grCouleur(graphique, grCouleurBordure, Blanc)
+//grCouleurSérie(GRF_HealthScore, 1, BleuClair)
+grCouleurSérie(graphique, 1, RVB(186, 197, 225))
+// Affiche le quadrillage
+grQuadrillage(graphique, Vrai, grAbscisse)
+
+// Récupère toutes les dates qui ont été enregistrées dans "FieldData" pour l'utilisateur recherché
+REQ_GetUserDates_Desc.ParamIDclient = sIDClient
+SI HExécuteRequête(REQ_GetUserDates_Desc,hRequêteDéfaut) ALORS	
+	POUR TOUT REQ_GetUserDates_Desc  
+		nValeurX = nValeurX + nStep
+		sDateMachine = REQ_GetUserDates_Desc.Date
+		sDateFr = DateVersChaîne(sDateMachine,"J.M.AA H:mm:SS")
+		// Calculs excel 
+		clExcel.ExcelCalculate_FieldsData(sIDClient, sDateMachine)	
+		sValeur = clExcel.cExcelData[sCellule]["Valeur"]
+		SI PAS EstNumérique(sValeur) OU Contient(sValeur,"ERREUR") ALORS CONTINUE
+		grAjouteDonnée(graphique, 1, nValeurX, sValeur)
+		grEtiquetteCatégorie(graphique,nValeurX, sDateFr)
+	FIN
+FIN
+
+// Dessin du graphe
+grDessine(graphique)

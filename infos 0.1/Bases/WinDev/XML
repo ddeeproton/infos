@@ -1,0 +1,54 @@
+// Vérifier si les fichiers source existent
+SI PAS fFichierExiste(ComplèteRep(BD_Source)+"abo_contrat.xlsx") ALORS
+	Info("Le fichier: "+"abo_contrat.xlsx"+" n'existe pas")
+	RETOUR
+FIN
+
+DocXLS_ABO=xlsOuvre(ComplèteRep(BD_Source)+"abo_contrat.xlsx")
+SI ErreurDétectée() ALORS
+	Erreur(ErreurInfo())
+	RETOUR
+FIN
+NbLignes=DocXLS_ABO..NombreLigne
+
+SI NbLignes < 2 ALORS
+	Fichiers_Fermer()
+	Info("Le fichier ne contient pas de lignes")
+	RETOUR
+FIN
+
+// ===================================================================
+
+
+// Lire toutes les balises d'un fichier XML
+XMLPremier("MonDocXML")									//On amorce le parcours pour la Boucle qui suit
+TANTQUE PAS XMLEnDehors("MonDocXML")
+	sXML_NomElement = XMLNomElément("MonDocXML")			//Récupérer le nom de l'élément en cours
+	sXML_Donnée = XMLDonnée("MonDocXML")
+
+	// Traitement
+	// ...
+
+	//Passer à la Balise suivante (la ligne suivante)
+	SI XMLFilsExiste("MonDocXML", XMLAttribut+XMLBalise) = Vrai ALORS
+		//La Balise en cours a un fils, on se positionne donc sur la ligne-fils ... et on ne fait rien d'autre !
+		XMLFils("MonDocXML")							//On descend d'un niveau
+	SINON
+		XMLSuivant("MonDocXML")						//Lire l'élément suivant (la ligne suivante)
+		//Si on est "XMLEnDehors" (PAS forcément à la fin du fichier mais à la fin d'un noeud) alors il faut remonter sur le parent ... autant de fois que nécessaire
+		//Note: si on n'est PAS "XMLEnDehors" alors la Boucle ci-dessous ne sera PAS exécuté
+		TANTQUE XMLEnDehors("MonDocXML") = Vrai
+			//Remonter d'un niveau (revenir au début de la Balise en cours)
+			//Note: il faut tester si le Parent n'est pas vide car à la fin du fichier on remonte AVANT le 1er Parent ... qui est alors vide !
+			SI XMLNomParent("MonDocXML") <> "" ALORS
+				XMLParent("MonDocXML")
+				XMLSuivant("MonDocXML")				//Lire l'élément suivant (la ligne suivante)
+			SINON
+				SORTIR									//Quitter la Boucle si le Parent est vide ... afin de ne pas boucler indéfiniment
+			FIN
+		FIN
+	FIN
+
+FIN
+
+XMLTermine("MonDocXML")				

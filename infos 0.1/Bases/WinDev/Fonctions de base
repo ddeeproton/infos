@@ -1,0 +1,95 @@
+
+
+										
+										
+	--------------------
+		LES RETOUR
+	--------------------
+	
+	Pour les Procedures qui ne retournent rien
+		RETOUR
+	
+	Pour les Fonctions qui retournent quelque chose
+			RENVOYER pour sortir d'une fonction
+			RETOUR pour stocker la valeur de retour d'une fonction sans sortir de cette fonction
+	
+	
+	--------------------
+		LES BOUCLES
+	--------------------
+
+	SaisieAssistéeParamètre(SAI_NomPrenomPatientRecherche1,saTailleMin,3)
+	SaisieAssistéeParamètre(SAI_NomPrenomPatientRecherche1,saFiltre,filtreContient)
+
+	// =============================================================================================================
+    // Parcourir toutes les données d'une base
+	HLitRecherche(DonnéesPatientsNouvelleBase,DonnéesPatientsNouvelleBase.Nom_Prenom ,[sNom,sPrenom]) 
+	TANTQUE HTrouve(DonnéesPatientsNouvelleBase) 
+	    // ....
+		HLitSuivant(DonnéesPatientsNouvelleBase,DonnéesPatientsNouvelleBase.Nom_Prenom)
+	FIN
+
+	
+	// =============================================================================================================
+	// Nouveau code
+	HLitPremier(DonnéesPatientsNouvelleBase, DonnéesPatientsNouvelleBase.Nom_Prenom, hForwardOnly)
+	TANTQUE PAS HEnDehors(DonnéesPatientsNouvelleBase) 
+		SaisieAssistéeAjoute(SAI_NomPrenomPatientRecherche1, sansespace(DonnéesPatientsNouvelleBase.Nom) + " " +sansespace(DonnéesPatientsNouvelleBase.Prenom))	
+		HLitSuivant(DonnéesPatientsNouvelleBase,DonnéesPatientsNouvelleBase.Nom_Prenom)
+	FIN
+
+	
+	// =============================================================================================================
+	HLitPremier(DonnéesPatientsNouvelleBase, DonnéesPatientsNouvelleBase.Nom_Prenom, hForwardOnly)
+	BOUCLE
+		SaisieAssistéeAjoute(SAI_NomPrenomPatientRecherche1, SansEspace(DonnéesPatientsNouvelleBase.Nom) + " " +SansEspace(DonnéesPatientsNouvelleBase.Prenom))	
+	À FAIRE TANTQUE HLitSuivant(DonnéesPatientsNouvelleBase,DonnéesPatientsNouvelleBase.Nom_Prenom)
+		
+	
+	
+	
+	// =============================================================================================================
+
+	POUR TOUT _value,_key de gtaData
+		POUR TOUT _sub_value,_sub_key de gtaData[_key]
+			Info("m_taSubstance["+_key+"]["+_sub_key+"] = "+_sub_value)
+		FIN
+	FIN
+
+	// =============================================================================================================
+	// Parcourir la première donnée
+	HLitRecherche(DonnéesPatientsNouvelleBase,DonnéesPatientsNouvelleBase.Nom_Prenom ,[sNom,sPrenom]) 
+	SI HTrouve(DonnéesPatientsNouvelleBase) ALORS
+	    // ....
+	FIN
+
+	// =============================================================================================================
+	// Parcourir toutes les données d'une base avec une boucle for
+	sNomPrenomTrouve est une chaîne
+	j est un entier
+	POUR j = 1 _À_ HNbEnr(DonnéesPatientsNouvelleBase, hEtatTous)
+		HLit(DonnéesPatientsNouvelleBase , j)
+		SI HEtat() = hEtatActif ALORS 
+			sNomPrenomTrouve = SansEspace(DonnéesPatientsNouvelleBase.Nom) + " " +SansEspace(DonnéesPatientsNouvelleBase.Prenom)
+			SaisieAssistéeAjoute(SAI_NomPrenomPatientRecherche1,sNomPrenomTrouve)
+		FIN
+		//ExécuteTraitement(CELL_SansNom1.BTN_NomPrenomValider,trtEntrée)
+	FIN
+
+	// =============================================================================================================
+	//From: SEL_Q1 -> To: SEL_Q43
+	ChampPointé est un Champ
+	i est un entier
+	POUR i = 1 _À_ 43
+		ChampPointé <- {"SEL_Q"+i}
+		//Info(ChampPointé)
+	FIN
+	// =============================================================================================================
+
+	ord et char
+	Charact(41) et Asc("a")
+	exemple
+	sFormule = Remplace(sFormule, Charact(41), "")
+	Info(Asc(Right(sFormule,1)))
+	
+	
